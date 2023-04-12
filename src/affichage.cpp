@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   affichage.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tdelauna <tdelauna@student.42.fr>          +#+  +:+       +#+        */
+/*   By: aptive <aptive@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/07 19:23:07 by aptive            #+#    #+#             */
-/*   Updated: 2023/04/10 14:21:02 by tdelauna         ###   ########.fr       */
+/*   Updated: 2023/04/12 13:36:16 by aptive           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,4 +20,16 @@ void affichage_list(std::map<std::string, std::string> list)
 		i++;
 		std::cout << "list " << i << " < " << it->first << ", " << it->second << " >"<< std::endl;
 	}
+}
+
+void affichage_socket(int client_server_fd, struct sockaddr_in client_addr)
+{
+	std::cout << "---------------------------------------" << std::endl;
+	std::cout << "Nouvelle connexion entrante" << std::endl;
+	std::cout << "client_socket fd : " << client_server_fd << std::endl;
+	std::cout << "addr : " << &client_addr << std::endl;
+	std::cout << "sin_family : " << client_addr.sin_family << std::endl;
+	std::cout << "sin_port : " << client_addr.sin_port  << std::endl;
+	std::cout << "sin_addr.s_addr : " << client_addr.sin_addr.s_addr << std::endl;
+	std::cout << "---------------------------------------" << std::endl;
 }

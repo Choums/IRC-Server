@@ -6,7 +6,7 @@
 #    By: aptive <aptive@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/12/05 17:28:02 by aptive            #+#    #+#              #
-#    Updated: 2023/04/11 14:46:50 by aptive           ###   ########.fr        #
+#    Updated: 2023/04/12 13:50:24 by aptive           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -22,6 +22,7 @@ OBJDIR		=	./obj
 SRC		=	main.cpp\
 			affichage.cpp\
 			read_file.cpp\
+			server.cpp\
 			verif_arg.cpp\
 
 
