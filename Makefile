@@ -6,7 +6,7 @@
 #    By: aptive <aptive@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/12/05 17:28:02 by aptive            #+#    #+#              #
-#    Updated: 2023/04/12 13:50:24 by aptive           ###   ########.fr        #
+#    Updated: 2023/04/12 18:57:25 by aptive           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -24,6 +24,7 @@ SRC		=	main.cpp\
 			read_file.cpp\
 			server.cpp\
 			verif_arg.cpp\
+			User.cpp\
 
 
 # nommage automatique des fichiers objets d'apres les noms des sources C

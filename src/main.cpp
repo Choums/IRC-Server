@@ -6,11 +6,12 @@
 /*   By: aptive <aptive@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/07 18:15:00 by aptive            #+#    #+#             */
-/*   Updated: 2023/04/12 16:36:57 by aptive           ###   ########.fr       */
+/*   Updated: 2023/04/12 22:46:52 by aptive           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/web_serv.hpp"
+#include "../includes/User.hpp"
 
 int main(int argc, char ** argv)
 {
@@ -75,6 +76,7 @@ int main(int argc, char ** argv)
 
 		int max_clients = 30;
 		int client_socket[30];
+		std::vector<User> client_socket_v;
 		int valread;
 		int sd;
 		int max_sd;
@@ -110,10 +112,128 @@ int main(int argc, char ** argv)
 
 		fd_set temp;
 		// Boucle principale du serveur
+		int count(0);
+
+
+
+		// struct timeval timeout;
+		// timeout.tv_sec = 1;
+		// timeout.tv_usec = 0;
+
+
+		// while (true)
+		// {
+
+		// 	std::cout << "en attende de donnees : " << YELLOW << count << END << std::endl;
+		// 	count++;
+		// 	if (count > 20)
+		// 		return 0;
+
+		// 	// Wait for any of the sockets to become readable
+		// 	temp = read_sockets;
+
+
+		// 	int select_result = select(max_socket_fd + 1, &temp, NULL, NULL, NULL);
+		// 	if (select_result < 0)
+		// 		throw std::string("Error : waiting for sockets to become readable !\n");
+
+		// 	std::cout << "select_result : " << select_result << std::endl;
+
+
+		// 	// traitement de l'activité sur les sockets
+		// 	if (FD_ISSET(server_fd, &temp))
+		// 	{
+		// 		std::cout << "herrrrrrre" << std::endl;
+
+		// 		// nouvelle connexion entrante
+		// 		struct sockaddr_in client_address;
+		// 		int addrlen = sizeof(client_address);
+		// 		int new_socket = accept(server_fd, (struct sockaddr *)&client_address, (socklen_t *)&addrlen);
+		// 		if (new_socket < 0)
+		// 		{
+		// 			perror("Failed to accept connection");
+		// 			exit(1);
+		// 		}
+		// 		FD_SET(new_socket, &read_sockets);
+		// 		if (new_socket > max_socket_fd) {
+		// 			max_socket_fd = new_socket;
+		// 		}
+		// 		std::cout	<< "Nouvelle connexion : socket_fd : "
+		// 					<< new_socket << "/ ip : " << inet_ntoa(addr.sin_addr)
+		// 					<< " / port : " << ntohs(addr.sin_port)
+		// 					<< std::endl;
+		// 		// for (int i = 0; i < max_clients; i++)
+		// 		// {
+		// 		// 	if (client_socket[i] == 0)
+		// 		// 	{
+		// 		// 		client_socket[i] = new_socket;
+		// 		// 		break;
+		// 		// 	}
+		// 		// }
+		// 		for (int i = 0; i < max_clients; i++)
+		// 		{
+		// 			if (client_socket[i] == 0)
+		// 			{
+		// 				client_socket[i] = new_socket;
+		// 				break;
+		// 			}
+		// 		}
+		// 		client_socket_v.push_back(User(new_socket));
+		// 		select_result = 0;
+		// 	}
+		// 	affichage_vector(client_socket_v);
+
+		// 	// for (int i = 0; i < max_clients; i++)
+		// 	// {
+		// 	// 	if (client_socket[i] != 0)
+		// 	// 		std::cout << "fd : " << client_socket[i] << std::endl;
+		// 	// }
+
+		// 	std::cout << "select_result : " << select_result << std::endl;
+
+		// 	// Check for data on any of the client sockets
+		// 	// for (size_t i = 0; i < client_socket_v.size() && select_result > 0; i++)
+		// 	// {
+		// 	// 	// std::cout << "client socket " << i << " : " << client_socket[i] << std::endl;
+
+		// 	// 	// std::cout << "heeeerreeee\n";
+		// 	// 	int client_socket_fd = client_socket_v[i].getFd();
+
+
+		// 	// 		(void)client_socket_fd;
+
+
+		// 	// 	if (FD_ISSET(client_socket_fd, &temp))
+		// 	// 	{
+		// 	// 		valread = read(client_socket_fd, buffer, 1024);
+		// 	// 		std::cout << "valread on client socket : " << valread << " / "<< client_socket_fd << std::endl;
+		// 	// 		if (valread == 0)
+		// 	// 		{
+		// 	// 			std::cout << "suprrrrrrrrrrression" << std::endl;
+		// 	// 			// Client disconnected, remove from active socket set
+		// 	// 			close(client_socket_fd);
+		// 	// 			FD_CLR(client_socket_fd, &temp);
+		// 	// 			// client_socket[i] = 0;
+		// 	// 			// client_socket_v.erase(client_socket_v.begin()+i);
+		// 	// 		}
+		// 	// 		else
+		// 	// 		{
+		// 	// 			// Echo back the received data
+		// 	// 			buffer[valread] = '\0';
+		// 	// 			std::cout << "Received message: " << buffer << "\n";
+		// 	// 			// send(client_socket_fd, buffer, strlen(buffer), 0);
+		// 	// 		}
+		// 	// 	}
+		// 	// }
+		// 	(void)timeout;
+		// }
 		while (true)
 		{
+			std::cout << "en attende de donnees : " << YELLOW << count << END << std::endl;
+			count++;
+			if (count > 20)
+				return 0;
 
-			std::cout << "en attende de donnees \n";
 
 			// Wait for any of the sockets to become readable
 			temp = read_sockets;
@@ -126,6 +246,7 @@ int main(int argc, char ** argv)
 			// traitement de l'activité sur les sockets
 			if (FD_ISSET(server_fd, &temp))
 			{
+				std::cout << "herrrrrrre" << std::endl;
 
 				// nouvelle connexion entrante
 				struct sockaddr_in client_address;
@@ -136,7 +257,7 @@ int main(int argc, char ** argv)
 					perror("Failed to accept connection");
 					exit(1);
 				}
-				FD_SET(new_socket, &temp);
+				FD_SET(new_socket, &read_sockets);
 				if (new_socket > max_socket_fd) {
 					max_socket_fd = new_socket;
 				}
@@ -144,6 +265,7 @@ int main(int argc, char ** argv)
 							<< new_socket << "/ ip : " << inet_ntoa(addr.sin_addr)
 							<< " / port : " << ntohs(addr.sin_port)
 							<< std::endl;
+
 				for (int i = 0; i < max_clients; i++)
 				{
 					if (client_socket[i] == 0)
@@ -152,27 +274,36 @@ int main(int argc, char ** argv)
 						break;
 					}
 				}
+				client_socket_v.push_back(User(new_socket));
+				// select_result = 0;
 			}
+			affichage_vector(client_socket_v);
 
 			// Check for data on any of the client sockets
-			for (int i = 0; i < max_clients && client_socket[i] != 0; i++)
+			for (size_t i = 0; i < client_socket_v.size(); i++)
+			// for (size_t i = 0; i < client_socket_v.size() && select_result > 0; i++)
 			{
-				std::cout << "client socket " << i << " : " << client_socket[i] << std::endl;
+				// std::cout << "client socket " << i << " : " << client_socket[i] << std::endl;
 
 				// std::cout << "heeeerreeee\n";
-				int client_socket_fd = client_socket[i];
+				int client_socket_fd = client_socket_v[i].getFd();
 
-				if (FD_ISSET(client_socket_fd, &temp))
+
+					(void)client_socket_fd;
+
+
+				if (FD_ISSET(client_socket_fd, &read_sockets))
 				{
-					std::cout << "heeeerreeee1\n";
-
 					valread = read(client_socket_fd, buffer, 1024);
+					std::cout << "valread on client socket : " << valread << " / "<< client_socket_fd << std::endl;
 					if (valread == 0)
 					{
+						std::cout << "suprrrrrrrrrrression" << std::endl;
 						// Client disconnected, remove from active socket set
 						close(client_socket_fd);
-						FD_CLR(client_socket_fd, &temp);
-						client_socket[i] = 0;
+						FD_CLR(client_socket_fd, &read_sockets);
+						// client_socket[i] = 0;
+						client_socket_v.erase(client_socket_v.begin()+i);
 					}
 					else
 					{
@@ -185,13 +316,15 @@ int main(int argc, char ** argv)
 			}
 		}
 
-
+	(void)count;
 	(void)sd;
 	(void)max_sd;
 	(void)client_socket;
 	(void)valread;
 	(void)addrlen;
 	(void)buffer;
+
+
 
 		std::cout << "No problems" << std::endl;
 	}

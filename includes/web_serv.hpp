@@ -6,7 +6,7 @@
 /*   By: aptive <aptive@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/07 18:14:43 by aptive            #+#    #+#             */
-/*   Updated: 2023/04/12 14:55:49 by aptive           ###   ########.fr       */
+/*   Updated: 2023/04/12 19:28:50 by aptive           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@
 # include <fstream>
 
 # include <list>
+# include <vector>
 # include <map>
 # include <utility> // pour utiliser la paire (std::pair)
 
@@ -32,6 +33,12 @@
 # include <netinet/in.h>
 # include <arpa/inet.h>
 # include <netdb.h>
+
+# define RED "\033[1;31m"
+# define GREEN "\033[1;32m"
+# define YELLOW "\033[1;33m"
+# define END "\033[0m"
+
 
 // configurer la connexion. On l'appelle contexte d'adressage.
 // struct sockaddr_in
@@ -70,6 +77,18 @@ void						check_arg(int argc, char ** argv);
 //                                    END                                       |
 // +----------------------------------------------------------------------------+
 
+template <typename T>
+void affichage_vector(std::vector<T> v)
+{
+	std::cout << RED << "*******************" << std::endl;
+	for (size_t i = 0; i < v.size(); i++)
+	{
+		std::cout << GREEN << "-------------------" << std::endl;
+		std::cout << "vector : " << i << std::endl << v[i];
+		std::cout << "-------------------" << std::endl;
+	}
+	std::cout << RED << "*******************" << END << std::endl;
 
+}
 
 #endif

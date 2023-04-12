@@ -6,11 +6,12 @@
 /*   By: aptive <aptive@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/07 19:23:07 by aptive            #+#    #+#             */
-/*   Updated: 2023/04/12 13:36:16 by aptive           ###   ########.fr       */
+/*   Updated: 2023/04/12 19:19:47 by aptive           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/web_serv.hpp"
+#include "../includes/User.hpp"
 
 void affichage_list(std::map<std::string, std::string> list)
 {
@@ -21,6 +22,15 @@ void affichage_list(std::map<std::string, std::string> list)
 		std::cout << "list " << i << " < " << it->first << ", " << it->second << " >"<< std::endl;
 	}
 }
+
+// void affichage_vector(std::vector<User> v)
+// {
+// 	for (size_t i = 0; i < v.size(); i++)
+// 	{
+// 		i++;
+// 		std::cout << "vector : " << i << " : " << v[i];
+// 	}
+// }
 
 void affichage_socket(int client_server_fd, struct sockaddr_in client_addr)
 {
