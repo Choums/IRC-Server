@@ -6,7 +6,7 @@
 /*   By: aptive <aptive@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/07 18:14:43 by aptive            #+#    #+#             */
-/*   Updated: 2023/04/12 19:28:50 by aptive           ###   ########.fr       */
+/*   Updated: 2023/04/13 15:19:36 by aptive           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,7 @@ std::pair<std::string, std::string>	parse_to_pair (std::string str);
 std::map<std::string, std::string>open_and_check_conf_file(std::string file);
 
 // +----------------------------------------------------------------------------+
-//                                    SERVER                                    |
+//                                   SERVER                                     |
 // +----------------------------------------------------------------------------+
 void todo_connexion(int fd);
 
@@ -72,6 +72,18 @@ void todo_connexion(int fd);
 //                                  VERIF_ARG                                   |
 // +----------------------------------------------------------------------------+
 void						check_arg(int argc, char ** argv);
+
+
+// +----------------------------------------------------------------------------+
+//                               SOCKET_SERVER_CPP                              |
+// +----------------------------------------------------------------------------+
+void ft_socket_addr_server(int * server_fd, struct sockaddr_in * addr, int port);
+void creation_socket_server( int * server_fd );
+void configuration_socket_server( int *server_fd );
+void creation_address_connexion( int port , struct sockaddr_in * addr);
+void association_socket_to_address (int *server_fd, struct sockaddr_in * addr);
+void mode_listing_socket(int *server_fd);
+void affichage_addr(struct sockaddr_in addr);
 
 // +----------------------------------------------------------------------------+
 //                                    END                                       |

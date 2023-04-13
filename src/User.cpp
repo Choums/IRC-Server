@@ -6,7 +6,7 @@
 /*   By: aptive <aptive@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/12 18:50:55 by aptive            #+#    #+#             */
-/*   Updated: 2023/04/12 19:24:37 by aptive           ###   ########.fr       */
+/*   Updated: 2023/04/13 14:44:30 by aptive           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ User::~User()
 
 User & User::operator=(User const & rhs)
 {
-	if ( this != &rhs)
+	if (this != &rhs && rhs.getFd())
 		*this = rhs;
 	return *this;
 }

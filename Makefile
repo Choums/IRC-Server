@@ -6,7 +6,7 @@
 #    By: aptive <aptive@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/12/05 17:28:02 by aptive            #+#    #+#              #
-#    Updated: 2023/04/12 18:57:25 by aptive           ###   ########.fr        #
+#    Updated: 2023/04/13 14:51:42 by aptive           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -23,6 +23,7 @@ SRC		=	main.cpp\
 			affichage.cpp\
 			read_file.cpp\
 			server.cpp\
+			socket_server.cpp\
 			verif_arg.cpp\
 			User.cpp\
 
