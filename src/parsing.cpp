@@ -1,16 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   verif_arg.cpp                                      :+:      :+:    :+:   */
+/*   parsing.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: aptive <aptive@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/07 19:19:35 by aptive            #+#    #+#             */
-/*   Updated: 2023/04/11 15:57:42 by aptive           ###   ########.fr       */
+/*   Updated: 2023/04/13 15:32:45 by aptive           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/web_serv.hpp"
+
+void parsing(int argc, char ** argv, int * port, std::string * password)
+{
+	check_arg(argc, argv);
+	*port = atoi(argv[1]);
+	*password = argv[2];
+	std::cout << "Port / Password : " << port << " / " << password << std::endl;
+
+}
 
 void check_arg(int argc, char ** argv)
 {

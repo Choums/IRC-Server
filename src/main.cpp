@@ -6,7 +6,7 @@
 /*   By: aptive <aptive@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/07 18:15:00 by aptive            #+#    #+#             */
-/*   Updated: 2023/04/13 15:21:32 by aptive           ###   ########.fr       */
+/*   Updated: 2023/04/13 15:32:14 by aptive           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,13 +27,10 @@ int main(int argc, char ** argv)
 
 	try
 	{
-		// Parsing arguments ------------------------------------------
-		check_arg(argc, argv);
-		port = atoi(argv[1]);
-		password = argv[2];
-		std::cout << "Port / Password : " << port << " / " << password << std::endl;
+		// Parsing arguments ---------------------------------------------------------------
+		parsing(argc, argv, &port, &password);
 
-
+		// Configuration socket et adresse server ------------------------------------------
 		ft_socket_addr_server(&server_fd, &addr, port);
 
 		std::cout << "socket : " << server_fd << std::endl;
@@ -50,9 +47,9 @@ int main(int argc, char ** argv)
 		fd_set read_sockets;
 		FD_ZERO(&read_sockets);
 		FD_SET(server_fd, &read_sockets);
+		
 		int max_socket_fd = server_fd;
 
-		fd_set temp;
 		// Boucle principale du serveur
 		int count(0);
 		while (true)
@@ -64,7 +61,7 @@ int main(int argc, char ** argv)
 
 
 			// Wait for any of the sockets to become readable
-			temp = read_sockets;
+			fd_set temp = read_sockets;
 			if (select(max_socket_fd + 1, &temp, NULL, NULL, NULL) < 0)
 				throw std::string("Error : waiting for sockets to become readable !\n");
 
