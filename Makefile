@@ -6,7 +6,7 @@
 #    By: aptive <aptive@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/12/05 17:28:02 by aptive            #+#    #+#              #
-#    Updated: 2023/04/13 16:53:45 by aptive           ###   ########.fr        #
+#    Updated: 2023/04/14 18:19:30 by aptive           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -24,10 +24,10 @@ SRC		=	main.cpp\
 			boucle_server.cpp\
 			parsing_cmd_irc.cpp\
 			parsing.cpp\
-			read_file.cpp\
 			server.cpp\
 			socket_server.cpp\
 			User.cpp\
+			Server.cpp\
 
 
 # nommage automatique des fichiers objets d'apres les noms des sources C

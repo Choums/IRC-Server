@@ -6,12 +6,16 @@
 /*   By: aptive <aptive@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/13 15:36:42 by aptive            #+#    #+#             */
-/*   Updated: 2023/04/13 16:53:29 by aptive           ###   ########.fr       */
+/*   Updated: 2023/04/14 18:20:54 by aptive           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/web_serv.hpp"
 #include "../includes/User.hpp"
+
+//------------------------------------------------------------------------------
+// Fichier en cours de tranformation en classe Server
+//------------------------------------------------------------------------------
 
 void boucle_server(int server_fd, struct sockaddr_in addr)
 {
@@ -103,7 +107,7 @@ void gestion_activite_client(fd_set * read_sockets, std::vector<User> * client_s
 				// buffer[valread] = '\0';
 				// std::cout << "Received message: " << buf << "\n";
 				// send(client_socket_fd, buffer, strlen(buffer), 0);
-				parsing_cmd( buffer );
+				parsing_cmd( buffer , &((*client_socket_v)[i]));
 			}
 		}
 	}

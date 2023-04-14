@@ -6,7 +6,7 @@
 /*   By: aptive <aptive@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/07 19:19:35 by aptive            #+#    #+#             */
-/*   Updated: 2023/04/13 15:32:45 by aptive           ###   ########.fr       */
+/*   Updated: 2023/04/14 18:16:07 by aptive           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ void parsing(int argc, char ** argv, int * port, std::string * password)
 	check_arg(argc, argv);
 	*port = atoi(argv[1]);
 	*password = argv[2];
-	std::cout << "Port / Password : " << port << " / " << password << std::endl;
+	// std::cout << "Port / Password : " << port << " / " << password << std::endl;
 
 }
 

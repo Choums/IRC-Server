@@ -6,7 +6,7 @@
 /*   By: aptive <aptive@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/07 18:14:43 by aptive            #+#    #+#             */
-/*   Updated: 2023/04/13 16:53:02 by aptive           ###   ########.fr       */
+/*   Updated: 2023/04/14 15:31:13 by aptive           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,8 @@
 # include <stdlib.h>
 
 # include <fstream>
+# include <sstream>
+
 
 # include <list>
 # include <vector>
@@ -33,6 +35,8 @@
 # include <netinet/in.h>
 # include <arpa/inet.h>
 # include <netdb.h>
+
+#include "User.hpp"
 
 # define RED "\033[1;31m"
 # define GREEN "\033[1;32m"
@@ -75,7 +79,6 @@ void todo_connexion(int fd);
 // +----------------------------------------------------------------------------+
 //                               PARSING_CMD_IRC                                |
 // +----------------------------------------------------------------------------+
-void parsing_cmd(std::string buffer);
 
 // +----------------------------------------------------------------------------+
 //                                 PARSING_CPP                                  |
