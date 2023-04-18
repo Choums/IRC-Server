@@ -6,7 +6,7 @@
 /*   By: aptive <aptive@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/14 17:37:42 by aptive            #+#    #+#             */
-/*   Updated: 2023/04/18 14:32:10 by aptive           ###   ########.fr       */
+/*   Updated: 2023/04/18 14:59:36 by aptive           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -215,7 +215,7 @@ void Server::gestion_activite_client(fd_set * read_sockets, fd_set * temp)
 				{
 					std::cout << "Commande complete\n";
 					_client_socket_v[i].setBuf(buf);
-					this->parsing_cmd( buffer , &_client_socket_v[i]);
+					this->parsing_cmd( &_client_socket_v[i] );
 				}
 				else
 				{
@@ -228,22 +228,17 @@ void Server::gestion_activite_client(fd_set * read_sockets, fd_set * temp)
 	}
 }
 
-void Server::parsing_cmd(std::string buffer, User * user)
+void Server::parsing_cmd( User * user )
 {
 	std::string cmd;
 	std::string rest;
 	std::vector<std::string> v_parse;
-	(void)buffer;
 
 
-	for (size_t i = 0; i < user->getBuf().size(); i++)
-	{
-		std::cout << (int)user->getBuf()[i] << std::endl;
-	}
+	// for (size_t i = 0; i < user->getBuf().size(); i++)
+	// 	std::cout << (int)user->getBuf()[i] << std::endl;
+	// std::cout << "END buffer" << std::endl;
 
-	std::cout << "END buffer" << std::endl;
-
-	(void)user;
 	v_parse = split_string(user->getBuf());
 
 	// Affiche chaque élément du vecteur tokens
@@ -254,36 +249,48 @@ void Server::parsing_cmd(std::string buffer, User * user)
 	if (v_parse[0][0] == '/')
 	{
 		std::cout << "It's a commande !" << std::endl;
+		this->handleCommandServer(v_parse[0], v_parse[1], *user);
 		user->handleCommand(v_parse[0], v_parse[1]);
+
 	}
 
 	user->clearBuf();
 }
 
 
-// void	Server::handleCommandServer(const std::string& cmd, const std::string& rest, User user)
-// {
-// 	std::string levels[4] = {
-// 								"/NAMES" };
+void	Server::handleCommandServer(const std::string& cmd, const std::string& rest, const User & user)
+{
 
-// 	void (Server::*f[2])(const std::string&) = {
-// 		// &Server::commandeServer_name
-// 	};
+	std::string levels[4] = {
+								"/NAMES" };
 
-// 	for (int i = 0; i < 2; i++) {
-// 		if (levels[i] == cmd) {
-// 			(this->*f[i])(rest);
-// 		}
-// 	}
-// }
+	void (Server::*f[2])( const User &) = {
+		&Server::commandeServer_name
+	};
+
+	for (int i = 0; i < 2; i++) {
+		std::cout << "handleCommandServer :" << cmd << "|" << levels[i] << "|"<< std::endl;
+		if (levels[i] == cmd) {
+			std::cout << "OKKK\n";
+			(this->*f[i])(user);
+		}
+	}
+	(void)rest;
+}
 
 /*
 ** --------------------------------- COMMANDE ---------------------------------
 */
 
-void	commandeServer_name( void )
+void	Server::commandeServer_name( const User & user )
 {
+	std::cout << "commandeServer_name\n";
+	for (size_t i = 0; i < _client_socket_v.size(); i++)
+	{
 
+		const std::string message = _client_socket_v[i].getNickname() + "\n";
+		user.sendMessage(message);
+	}
 }
 
 /*

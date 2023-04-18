@@ -6,7 +6,7 @@
 /*   By: aptive <aptive@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/14 17:32:55 by aptive            #+#    #+#             */
-/*   Updated: 2023/04/18 14:30:08 by aptive           ###   ########.fr       */
+/*   Updated: 2023/04/18 14:49:47 by aptive           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,18 +33,18 @@ class Server
 		void	boucle_server( void );
 		void	gestion_new_connexion( fd_set * temp, fd_set * read_sockets, struct sockaddr_in addr);
 		void	gestion_activite_client(fd_set * read_sockets,fd_set * temp);
-		void	parsing_cmd(std::string buffer, User * user);
+		void	parsing_cmd( User * user );
 
 
 
 
 
-		// void	handleCommandServer(const std::string& cmd, const std::string& rest, User user);
+void	handleCommandServer(const std::string& cmd, const std::string& rest, const User & user);
 
 
 		// ** --------------------------------- COMMANDE ---------------------------------
 
-		// void	commandeServer_name( void );
+		void	commandeServer_name( const User & user );
 
 		// ** --------------------------------- ACCESSOR ---------------------------------
 

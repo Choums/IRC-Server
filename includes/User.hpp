@@ -6,7 +6,7 @@
 /*   By: aptive <aptive@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/12 18:44:15 by aptive            #+#    #+#             */
-/*   Updated: 2023/04/18 13:51:24 by aptive           ###   ########.fr       */
+/*   Updated: 2023/04/18 14:50:22 by aptive           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ class User
 		User & operator=(User const & rhs);
 		// ** --------------------------------- METHODS ----------------------------------
 		void	handleCommand(const std::string& cmd, const std::string& rest);
-		void	sendMessage(const std::string& message);
+		void	sendMessage(const std::string& message) const;
 		void	clearBuf( void );
 
 

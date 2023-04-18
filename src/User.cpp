@@ -6,7 +6,7 @@
 /*   By: aptive <aptive@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/12 18:50:55 by aptive            #+#    #+#             */
-/*   Updated: 2023/04/18 13:57:46 by aptive           ###   ########.fr       */
+/*   Updated: 2023/04/18 14:50:26 by aptive           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,7 +102,7 @@ void	User::handleCommand(const std::string& cmd, const std::string& rest)
 	}
 }
 
-void	User::sendMessage(const std::string& message)
+void	User::sendMessage(const std::string& message) const
 {
 	send(this->getFd(), message.c_str(), message.length(), 0);
 }
