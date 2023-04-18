@@ -6,7 +6,7 @@
 /*   By: aptive <aptive@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/12 18:50:55 by aptive            #+#    #+#             */
-/*   Updated: 2023/04/14 17:20:38 by aptive           ###   ########.fr       */
+/*   Updated: 2023/04/18 13:34:46 by aptive           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,6 +96,20 @@ void	User::sendMessage(const std::string& message)
 	send(this->getFd(), message.c_str(), message.length(), 0);
 }
 
+void	User::setBuf(const std::string& buf)
+{
+	this->_buf += buf;
+
+	if (this->_buf[this->_buf.size() - 1] == '\n')
+		this->_buf[this->_buf.size() - 1] = '\0';
+
+}
+
+void	User::clearBuf( void )
+{
+	this->_buf = "";
+}
+
 
 /*
 ** --------------------------------- ACCESSOR ---------------------------------
@@ -116,6 +130,12 @@ std::string		User::getNickname(void) const
 	return this->_nickname;
 }
 
+std::string		User::getBuf(void) const
+{
+	return this->_buf;
+}
+
+
 /*
 ** --------------------------------- SETTER ---------------------------------
 */
@@ -127,7 +147,7 @@ void User::setNickname(const std::string& rest)
 	this->_nickname = rest;
 
 
-	std::string message = "Server : Your nickname has been changed to " + rest;
+	std::string message = "Server : Your nickname has been changed to " + rest + "\n";
 	this->sendMessage(message);
 }
 
