@@ -6,7 +6,7 @@
 /*   By: aptive <aptive@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/07 18:14:43 by aptive            #+#    #+#             */
-/*   Updated: 2023/04/14 15:31:13 by aptive           ###   ########.fr       */
+/*   Updated: 2023/04/18 14:30:57 by aptive           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,6 +83,8 @@ void todo_connexion(int fd);
 // +----------------------------------------------------------------------------+
 //                                 PARSING_CPP                                  |
 // +----------------------------------------------------------------------------+
+std::vector<std::string> split_string(std::string str);
+
 void parsing(int argc, char ** argv, int * port, std::string * password);
 void check_arg(int argc, char ** argv);
 

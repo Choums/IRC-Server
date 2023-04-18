@@ -6,7 +6,7 @@
 /*   By: aptive <aptive@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/12 18:50:55 by aptive            #+#    #+#             */
-/*   Updated: 2023/04/18 13:34:46 by aptive           ###   ########.fr       */
+/*   Updated: 2023/04/18 13:57:46 by aptive           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,10 @@ User::User(int fd) : _fd(fd)
 	ss << "Default_Nickname_" << id;
 	this->_nickname = ss.str();
 
+	// init _admin
+
+	this->_admin = false;
+
 }
 
 
@@ -67,6 +71,10 @@ std::ostream &			operator<<( std::ostream & o, User const & i )
 	o << "User		:	" << i.getId() << std::endl;
 	o << "fd		:	" << i.getFd() << std::endl;
 	o << "Nickname	:	" << i.getNickname() << std::endl;
+	if (i.getAdmin() == true)
+		o << "Operator	:	" << "admin" << std::endl;
+	else
+		o << "Operator	:	" << "user" << std::endl;
 	return o;
 }
 
@@ -78,7 +86,10 @@ std::ostream &			operator<<( std::ostream & o, User const & i )
 
 void	User::handleCommand(const std::string& cmd, const std::string& rest)
 {
-	std::string levels[4] = { "/nick", "/join" };
+	std::string levels[4] = {
+								"/NICK",
+								"/JOIN",
+								"/NAMES" };
 
 	void (User::*f[2])(const std::string&) = {
 		&User::setNickname
@@ -135,6 +146,12 @@ std::string		User::getBuf(void) const
 	return this->_buf;
 }
 
+bool		User::getAdmin(void) const
+{
+	return this->_admin;
+}
+
+
 
 /*
 ** --------------------------------- SETTER ---------------------------------
@@ -151,6 +168,10 @@ void User::setNickname(const std::string& rest)
 	this->sendMessage(message);
 }
 
+void	User::setAdmin(const bool & admin)
+{
+	this->_admin = admin;
+}
 
 
 /* ************************************************************************** */

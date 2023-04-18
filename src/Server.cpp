@@ -6,7 +6,7 @@
 /*   By: aptive <aptive@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/14 17:37:42 by aptive            #+#    #+#             */
-/*   Updated: 2023/04/18 12:50:59 by aptive           ###   ########.fr       */
+/*   Updated: 2023/04/18 14:32:10 by aptive           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,15 +122,14 @@ void	Server::mode_listing_socket(int *server_fd)
 void	Server::boucle_server( void )
 {
 	std::vector<User> client_socket_v;
-	int server_fd = this->getServer_fd();
 	struct sockaddr_in addr = this->getAddr();
 
 	// Initialize the read sockets set
 	fd_set read_sockets;
 	FD_ZERO(&read_sockets);
-	FD_SET(server_fd, &read_sockets);
+	FD_SET(_server_fd, &read_sockets);
 
-	int max_socket_fd = server_fd;
+	_max_socket_fd = _server_fd;
 
 	// Boucle principale du serveur
 	int count(0);
@@ -143,19 +142,148 @@ void	Server::boucle_server( void )
 
 		// Wait for any of the sockets to become readable
 		fd_set temp = read_sockets;
-		if (select(max_socket_fd + 1, &temp, NULL, NULL, NULL) < 0)
+		if (select(_max_socket_fd + 1, &temp, NULL, NULL, NULL) < 0)
 			throw std::string("Error : waiting for sockets to become readable !\n");
 
 
 		// traitement de l'activité sur les sockets
-		gestion_new_connexion(server_fd, &temp, &max_socket_fd, &read_sockets, addr, &client_socket_v);
+		this->gestion_new_connexion(&temp, &read_sockets, addr);
 
-		affichage_vector(client_socket_v);
+		affichage_vector(_client_socket_v);
 
 		// Check for data on any of the client sockets
-		gestion_activite_client( &read_sockets, &client_socket_v, &temp );
+		this->gestion_activite_client( &read_sockets, &temp );
 
 	}
+}
+
+void	Server::gestion_new_connexion(fd_set * temp, fd_set * read_sockets, struct sockaddr_in addr)
+{
+	if (FD_ISSET(_server_fd, temp))
+	{
+		struct sockaddr_in client_address;
+		int addrlen = sizeof(client_address);
+
+		int new_socket = accept(_server_fd,
+								(struct sockaddr *)&client_address,
+								(socklen_t *)&addrlen
+								);
+
+		if (new_socket < 0)
+			throw std::string("Error : Failed to accept connection !\n");
+
+		FD_SET(new_socket, read_sockets);
+
+		if (new_socket > _max_socket_fd)
+			_max_socket_fd = new_socket;
+
+		std::cout	<< "Nouvelle connexion : socket_fd : "
+					<< new_socket << "/ ip : " << inet_ntoa(addr.sin_addr)
+					<< " / port : " << ntohs(addr.sin_port)
+					<< std::endl;
+
+		_client_socket_v.push_back(User(new_socket));
+	}
+}
+
+void Server::gestion_activite_client(fd_set * read_sockets, fd_set * temp)
+{
+	int valread;
+	char buffer[1025];
+
+
+	for (size_t i = 0; i < _client_socket_v.size(); i++)
+	{
+		int client_socket_fd = _client_socket_v[i].getFd();
+		if (FD_ISSET(client_socket_fd, temp))
+		{
+			valread = read(client_socket_fd, buffer, 1024);
+			std::string buf (buffer, valread);
+			std::cout << "valread on client socket : " << valread << " / "<< client_socket_fd << std::endl;
+			if (valread == 0)
+			{
+				std::cout << RED << "Delete \n" << _client_socket_v[i] << END << std::endl;
+				// Client disconnected, remove from active socket set
+				close(client_socket_fd);
+				FD_CLR(client_socket_fd, read_sockets);
+				_client_socket_v.erase(_client_socket_v.begin()+i);
+			}
+			else
+			{
+				int buf_len = buf.size();
+				if (buf[buf_len - 1] == '\n' )
+				{
+					std::cout << "Commande complete\n";
+					_client_socket_v[i].setBuf(buf);
+					this->parsing_cmd( buffer , &_client_socket_v[i]);
+				}
+				else
+				{
+					std::cout << "add to buf\n";
+					_client_socket_v[i].setBuf(buf);
+				}
+
+			}
+		}
+	}
+}
+
+void Server::parsing_cmd(std::string buffer, User * user)
+{
+	std::string cmd;
+	std::string rest;
+	std::vector<std::string> v_parse;
+	(void)buffer;
+
+
+	for (size_t i = 0; i < user->getBuf().size(); i++)
+	{
+		std::cout << (int)user->getBuf()[i] << std::endl;
+	}
+
+	std::cout << "END buffer" << std::endl;
+
+	(void)user;
+	v_parse = split_string(user->getBuf());
+
+	// Affiche chaque élément du vecteur tokens
+	// for (std::vector<std::string>::iterator it = v_parse.begin(); it != v_parse.end(); ++it) {
+	// 	std::cout << *it << "|" << std::endl;
+	// }
+
+	if (v_parse[0][0] == '/')
+	{
+		std::cout << "It's a commande !" << std::endl;
+		user->handleCommand(v_parse[0], v_parse[1]);
+	}
+
+	user->clearBuf();
+}
+
+
+// void	Server::handleCommandServer(const std::string& cmd, const std::string& rest, User user)
+// {
+// 	std::string levels[4] = {
+// 								"/NAMES" };
+
+// 	void (Server::*f[2])(const std::string&) = {
+// 		// &Server::commandeServer_name
+// 	};
+
+// 	for (int i = 0; i < 2; i++) {
+// 		if (levels[i] == cmd) {
+// 			(this->*f[i])(rest);
+// 		}
+// 	}
+// }
+
+/*
+** --------------------------------- COMMANDE ---------------------------------
+*/
+
+void	commandeServer_name( void )
+{
+
 }
 
 /*

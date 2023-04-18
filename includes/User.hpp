@@ -6,7 +6,7 @@
 /*   By: aptive <aptive@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/12 18:44:15 by aptive            #+#    #+#             */
-/*   Updated: 2023/04/18 13:16:55 by aptive           ###   ########.fr       */
+/*   Updated: 2023/04/18 13:51:24 by aptive           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,21 +32,24 @@ class User
 
 
 		// ** --------------------------------- ACCESSOR ---------------------------------
-		int		getFd(void) const;
-		int		getId(void) const;
+		int				getFd(void) const;
+		int				getId(void) const;
 		std::string		getNickname(void) const;
 		std::string		getBuf(void) const;
+		bool			getAdmin(void) const;
 
 		// ** --------------------------------- SETTER ---------------------------------
 		void	setNickname(const std::string& rest);
 		void	setBuf(const std::string& buf);
+		void	setAdmin(const bool & admin);
 
 
 	private:
-		int _fd;
-		int _id;
-		std::string _nickname;
-		std::string _buf;
+		int			_fd;
+		int			_id;
+		std::string	_nickname;
+		std::string	_buf;
+		bool		_admin;
 };
 
 std::ostream &			operator<<( std::ostream & o, User const & i );

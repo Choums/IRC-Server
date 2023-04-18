@@ -6,7 +6,7 @@
 /*   By: aptive <aptive@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/13 16:50:46 by aptive            #+#    #+#             */
-/*   Updated: 2023/04/18 13:39:17 by aptive           ###   ########.fr       */
+/*   Updated: 2023/04/18 14:09:04 by aptive           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ void parsing_cmd(std::string buffer, User * user)
 	if (v_parse[0][0] == '/')
 	{
 		std::cout << "It's a commande !" << std::endl;
-		user->handleCommand(v_parse[0], v_parse[1]);
+		// user->handleCommand(v_parse[0], v_parse[1]);
 	}
 
 	user->clearBuf();
