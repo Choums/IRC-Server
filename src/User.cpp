@@ -6,7 +6,7 @@
 /*   By: aptive <aptive@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/12 18:50:55 by aptive            #+#    #+#             */
-/*   Updated: 2023/04/18 14:50:26 by aptive           ###   ########.fr       */
+/*   Updated: 2023/04/18 16:22:59 by aptive           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,6 @@ User::~User()
 
 User & User::operator=(User const & rhs)
 {
-	std::cout << "here\n";
 	if (this != &rhs && rhs.getFd())
 		*this = rhs;
 	return *this;
@@ -104,6 +103,7 @@ void	User::handleCommand(const std::string& cmd, const std::string& rest)
 
 void	User::sendMessage(const std::string& message) const
 {
+	std::cout << "[SEND] : to [" << _nickname << "] : " << message;
 	send(this->getFd(), message.c_str(), message.length(), 0);
 }
 
@@ -159,7 +159,7 @@ bool		User::getAdmin(void) const
 
 void User::setNickname(const std::string& rest)
 {
-	std::cout << "setNickname : " << std::endl;
+	// std::cout << "setNickname : " << std::endl;
 	// std::cout << "setNickname : " << nickname << std::endl;
 	this->_nickname = rest;
 

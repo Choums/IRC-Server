@@ -6,7 +6,7 @@
 /*   By: aptive <aptive@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/14 17:37:42 by aptive            #+#    #+#             */
-/*   Updated: 2023/04/18 14:59:36 by aptive           ###   ########.fr       */
+/*   Updated: 2023/04/18 16:20:54 by aptive           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ Server::Server(Server const & src)
 
 Server::Server(int port, std::string password)
 {
-	std::cout << "Configuration server en cours ..." << std::endl;
+	std::cout << "[SERVER] Configuration server en cours ..." << std::endl;
 
 	this->_port = port;
 	this->_password = password;
@@ -38,7 +38,7 @@ Server::Server(int port, std::string password)
 	this->association_socket_to_address(&this->_server_fd, &this->_addr);
 	this->mode_listing_socket(&this->_server_fd);
 
-	std::cout << "Configuration server succesful" << std::endl;
+	std::cout << "[SERVER] Configuration server succesful" << std::endl;
 
 }
 
@@ -135,7 +135,7 @@ void	Server::boucle_server( void )
 	int count(0);
 	while (true)
 	{
-		std::cout << "en attende de donnees : " << YELLOW << count << END << std::endl;
+		std::cout << "[SERVER] : waiting data : " << YELLOW << count << END << std::endl;
 		count++;
 		if (count > 20)
 			exit(EXIT_SUCCESS);
@@ -177,7 +177,7 @@ void	Server::gestion_new_connexion(fd_set * temp, fd_set * read_sockets, struct 
 		if (new_socket > _max_socket_fd)
 			_max_socket_fd = new_socket;
 
-		std::cout	<< "Nouvelle connexion : socket_fd : "
+		std::cout	<< "[SERVER] : New connexion : socket_fd : "
 					<< new_socket << "/ ip : " << inet_ntoa(addr.sin_addr)
 					<< " / port : " << ntohs(addr.sin_port)
 					<< std::endl;
@@ -199,10 +199,10 @@ void Server::gestion_activite_client(fd_set * read_sockets, fd_set * temp)
 		{
 			valread = read(client_socket_fd, buffer, 1024);
 			std::string buf (buffer, valread);
-			std::cout << "valread on client socket : " << valread << " / "<< client_socket_fd << std::endl;
+			// std::cout << "valread on client socket : " << valread << " / "<< client_socket_fd << std::endl;
 			if (valread == 0)
 			{
-				std::cout << RED << "Delete \n" << _client_socket_v[i] << END << std::endl;
+				std::cout << RED << "[SERVER] : Delete " << _client_socket_v[i].getNickname() << END << std::endl;
 				// Client disconnected, remove from active socket set
 				close(client_socket_fd);
 				FD_CLR(client_socket_fd, read_sockets);
@@ -213,13 +213,13 @@ void Server::gestion_activite_client(fd_set * read_sockets, fd_set * temp)
 				int buf_len = buf.size();
 				if (buf[buf_len - 1] == '\n' )
 				{
-					std::cout << "Commande complete\n";
+					std::cout << "[SERVER] : Commande complete\n";
 					_client_socket_v[i].setBuf(buf);
 					this->parsing_cmd( &_client_socket_v[i] );
 				}
 				else
 				{
-					std::cout << "add to buf\n";
+					std::cout << "[SERVER] : add to buf\n";
 					_client_socket_v[i].setBuf(buf);
 				}
 
@@ -248,7 +248,7 @@ void Server::parsing_cmd( User * user )
 
 	if (v_parse[0][0] == '/')
 	{
-		std::cout << "It's a commande !" << std::endl;
+		std::cout << "[SERVER] : It's a commande !" << std::endl;
 		this->handleCommandServer(v_parse[0], v_parse[1], *user);
 		user->handleCommand(v_parse[0], v_parse[1]);
 
@@ -269,9 +269,9 @@ void	Server::handleCommandServer(const std::string& cmd, const std::string& rest
 	};
 
 	for (int i = 0; i < 2; i++) {
-		std::cout << "handleCommandServer :" << cmd << "|" << levels[i] << "|"<< std::endl;
+		// std::cout << "[SERVER] : handleCommandServer :" << cmd << "|" << levels[i] << "|"<< std::endl;
 		if (levels[i] == cmd) {
-			std::cout << "OKKK\n";
+			// std::cout << "OKKK\n";
 			(this->*f[i])(user);
 		}
 	}
@@ -284,7 +284,7 @@ void	Server::handleCommandServer(const std::string& cmd, const std::string& rest
 
 void	Server::commandeServer_name( const User & user )
 {
-	std::cout << "commandeServer_name\n";
+	// std::cout << "commandeServer_name\n";
 	for (size_t i = 0; i < _client_socket_v.size(); i++)
 	{
 
