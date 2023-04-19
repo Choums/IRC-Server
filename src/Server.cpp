@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aptive <aptive@student.42.fr>              +#+  +:+       +#+        */
+/*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/14 17:37:42 by aptive            #+#    #+#             */
-/*   Updated: 2023/04/18 16:20:54 by aptive           ###   ########.fr       */
+/*   Updated: 2023/04/19 18:45:46 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -250,32 +250,106 @@ void Server::parsing_cmd( User * user )
 	{
 		std::cout << "[SERVER] : It's a commande !" << std::endl;
 		this->handleCommandServer(v_parse[0], v_parse[1], *user);
-		user->handleCommand(v_parse[0], v_parse[1]);
+		// user->handleCommand(v_parse[0], v_parse[1]);
 
 	}
 
 	user->clearBuf();
 }
 
-
-void	Server::handleCommandServer(const std::string& cmd, const std::string& rest, const User & user)
+static Command option(const std::string& cmd)
 {
+	if (!cmd.compare("/NICK")) return (Nick);
+	if (!cmd.compare("/JOIN")) return (Join);
+	return (Unknown);
+}
 
-	std::string levels[4] = {
-								"/NAMES" };
-
-	void (Server::*f[2])( const User &) = {
-		&Server::commandeServer_name
-	};
-
-	for (int i = 0; i < 2; i++) {
-		// std::cout << "[SERVER] : handleCommandServer :" << cmd << "|" << levels[i] << "|"<< std::endl;
-		if (levels[i] == cmd) {
-			// std::cout << "OKKK\n";
-			(this->*f[i])(user);
-		}
+void	Server::handleCommandServer(std::string const& cmd, std::string const& rest, User& user)
+{
+	switch (option(cmd))
+	{
+		case Unknown:
+			throw std::string("Unknown Command !");
+			break;
+		case Nick:
+			user.setNickname(rest);
+			break;
+		case Join:
+			this->joinChannel(rest, user);
+			break;
 	}
-	(void)rest;
+}
+
+bool	Server::channel_exist(std::string const& cnl_name)
+{
+	for (size_t i(0); i < this->_channel.size(); i++)
+		if (!cnl_name.compare(this->_channel[i]->getName()))
+			return (true);
+	return (false);
+}
+
+/*
+ *	Command: JOIN
+ *	Parameters: ( <channel> *( "," <channel> ) [ <key> *( "," <key> ) ] )
+ *            / "0"
+ *	----------
+ *	The JOIN command is used by a user to request to start listening to
+ *		the specific channel.
+ *
+ *	Once a user has joined a channel, he receives information about
+ *		all commands his server receives affecting the channel.
+ *
+ *	If a JOIN is successful, the user receives a JOIN message
+ *		as confirmation and is then sent the channel's topic
+ *			and the list of users who are on the channel,
+ *				which MUST include the user joining.
+ *
+ *	Note that this message accepts a special argument ("0"), which is
+ *		a special request to leave all channels the user is currently a member of.
+ *
+ * 	----------
+ * @example
+ * 	/join &foobar		|	Command to join channel &foobar.
+ *	/join &foo,&bar		|	Command to join channels &foo and &bar.
+ *	/join 0				|	Leave all currently joined channels.
+ *	
+ *	----------
+ *	Si le rest est "0", l'User quitte tout les channels dont il fait parti
+ *	Le rest est une premiere fois parser, renvoie un vector avec le ou les channels
+ *	Si le nom du Canal n'est pas connu, il est cree
+ *	Sinon l'User est ajoute au Canal
+*/
+void	Server::joinChannel(std::string const& rest, User& user)
+{
+	if (!rest.compare("0"))
+	{
+		// command to quit all channel
+		return ;
+	}
+	std::vector<std::string> cnl = parse_cnl_name(rest);
+	
+	for (size_t	i(0); i < cnl.size(); i++)
+	{
+		if (channel_exist(cnl[i])) // Verif que le channel existe dans le serveur
+		{
+			
+			for (size_t i(0); i < this->_channel.size(); i++)
+				if (!cnl[i].compare(this->_channel[i]->getName()))
+					this->_channel[i]->AddUser(user, true);
+		}
+		else // Le channel est cree
+		{
+			if (cnl[i][0] != '&' || cnl[i].size() > 50)
+				throw std::string("Invalid channel name !");
+			Channel chan;
+			chan.setName(rest);
+			chan.AddUser(user, false);
+			this->setNewChannel(chan);
+		}
+		
+	}
+	
+		// VERIFICATION DES NOMS
 }
 
 /*
@@ -338,7 +412,21 @@ void	Server::setPassword(const std::string & password)
 	this->_password = password;
 }
 
+void	Server::setRmChannel(Channel& cnl)
+{
+	std::vector<Channel *>::iterator it = this->_channel.begin();
+	while (it != this->_channel.end())
+	{
+		if (!cnl.getName().compare((*it)->getName()))
+			this->_channel.erase(it);
+		it++;
+	}
+}
 
+void	Server::setNewChannel(Channel& cnl)
+{
+	this->_channel.push_back(&cnl);
+}
 
 
 /* ************************************************************************** */

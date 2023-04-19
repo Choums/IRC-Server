@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   web_serv.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aptive <aptive@student.42.fr>              +#+  +:+       +#+        */
+/*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/07 18:14:43 by aptive            #+#    #+#             */
-/*   Updated: 2023/04/18 14:30:57 by aptive           ###   ########.fr       */
+/*   Updated: 2023/04/19 15:17:40 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,12 +37,18 @@
 # include <netdb.h>
 
 #include "User.hpp"
+#include "Channel.hpp"
 
 # define RED "\033[1;31m"
 # define GREEN "\033[1;32m"
 # define YELLOW "\033[1;33m"
 # define END "\033[0m"
 
+enum Command {
+	Nick = 1,
+	Join = 2,
+	Unknown = 0
+};
 
 // configurer la connexion. On l'appelle contexte d'adressage.
 // struct sockaddr_in
