@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   User.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aptive <aptive@student.42.fr>              +#+  +:+       +#+        */
+/*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/12 18:50:55 by aptive            #+#    #+#             */
-/*   Updated: 2023/04/20 18:13:53 by aptive           ###   ########.fr       */
+/*   Updated: 2023/04/20 19:47:31 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,7 +94,7 @@ std::ostream &			operator<<( std::ostream & o, User const & i )
 
 // 	void (User::*f[])(const std::string&) = {
 // 		&User::setNickname,
-// 		&User::joinChannel
+// 		&User::cmd_JoinChannel
 // 	};
 
 // 	// for (int i = 0; i < 2; i++) {
@@ -173,7 +173,11 @@ bool		User::getAuth_password(void) const
 	return this->_auth_password;
 }
 
-
+void	User::getListCnl() const
+{
+	for (size_t i(0); i < this->_list_cnl.size(); i++)
+		std::cout << this->_list_cnl[i].getName() << std::endl;
+}
 
 /*
 ** --------------------------------- SETTER ---------------------------------
@@ -201,5 +205,9 @@ void	User::setAuth_passwordOK( void )
 	this->_auth_password = true;
 }
 
+void	User::setListCnlMember(Channel& cnl)
+{
+	this->_list_cnl.push_back(cnl);
+}
 
 /* ************************************************************************** */

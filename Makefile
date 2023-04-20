@@ -6,7 +6,7 @@
 #    By: root <root@student.42.fr>                  +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/12/05 17:28:02 by aptive            #+#    #+#              #
-#    Updated: 2023/04/20 10:54:24 by root             ###   ########.fr        #
+#    Updated: 2023/04/20 19:22:46 by root             ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -42,7 +42,7 @@ DEP= $(SDEP)
 
 # compiler
 CC		= c++ $(CFLAGS)
-CFLAGS	= -Wall -Wextra -Werror -g3 -std=c++98 -Wshadow -Wno-shadow -MMD #-fsanitize=address
+CFLAGS	= -Wall -Wextra -Werror -g3 -std=c++98 -Wshadow -Wno-shadow -MMD -fsanitize=address
 
 all: obj $(NAME)
 # @echo "COMPILATION [OK]"

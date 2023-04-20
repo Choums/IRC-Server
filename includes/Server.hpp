@@ -6,7 +6,7 @@
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/14 17:32:55 by aptive            #+#    #+#             */
-/*   Updated: 2023/04/20 18:26:02 by root             ###   ########.fr       */
+/*   Updated: 2023/04/20 19:34:34 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,6 @@ class Server
 
 
 		bool	channel_exist(std::string const& cnl_name);
-		void	joinChannel(std::string const& rest, User& user);
 
 
 void	handleCommandServer(std::string const& cmd, std::string const& rest, User& user);
@@ -49,14 +48,15 @@ void	handleCommandServer(std::string const& cmd, std::string const& rest, User& 
 		// ** --------------------------------- COMMANDE ---------------------------------
 
 		void	commandeServer_name( const User & user );
-
+		void	cmd_JoinChannel(std::string const& rest, User& user);
+		void	cmd_DisplayChannel() const;
+		void	cmd_Whois(std::string const& rest) const;
 		// ** --------------------------------- ACCESSOR ---------------------------------
 
 		int						getServer_fd(void) const;
 		struct sockaddr_in		getAddr(void) const;
 		int						getPort(void) const;
 		std::string				getPassword(void) const;
-		// std::vector<Channel>	getChannels() const;
 
 		// ** --------------------------------- SETTER ---------------------------------
 		void				setServer_fd(const int & server_fd);

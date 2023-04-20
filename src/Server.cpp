@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aptive <aptive@student.42.fr>              +#+  +:+       +#+        */
+/*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/14 17:37:42 by aptive            #+#    #+#             */
-/*   Updated: 2023/04/20 18:14:05 by aptive           ###   ########.fr       */
+/*   Updated: 2023/04/20 19:48:36 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -285,7 +285,7 @@ void Server::parsing_cmd( User * user )
 
 	if (v_parse[0][0] == '/')
 	{
-		std::cout << "[SERVER] : It's a commande !" << std::endl;
+		std::cout << "[SERVER] : It's a commande: [" << v_parse[0] << "] !" << std::endl;
 		this->handleCommandServer(v_parse[0], v_parse[1], *user);
 		// user->handleCommand(v_parse[0], v_parse[1]);
 
@@ -298,6 +298,9 @@ static Command option(const std::string& cmd)
 {
 	if (!cmd.compare("/NICK")) return (Nick);
 	if (!cmd.compare("/JOIN")) return (Join);
+	if (!cmd.compare("/NAMES")) return (Names);
+	if (!cmd.compare("/LIST")) return (List);
+	if (!cmd.compare("/WHOIS")) return (Whois);
 	return (Unknown);
 }
 
@@ -306,13 +309,22 @@ void	Server::handleCommandServer(std::string const& cmd, std::string const& rest
 	switch (option(cmd))
 	{
 		case Unknown:
-			throw std::string("Unknown Command !");
+			// throw std::string("Unknown Command !");
 			break;
 		case Nick:
 			user.setNickname(rest);
 			break;
 		case Join:
-			this->joinChannel(rest, user);
+			this->cmd_JoinChannel(rest, user);
+			break;
+		case Names:
+			this->commandeServer_name(user);
+			break;
+		case List:
+			this->cmd_DisplayChannel();
+			break;
+		case Whois:
+			this->cmd_Whois(rest);
 			break;
 	}
 }
@@ -324,6 +336,11 @@ bool	Server::channel_exist(std::string const& cnl_name)
 			return (true);
 	return (false);
 }
+
+
+/*
+** --------------------------------- COMMANDE ---------------------------------
+*/
 
 /*
  *	Command: JOIN
@@ -356,7 +373,7 @@ bool	Server::channel_exist(std::string const& cnl_name)
  *	Si le nom du Canal n'est pas connu, il est cree
  *	Sinon l'User est ajoute au Canal
 */
-void	Server::joinChannel(std::string const& rest, User& user)
+void	Server::cmd_JoinChannel(std::string const& rest, User& user)
 {
 	if (!rest.compare("0"))
 	{
@@ -369,29 +386,26 @@ void	Server::joinChannel(std::string const& rest, User& user)
 	{
 		if (channel_exist(cnl[i])) // Verif que le channel existe dans le serveur
 		{
-			std::cout << "there\n" ;
+			// std::cout << "there\n" ;
 			for (size_t i(0); i < this->_channel.size(); i++)
 				if (!cnl[i].compare(this->_channel[i].getName()))
-					this->_channel[i].AddUser(user, true);
-			this->_channel[i].getUsers();
+					this->_channel[i].AddUser(user, false);
+			// this->_channel[i].getUsers();
 		}
 		else // Le channel est cree
 		{
 			if (cnl[i][0] != '&' || cnl[i].size() > 50)
-				throw std::string("Invalid channel name !");
+				break;
+				// throw std::string("Invalid channel name !");
 			Channel chan;
 			chan.setName(rest);
-			chan.AddUser(user, false);
+			chan.AddUser(user, true);
 			this->setNewChannel(chan);
-			// this->getChannels();
+			user.setListCnlMember(chan);
 		}
 
 	}
 }
-
-/*
-** --------------------------------- COMMANDE ---------------------------------
-*/
 
 void	Server::commandeServer_name( const User & user )
 {
@@ -401,6 +415,26 @@ void	Server::commandeServer_name( const User & user )
 
 		const std::string message = _client_socket_v[i].getNickname() + "\n";
 		user.sendMessage(message);
+	}
+}
+
+void	Server::cmd_DisplayChannel() const
+{
+	std::cout << "display servers" << std::endl;
+	for (size_t i(0); i < this->_channel.size(); i++)
+		std::cout << this->_channel[i].getName() << std::endl;
+	std::cout << "---" << std::endl;
+}
+
+void	Server::cmd_Whois(std::string const& rest) const
+{
+	for (size_t i(0); i < this->_client_socket_v.size(); i++)
+	{
+		if (!rest.compare(this->_client_socket_v[i].getNickname()))
+		{
+			this->_client_socket_v[i].getListCnl();
+			return ;
+		}
 	}
 }
 
@@ -424,18 +458,6 @@ std::string			Server::getPassword() const
 {
 	return this->_password;
 }
-
-// std::vector<Channel>	Server::getChannels() const
-// {
-// 	std::vector<Channel>	cnl;
-
-
-
-// 	std::cout << cnl.size() << std::endl;
-// 	for (size_t i(0); i < cnl.size(); i++)
-// 		std::cout << cnl[i].getName() << std::endl;
-// 	return (cnl);
-// }
 
 /*
 ** --------------------------------- SETTER ---------------------------------

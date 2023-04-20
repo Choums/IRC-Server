@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   User.hpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aptive <aptive@student.42.fr>              +#+  +:+       +#+        */
+/*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/12 18:44:15 by aptive            #+#    #+#             */
-/*   Updated: 2023/04/20 18:14:16 by aptive           ###   ########.fr       */
+/*   Updated: 2023/04/20 19:46:02 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,8 @@
 # define USER_HPP
 
 # include "web_serv.hpp"
+
+class Channel;
 
 class User
 {
@@ -37,21 +39,23 @@ class User
 		std::string		getBuf(void) const;
 		bool			getAdmin(void) const;
 		bool			getAuth_password(void) const;
+		void			getListCnl() const;
 
 		// ** --------------------------------- SETTER ---------------------------------
 		void	setNickname(const std::string& rest);
 		void	setBuf(const std::string& buf);
 		void	setAdmin(const bool & admin);
 		void	setAuth_passwordOK( void );
-
+		void	setListCnlMember(Channel& cnl);
 
 	private:
-		int			_fd;
-		int			_id;
-		std::string	_nickname;
-		std::string	_buf;
-		bool		_admin;
-		bool		_auth_password;
+		int						_fd;
+		int						_id;
+		std::string				_nickname;
+		std::string				_buf;
+		bool					_admin;
+		bool					_auth_password;
+		std::vector<Channel>	_list_cnl;
 };
 
 std::ostream &			operator<<( std::ostream & o, User const & i );
