@@ -6,7 +6,7 @@
 /*   By: aptive <aptive@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/14 17:32:55 by aptive            #+#    #+#             */
-/*   Updated: 2023/04/18 14:49:47 by aptive           ###   ########.fr       */
+/*   Updated: 2023/04/19 18:46:04 by aptive           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,11 +35,11 @@ class Server
 		void	gestion_activite_client(fd_set * read_sockets,fd_set * temp);
 		void	parsing_cmd( User * user );
 
+		void	verif_password(void);
 
 
 
-
-void	handleCommandServer(const std::string& cmd, const std::string& rest, const User & user);
+		void	handleCommandServer(const std::string& cmd, const std::string& rest, const User & user);
 
 
 		// ** --------------------------------- COMMANDE ---------------------------------

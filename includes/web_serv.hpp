@@ -6,7 +6,7 @@
 /*   By: aptive <aptive@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/07 18:14:43 by aptive            #+#    #+#             */
-/*   Updated: 2023/04/18 14:30:57 by aptive           ###   ########.fr       */
+/*   Updated: 2023/04/19 18:37:56 by aptive           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,14 +44,11 @@
 # define END "\033[0m"
 
 
-// configurer la connexion. On l'appelle contexte d'adressage.
-// struct sockaddr_in
-// {
-// 	short			sin_family;
-// 	unsigned short	sin_port;
-// 	struct in_addr	sin_addr;
-// 	char			sin_zero[8];
-// };
+void sendMessage(int fd, std::string message);
+void sendMessageSuccess(int fd, std::string message);
+void sendMessageUnSuccess(int fd, std::string message);
+void sendMessageWarning(int fd, std::string message);
+
 
 
 // +----------------------------------------------------------------------------+

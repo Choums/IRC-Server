@@ -6,7 +6,7 @@
 /*   By: aptive <aptive@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/12 18:50:55 by aptive            #+#    #+#             */
-/*   Updated: 2023/04/18 16:22:59 by aptive           ###   ########.fr       */
+/*   Updated: 2023/04/19 18:29:56 by aptive           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ User::User()
 
 }
 
-User::User(User const & src) : _fd(src.getFd()), _id(src.getId()), _nickname(src.getNickname())
+User::User(User const & src) : _fd(src.getFd()), _id(src.getId()), _nickname(src.getNickname()), _auth_password(src.getAuth_password())
 {
 }
 
@@ -41,7 +41,7 @@ User::User(int fd) : _fd(fd)
 	// init _admin
 
 	this->_admin = false;
-
+	this->_auth_password = false;
 }
 
 
@@ -151,6 +151,12 @@ bool		User::getAdmin(void) const
 	return this->_admin;
 }
 
+bool		User::getAuth_password(void) const
+{
+	// std::cout << "here : " << this->_auth_password << std::endl;
+	return this->_auth_password;
+}
+
 
 
 /*
@@ -171,6 +177,12 @@ void User::setNickname(const std::string& rest)
 void	User::setAdmin(const bool & admin)
 {
 	this->_admin = admin;
+}
+
+
+void	User::setAuth_passwordOK( void )
+{
+	this->_auth_password = true;
 }
 
 

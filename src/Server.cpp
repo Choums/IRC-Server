@@ -6,7 +6,7 @@
 /*   By: aptive <aptive@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/14 17:37:42 by aptive            #+#    #+#             */
-/*   Updated: 2023/04/18 16:20:54 by aptive           ###   ########.fr       */
+/*   Updated: 2023/04/19 18:41:29 by aptive           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -145,17 +145,22 @@ void	Server::boucle_server( void )
 		if (select(_max_socket_fd + 1, &temp, NULL, NULL, NULL) < 0)
 			throw std::string("Error : waiting for sockets to become readable !\n");
 
-
 		// traitement de l'activité sur les sockets
 		this->gestion_new_connexion(&temp, &read_sockets, addr);
 
 		affichage_vector(_client_socket_v);
 
-		// Check for data on any of the client sockets
-		this->gestion_activite_client( &read_sockets, &temp );
+			// Check for data on any of the client sockets
+			this->gestion_activite_client( &read_sockets, &temp );
 
 	}
 }
+
+void	verif_password(void)
+{
+
+}
+
 
 void	Server::gestion_new_connexion(fd_set * temp, fd_set * read_sockets, struct sockaddr_in addr)
 {
@@ -183,8 +188,14 @@ void	Server::gestion_new_connexion(fd_set * temp, fd_set * read_sockets, struct 
 					<< std::endl;
 
 		_client_socket_v.push_back(User(new_socket));
+
+		sendMessage(new_socket, "[SERVER] : password ?\n");
+
+
 	}
 }
+
+
 
 void Server::gestion_activite_client(fd_set * read_sockets, fd_set * temp)
 {
@@ -200,22 +211,48 @@ void Server::gestion_activite_client(fd_set * read_sockets, fd_set * temp)
 			valread = read(client_socket_fd, buffer, 1024);
 			std::string buf (buffer, valread);
 			// std::cout << "valread on client socket : " << valread << " / "<< client_socket_fd << std::endl;
+
+			std::cout << "getAuth_password : " << _client_socket_v[i].getAuth_password() << std::endl;
+
 			if (valread == 0)
 			{
+
 				std::cout << RED << "[SERVER] : Delete " << _client_socket_v[i].getNickname() << END << std::endl;
 				// Client disconnected, remove from active socket set
+				sendMessageWarning(_client_socket_v[i].getFd(), "[SERVER] : You have been disconnected\n");
 				close(client_socket_fd);
 				FD_CLR(client_socket_fd, read_sockets);
 				_client_socket_v.erase(_client_socket_v.begin()+i);
+
 			}
 			else
 			{
 				int buf_len = buf.size();
+				std::cout << "[SERVER] : Commande complete\n";
 				if (buf[buf_len - 1] == '\n' )
 				{
-					std::cout << "[SERVER] : Commande complete\n";
-					_client_socket_v[i].setBuf(buf);
-					this->parsing_cmd( &_client_socket_v[i] );
+					if (_client_socket_v[i].getAuth_password() == 0)
+					{
+						buf.erase(buf.size() - 1, 1);
+						std::cout << buf << "|" << _password << "|" << std::endl;
+						if (!buf.compare(_password))
+						{
+
+							_client_socket_v[i].setAuth_passwordOK();
+							sendMessageSuccess(_client_socket_v[i].getFd(), "[SERVER] : authentication successful\n");
+							std::cout << "good password" << std::endl;
+						}
+						else
+						{
+							sendMessageUnSuccess(_client_socket_v[i].getFd(), "[SERVER] : Wrong password\n");
+						}
+						_client_socket_v[i].clearBuf();
+					}
+					else
+					{
+						_client_socket_v[i].setBuf(buf);
+						this->parsing_cmd( &_client_socket_v[i] );
+					}
 				}
 				else
 				{

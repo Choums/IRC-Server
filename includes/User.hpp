@@ -6,7 +6,7 @@
 /*   By: aptive <aptive@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/12 18:44:15 by aptive            #+#    #+#             */
-/*   Updated: 2023/04/18 14:50:22 by aptive           ###   ########.fr       */
+/*   Updated: 2023/04/19 18:28:05 by aptive           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,11 +37,13 @@ class User
 		std::string		getNickname(void) const;
 		std::string		getBuf(void) const;
 		bool			getAdmin(void) const;
+		bool			getAuth_password(void) const;
 
 		// ** --------------------------------- SETTER ---------------------------------
 		void	setNickname(const std::string& rest);
 		void	setBuf(const std::string& buf);
 		void	setAdmin(const bool & admin);
+		void	setAuth_passwordOK( void );
 
 
 	private:
@@ -50,6 +52,7 @@ class User
 		std::string	_nickname;
 		std::string	_buf;
 		bool		_admin;
+		bool		_auth_password;
 };
 
 std::ostream &			operator<<( std::ostream & o, User const & i );
