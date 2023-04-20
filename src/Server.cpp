@@ -6,7 +6,7 @@
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/14 17:37:42 by aptive            #+#    #+#             */
-/*   Updated: 2023/04/19 18:45:46 by root             ###   ########.fr       */
+/*   Updated: 2023/04/20 11:49:23 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -283,7 +283,7 @@ void	Server::handleCommandServer(std::string const& cmd, std::string const& rest
 bool	Server::channel_exist(std::string const& cnl_name)
 {
 	for (size_t i(0); i < this->_channel.size(); i++)
-		if (!cnl_name.compare(this->_channel[i]->getName()))
+		if (!cnl_name.compare(this->_channel[i].getName()))
 			return (true);
 	return (false);
 }
@@ -332,10 +332,11 @@ void	Server::joinChannel(std::string const& rest, User& user)
 	{
 		if (channel_exist(cnl[i])) // Verif que le channel existe dans le serveur
 		{
-			
+			std::cout << "there\n" ;
 			for (size_t i(0); i < this->_channel.size(); i++)
-				if (!cnl[i].compare(this->_channel[i]->getName()))
-					this->_channel[i]->AddUser(user, true);
+				if (!cnl[i].compare(this->_channel[i].getName()))
+					this->_channel[i].AddUser(user, true);
+			this->_channel[i].getUsers();
 		}
 		else // Le channel est cree
 		{
@@ -345,11 +346,10 @@ void	Server::joinChannel(std::string const& rest, User& user)
 			chan.setName(rest);
 			chan.AddUser(user, false);
 			this->setNewChannel(chan);
+			// this->getChannels();
 		}
 		
-	}
-	
-		// VERIFICATION DES NOMS
+	}	
 }
 
 /*
@@ -388,6 +388,17 @@ std::string			Server::getPassword() const
 	return this->_password;
 }
 
+// std::vector<Channel>	Server::getChannels() const
+// {
+// 	std::vector<Channel>	cnl;
+
+	
+	
+// 	std::cout << cnl.size() << std::endl;
+// 	for (size_t i(0); i < cnl.size(); i++)
+// 		std::cout << cnl[i].getName() << std::endl;
+// 	return (cnl);
+// }
 
 /*
 ** --------------------------------- SETTER ---------------------------------
@@ -414,10 +425,10 @@ void	Server::setPassword(const std::string & password)
 
 void	Server::setRmChannel(Channel& cnl)
 {
-	std::vector<Channel *>::iterator it = this->_channel.begin();
+	std::vector<Channel>::iterator it = this->_channel.begin();
 	while (it != this->_channel.end())
 	{
-		if (!cnl.getName().compare((*it)->getName()))
+		if (!cnl.getName().compare(it->getName()))
 			this->_channel.erase(it);
 		it++;
 	}
@@ -425,7 +436,7 @@ void	Server::setRmChannel(Channel& cnl)
 
 void	Server::setNewChannel(Channel& cnl)
 {
-	this->_channel.push_back(&cnl);
+	this->_channel.push_back(cnl);
 }
 
 

@@ -6,7 +6,7 @@
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/19 08:28:18 by root              #+#    #+#             */
-/*   Updated: 2023/04/19 18:30:39 by root             ###   ########.fr       */
+/*   Updated: 2023/04/20 11:43:11 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,8 +45,8 @@ class	Channel {
 		std::map<int, bool>		_privilege;	//	Definis les privileges des differents users: Operateur ou standard
 		std::vector<int>		_ban;		//	Liste des Users bannis du Canal
 	
-		Channel(Channel const& cpy);
-		Channel&	operator=(Channel const& obj);
+		// Channel(Channel const& cpy);
+		// Channel&	operator=(Channel const& obj);
 
 	public: /*	Exception */
 		class UserNotFound : std::exception {

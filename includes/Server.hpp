@@ -6,7 +6,7 @@
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/14 17:32:55 by aptive            #+#    #+#             */
-/*   Updated: 2023/04/19 18:01:11 by root             ###   ########.fr       */
+/*   Updated: 2023/04/20 11:41:21 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ void	handleCommandServer(std::string const& cmd, std::string const& rest, User& 
 		struct sockaddr_in		getAddr(void) const;
 		int						getPort(void) const;
 		std::string				getPassword(void) const;
-		std::vector<Channel *>	getChannels() const;
+		// std::vector<Channel>	getChannels() const;
 		
 		// ** --------------------------------- SETTER ---------------------------------
 		void				setServer_fd(const int & server_fd);
@@ -71,7 +71,7 @@ void	handleCommandServer(std::string const& cmd, std::string const& rest, User& 
 		int						_max_socket_fd;
 
 		std::vector<User>		_client_socket_v;
-		std::vector<Channel *>	_channel;
+		std::vector<Channel>	_channel;
 
 };
 

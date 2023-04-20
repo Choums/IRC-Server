@@ -6,7 +6,7 @@
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/19 08:47:29 by root              #+#    #+#             */
-/*   Updated: 2023/04/19 18:44:44 by root             ###   ########.fr       */
+/*   Updated: 2023/04/20 11:48:35 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,10 @@ Channel::~Channel()
 void	Channel::AddUser(User& new_user, bool priv) // check user existant
 {
 	if (this->_users.find(new_user.getFd()) != this->_users.end())
-		throw UserAlreadyExists();
+	{
+		// throw UserAlreadyExists();
+		return ;
+	}
 	
 	this->_users.insert(std::pair<int, User *>(new_user.getFd(), &new_user));
 	this->_privilege.insert(std::pair<int, bool>(new_user.getFd(), priv));
@@ -92,7 +95,10 @@ std::vector<User *>	Channel::getUsers()
 	std::vector<User *>	list_user;
 
 	for (std::map<int, User *>::iterator it = this->_users.begin(); it != this->_users.end(); it++)
+	{
 		list_user.push_back(it->second);
+		std::cout << it->second->getNickname() << std::endl;
+	}
 	return (list_user);	
 }
 
