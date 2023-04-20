@@ -6,7 +6,7 @@
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/19 08:28:18 by root              #+#    #+#             */
-/*   Updated: 2023/04/20 11:43:11 by root             ###   ########.fr       */
+/*   Updated: 2023/04/20 18:22:56 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,21 +48,21 @@ class	Channel {
 		// Channel(Channel const& cpy);
 		// Channel&	operator=(Channel const& obj);
 
-	public: /*	Exception */
-		class UserNotFound : std::exception {
-			public:
-				UserNotFound() throw() {}
-				virtual ~UserNotFound() throw() {}
-				virtual const char* what() const throw()
-				{	return ("User not found !"); }
-		};
-		class UserAlreadyExists : std::exception {
-			public:
-				UserAlreadyExists() throw() {}
-				virtual ~UserAlreadyExists() throw() {}
-				virtual const char* what() const throw()
-				{	return ("User already exists !"); }
-		};
+	// public: /*	Exception */
+	// 	class UserNotFound : std::exception {
+	// 		public:
+	// 			UserNotFound() throw() {}
+	// 			virtual ~UserNotFound() throw() {}
+	// 			virtual const char* what() const throw()
+	// 			{	return ("User not found !"); }
+	// 	};
+	// 	class UserAlreadyExists : std::exception {
+	// 		public:
+	// 			UserAlreadyExists() throw() {}
+	// 			virtual ~UserAlreadyExists() throw() {}
+	// 			virtual const char* what() const throw()
+	// 			{	return ("User already exists !"); }
+	// 	};
 };
 
 std::ostream&	operator<<(std::ostream& flux, Channel& cnl);

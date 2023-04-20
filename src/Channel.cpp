@@ -6,7 +6,7 @@
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/19 08:47:29 by root              #+#    #+#             */
-/*   Updated: 2023/04/20 11:48:35 by root             ###   ########.fr       */
+/*   Updated: 2023/04/20 18:21:43 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,10 +28,8 @@ Channel::~Channel()
 void	Channel::AddUser(User& new_user, bool priv) // check user existant
 {
 	if (this->_users.find(new_user.getFd()) != this->_users.end())
-	{
-		// throw UserAlreadyExists();
 		return ;
-	}
+		// throw UserAlreadyExists();
 	
 	this->_users.insert(std::pair<int, User *>(new_user.getFd(), &new_user));
 	this->_privilege.insert(std::pair<int, bool>(new_user.getFd(), priv));
@@ -49,7 +47,8 @@ void	Channel::RmUser(int user_fd)
 	if (it != this->_users.end())
 		this->_users.erase(it);
 	else
-		throw UserNotFound();
+		return ;
+		// throw UserNotFound();
 	
 	std::map<int, bool>::iterator	pit;
 	pit = this->_privilege.find(user_fd);
@@ -79,7 +78,8 @@ void	Channel::RmUser(std::string name)
 		}
 		it++;
 	}
-	throw UserNotFound();
+	return ;
+	// throw UserNotFound();
 }
 
 		/*	Getters */
