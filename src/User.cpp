@@ -6,7 +6,7 @@
 /*   By: aptive <aptive@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/12 18:50:55 by aptive            #+#    #+#             */
-/*   Updated: 2023/04/19 18:29:56 by aptive           ###   ########.fr       */
+/*   Updated: 2023/04/20 18:13:53 by aptive           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,23 +83,39 @@ std::ostream &			operator<<( std::ostream & o, User const & i )
 ** --------------------------------- METHODS ----------------------------------
 */
 
-void	User::handleCommand(const std::string& cmd, const std::string& rest)
-{
-	std::string levels[4] = {
-								"/NICK",
-								"/JOIN",
-								"/NAMES" };
 
-	void (User::*f[2])(const std::string&) = {
-		&User::setNickname
-	};
 
-	for (int i = 0; i < 2; i++) {
-		if (levels[i] == cmd) {
-			(this->*f[i])(rest);
-		}
-	}
-}
+// void	User::handleCommand(const std::string& cmd, const std::string& rest)
+// {
+// 	// std::string levels[] = {
+// 	// 							"/NICK",
+// 	// 							"/JOIN",
+// 	// 							"/NAMES" };
+
+// 	void (User::*f[])(const std::string&) = {
+// 		&User::setNickname,
+// 		&User::joinChannel
+// 	};
+
+// 	// for (int i = 0; i < 2; i++) {
+// 	// 	if (levels[i] == cmd) {
+// 	// 		(this->*f[i])(rest);
+// 	// 	}
+// 	// }
+
+// 	switch (option(cmd))
+// 	{
+// 		case Unknown:
+// 			throw std::string("Unknown Command !");
+// 			break;
+// 		case Nick:
+// 			(this->*f[Nick - 1])(rest);
+// 			break;
+// 		case Join:
+// 			(this->*f[Join - 1])(rest);
+// 			break;
+// 	}
+// }
 
 void	User::sendMessage(const std::string& message) const
 {

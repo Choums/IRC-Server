@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: aptive <aptive@student.42.fr>              +#+  +:+       +#+         #
+#    By: root <root@student.42.fr>                  +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/12/05 17:28:02 by aptive            #+#    #+#              #
-#    Updated: 2023/04/17 13:37:02 by aptive           ###   ########.fr        #
+#    Updated: 2023/04/20 10:54:24 by root             ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -27,6 +27,8 @@ SRC		=	main.cpp\
 			socket_server.cpp\
 			User.cpp\
 			Server.cpp\
+			Channel.cpp\
+			command_utils.cpp
 
 
 # nommage automatique des fichiers objets d'apres les noms des sources C
@@ -40,7 +42,7 @@ DEP= $(SDEP)
 
 # compiler
 CC		= c++ $(CFLAGS)
-CFLAGS	= -Wall -Wextra -Werror -g3 -std=c++98 -Wshadow -Wno-shadow -fsanitize=address -MMD
+CFLAGS	= -Wall -Wextra -Werror -g3 -std=c++98 -Wshadow -Wno-shadow -MMD #-fsanitize=address
 
 all: obj $(NAME)
 # @echo "COMPILATION [OK]"

@@ -6,7 +6,7 @@
 /*   By: aptive <aptive@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/07 18:14:43 by aptive            #+#    #+#             */
-/*   Updated: 2023/04/19 18:37:56 by aptive           ###   ########.fr       */
+/*   Updated: 2023/04/20 18:13:08 by aptive           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,12 +37,18 @@
 # include <netdb.h>
 
 #include "User.hpp"
+#include "Channel.hpp"
 
 # define RED "\033[1;31m"
 # define GREEN "\033[1;32m"
 # define YELLOW "\033[1;33m"
 # define END "\033[0m"
 
+enum Command {
+	Nick = 1,
+	Join = 2,
+	Unknown = 0
+};
 
 void sendMessage(int fd, std::string message);
 void sendMessageSuccess(int fd, std::string message);
