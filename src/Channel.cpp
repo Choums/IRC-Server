@@ -6,7 +6,7 @@
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/19 08:47:29 by root              #+#    #+#             */
-/*   Updated: 2023/04/20 18:21:43 by root             ###   ########.fr       */
+/*   Updated: 2023/04/21 13:03:40 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,27 +59,21 @@ void	Channel::RmUser(int user_fd)
 void	Channel::RmUser(std::string name)
 {
 	std::map<int, User *>::iterator	it = this->_users.begin();
-
 	while (it != this->_users.end())
 	{
+		std::cout << it->second->getNickname() << std::endl;
 		if (!name.compare(it->second->getNickname()))
 			this->_users.erase(it);
 		it++;
 	}
-	
-	std::map<int, bool>::iterator	pit;
-	
-	while (pit != this->_privilege.end())
-	{
-		if (!name.compare(it->second->getNickname()))
-		{
-			this->_privilege.erase(pit);
-			return ;
-		}
-		it++;
-	}
-	return ;
-	// throw UserNotFound();
+	// if (it == this->_users.end())
+	// 	return ;
+		// throw UserNotFound();
+
+	std::map<int, bool>::iterator	pit = this->_privilege.find(it->first);
+	this->_privilege.erase(pit);
+
+	std::cout << "[" << this->_name << "] : [" << it->second->getNickname() << "] has been removed" << std::endl;
 }
 
 		/*	Getters */
@@ -117,6 +111,8 @@ void	Channel::setTopic(std::string topic)
 void	Channel::setUserPrivilege(int user_fd, bool priv)
 {	(this->_privilege.find(user_fd))->second = priv; }
 
+		/*	Displa Operator Overload */
+		
 /*	Affiche toutes les informations du Canal */
 std::ostream&	operator<<(std::ostream& flux, Channel& cnl)
 {
@@ -129,4 +125,14 @@ std::ostream&	operator<<(std::ostream& flux, Channel& cnl)
 		flux << (*it)->getFd() << "\t" << (*it)->getNickname() << cnl.getUserPrivilege((*it)->getFd()) << std::endl;
 	flux << "---------------------------------------" << std::endl;
 	return (flux);
+}
+
+
+		/*	Comparison Operator Overload */
+
+bool	operator==(Channel const& cnl1, Channel const& cnl2)
+{
+	if (!cnl1.getName().compare(cnl2.getName()))
+		return (true);
+	return (false);
 }

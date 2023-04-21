@@ -6,7 +6,7 @@
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/12 18:50:55 by aptive            #+#    #+#             */
-/*   Updated: 2023/04/20 19:47:31 by root             ###   ########.fr       */
+/*   Updated: 2023/04/21 13:02:28 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -137,6 +137,21 @@ void	User::clearBuf( void )
 	this->_buf = "";
 }
 
+/*
+ *	Quitte tout les Canals dont l'user fait parti
+ *	Parcours la liste des Canals, pour chaque Canal -> RmCnlMembership
+*/
+void	User::LeaveCnls()
+{
+	std::cout << "list part of cnl " << this->getListCnl() << std::endl;
+	for (std::vector<Channel>::iterator it = this->_list_cnl.begin(); it != this->_list_cnl.end(); it++)
+	{
+		it->RmUser(this->_nickname);
+		this->_list_cnl.erase(it);
+	}
+}
+
+
 
 /*
 ** --------------------------------- ACCESSOR ---------------------------------
@@ -173,10 +188,19 @@ bool		User::getAuth_password(void) const
 	return this->_auth_password;
 }
 
-void	User::getListCnl() const
+// Renvoie une string avec tout les channels dont est present l'user
+std::string	User::getListCnl() const
 {
+	std::string list_channel;
+	std::cout << "list: [ ";
 	for (size_t i(0); i < this->_list_cnl.size(); i++)
-		std::cout << this->_list_cnl[i].getName() << std::endl;
+	{
+		std::cout << this->_list_cnl[i].getName() << " ";
+		list_channel.append(this->_list_cnl[i].getName());
+		list_channel.push_back('\n');
+	}
+	std::cout << "]" << std::endl;
+	return (list_channel);
 }
 
 /*
@@ -205,9 +229,33 @@ void	User::setAuth_passwordOK( void )
 	this->_auth_password = true;
 }
 
-void	User::setListCnlMember(Channel& cnl)
+// Ajoute le nouveau channel a la liste des channels dont l'user fait partie
+void	User::setAddListCnlMember(Channel& cnl)
 {
 	this->_list_cnl.push_back(cnl);
 }
+
+// Retire le channel de la liste des channels dont l'user fait partie
+// L'user est par la meme occassion retirer au sein du channel
+void	User::setRmCnlMembership(Channel& cnl)
+{
+	cnl.RmUser(this->getNickname());
+	for (std::vector<Channel>::iterator it = this->_list_cnl.begin(); it != this->_list_cnl.end(); it++)
+	{
+		if (*it == cnl)
+		{
+			this->_list_cnl.erase(it);
+			return ;
+		}
+	}
+	// throw std::string("Channel not found");
+}
+
+// // Retire le channel de la liste des channels dont l'user fait partie
+// // L'user est par la meme occassion retirer au sein du channel
+// void	User::setRmCnlMembership(Channel& cnl)
+// {
+// 	cnl.RmUser(this->getFd());
+// }
 
 /* ************************************************************************** */

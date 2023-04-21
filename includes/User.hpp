@@ -6,7 +6,7 @@
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/12 18:44:15 by aptive            #+#    #+#             */
-/*   Updated: 2023/04/20 19:46:02 by root             ###   ########.fr       */
+/*   Updated: 2023/04/21 11:30:58 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ class User
 		// void	handleCommand(const std::string& cmd, const std::string& rest);
 		void	sendMessage(const std::string& message) const;
 		void	clearBuf( void );
-
+		void	LeaveCnls();
 
 		// ** --------------------------------- ACCESSOR ---------------------------------
 		int				getFd(void) const;
@@ -39,14 +39,15 @@ class User
 		std::string		getBuf(void) const;
 		bool			getAdmin(void) const;
 		bool			getAuth_password(void) const;
-		void			getListCnl() const;
+		std::string		getListCnl() const;
 
 		// ** --------------------------------- SETTER ---------------------------------
 		void	setNickname(const std::string& rest);
 		void	setBuf(const std::string& buf);
 		void	setAdmin(const bool & admin);
 		void	setAuth_passwordOK( void );
-		void	setListCnlMember(Channel& cnl);
+		void	setRmCnlMembership(Channel& cnl);
+		void	setAddListCnlMember(Channel& cnl);
 
 	private:
 		int						_fd;

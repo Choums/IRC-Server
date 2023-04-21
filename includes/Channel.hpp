@@ -6,7 +6,7 @@
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/19 08:28:18 by root              #+#    #+#             */
-/*   Updated: 2023/04/20 18:22:56 by root             ###   ########.fr       */
+/*   Updated: 2023/04/21 10:55:32 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,3 +66,4 @@ class	Channel {
 };
 
 std::ostream&	operator<<(std::ostream& flux, Channel& cnl);
+bool			operator==(Channel const& cnl1, Channel const& cnl2);

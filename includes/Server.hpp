@@ -6,7 +6,7 @@
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/14 17:32:55 by aptive            #+#    #+#             */
-/*   Updated: 2023/04/20 19:34:34 by root             ###   ########.fr       */
+/*   Updated: 2023/04/21 16:46:33 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,15 +42,17 @@ class Server
 		bool	channel_exist(std::string const& cnl_name);
 
 
-void	handleCommandServer(std::string const& cmd, std::string const& rest, User& user);
+		void	handleCommandServer(std::string const& cmd, std::string const& rest, User& user);
 
 
 		// ** --------------------------------- COMMANDE ---------------------------------
 
 		void	commandeServer_name( const User & user );
 		void	cmd_JoinChannel(std::string const& rest, User& user);
-		void	cmd_DisplayChannel() const;
-		void	cmd_Whois(std::string const& rest) const;
+		void	cmd_DisplayChannel(User const& user) const;
+		void	cmd_Whois(User const& user, std::string const& target) const;
+		void	cmd_Part(User& user, std::string const& rest);
+		
 		// ** --------------------------------- ACCESSOR ---------------------------------
 
 		int						getServer_fd(void) const;

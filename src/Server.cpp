@@ -6,7 +6,7 @@
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/14 17:37:42 by aptive            #+#    #+#             */
-/*   Updated: 2023/04/20 19:48:36 by root             ###   ########.fr       */
+/*   Updated: 2023/04/21 16:50:34 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -301,6 +301,7 @@ static Command option(const std::string& cmd)
 	if (!cmd.compare("/NAMES")) return (Names);
 	if (!cmd.compare("/LIST")) return (List);
 	if (!cmd.compare("/WHOIS")) return (Whois);
+	if (!cmd.compare("/PART")) return (Part);
 	return (Unknown);
 }
 
@@ -321,10 +322,13 @@ void	Server::handleCommandServer(std::string const& cmd, std::string const& rest
 			this->commandeServer_name(user);
 			break;
 		case List:
-			this->cmd_DisplayChannel();
+			this->cmd_DisplayChannel(user);
 			break;
 		case Whois:
-			this->cmd_Whois(rest);
+			this->cmd_Whois(user, rest);
+			break;
+		case Part:
+			this->cmd_Part(user, rest);
 			break;
 	}
 }
@@ -375,9 +379,11 @@ bool	Server::channel_exist(std::string const& cnl_name)
 */
 void	Server::cmd_JoinChannel(std::string const& rest, User& user)
 {
-	if (!rest.compare("0"))
+	std::cout << RED << "rest: |" << rest << "|, " << rest.size() << END << std::endl;
+	if (rest.size() == 2 && rest[0] == '0')
 	{
-		// command to quit all channel
+		std::cout << "[SERVER] : [" << user.getNickname() << "] leaving all channels" << std::endl;
+		user.LeaveCnls();
 		return ;
 	}
 	std::vector<std::string> cnl = parse_cnl_name(rest);
@@ -390,6 +396,7 @@ void	Server::cmd_JoinChannel(std::string const& rest, User& user)
 			for (size_t i(0); i < this->_channel.size(); i++)
 				if (!cnl[i].compare(this->_channel[i].getName()))
 					this->_channel[i].AddUser(user, false);
+			user.setAddListCnlMember(this->_channel[i]);
 			// this->_channel[i].getUsers();
 		}
 		else // Le channel est cree
@@ -401,7 +408,7 @@ void	Server::cmd_JoinChannel(std::string const& rest, User& user)
 			chan.setName(rest);
 			chan.AddUser(user, true);
 			this->setNewChannel(chan);
-			user.setListCnlMember(chan);
+			user.setAddListCnlMember(chan);
 		}
 
 	}
@@ -418,24 +425,53 @@ void	Server::commandeServer_name( const User & user )
 	}
 }
 
-void	Server::cmd_DisplayChannel() const
+/*
+ *	Command LIST
+ *	Permet d'afficher tout les channels existant sur le serveur
+ *	Concatene tout les noms de channel avec un nl en tant que separateur
+ *	La list des channels est send a l'user
+*/
+void	Server::cmd_DisplayChannel(User const& user) const
 {
-	std::cout << "display servers" << std::endl;
+	std::cout << "[Display Channels]" << std::endl;
+	std::string	list_channel;
 	for (size_t i(0); i < this->_channel.size(); i++)
-		std::cout << this->_channel[i].getName() << std::endl;
-	std::cout << "---" << std::endl;
+	{
+		list_channel.append(this->_channel[i].getName());
+		list_channel.push_back('\n');
+	}
+	user.sendMessage(list_channel);
 }
 
-void	Server::cmd_Whois(std::string const& rest) const
+/*
+ *	Command WHOIS <target>
+ *	Permet d'afficher la liste des channels dont fait partie le <target>
+ *	cherche le <target> dans la liste des users presents dans le serveur
+ *	Concatene tout ses channel avec un nl en tant que separateur
+ *	La list des channels est send a l'user
+*/
+void	Server::cmd_Whois(User const& user, std::string const& target) const
 {
+	std::cout << "target: " << target << std::endl;
 	for (size_t i(0); i < this->_client_socket_v.size(); i++)
 	{
-		if (!rest.compare(this->_client_socket_v[i].getNickname()))
-		{
-			this->_client_socket_v[i].getListCnl();
+		if (!target.compare(this->_client_socket_v[i].getNickname()))
+		{			
+			std::string	list = this->_client_socket_v[i].getListCnl();
+			user.sendMessage(list);
 			return ;
 		}
 	}
+	// throw std::string("Unknown User");
+}
+
+void	Server::cmd_Part(User& user, std::string const& rest)
+{
+	std::vector<std::string> cnl = parse_cnl_name(rest);
+	
+	for (size_t	i(0); i < cnl.size(); i++)
+		for (size_t i(0); i < this->_channel.size(); i++)
+			user.setRmCnlMembership(this->_channel[i]);
 }
 
 /*
