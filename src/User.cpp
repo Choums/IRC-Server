@@ -6,7 +6,7 @@
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/12 18:50:55 by aptive            #+#    #+#             */
-/*   Updated: 2023/04/21 13:02:28 by root             ###   ########.fr       */
+/*   Updated: 2023/04/23 12:17:27 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -207,14 +207,14 @@ std::string	User::getListCnl() const
 ** --------------------------------- SETTER ---------------------------------
 */
 
-void User::setNickname(const std::string& rest)
+void User::setNickname(const std::string& nick)
 {
 	// std::cout << "setNickname : " << std::endl;
 	// std::cout << "setNickname : " << nickname << std::endl;
-	this->_nickname = rest;
 
 
-	std::string message = "Server : Your nickname has been changed to " + rest + "\n";
+	std::string message = "[Server] : " + this->_nickname + " nickname has been changed to " + nick + "\n";
+	this->_nickname = nick;
 	this->sendMessage(message);
 }
 

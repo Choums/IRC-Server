@@ -6,7 +6,7 @@
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/14 17:37:42 by aptive            #+#    #+#             */
-/*   Updated: 2023/04/21 16:50:34 by root             ###   ########.fr       */
+/*   Updated: 2023/04/23 12:20:59 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -201,7 +201,7 @@ void Server::gestion_activite_client(fd_set * read_sockets, fd_set * temp)
 {
 	int valread;
 	char buffer[1025];
-
+	(void)read_sockets;
 
 	for (size_t i = 0; i < _client_socket_v.size(); i++)
 	{
@@ -210,9 +210,6 @@ void Server::gestion_activite_client(fd_set * read_sockets, fd_set * temp)
 		{
 			valread = read(client_socket_fd, buffer, 1024);
 			std::string buf (buffer, valread);
-			// std::cout << "valread on client socket : " << valread << " / "<< client_socket_fd << std::endl;
-
-			std::cout << "getAuth_password : " << _client_socket_v[i].getAuth_password() << std::endl;
 
 			if (valread == 0)
 			{
@@ -227,67 +224,77 @@ void Server::gestion_activite_client(fd_set * read_sockets, fd_set * temp)
 			}
 			else
 			{
-				int buf_len = buf.size();
-				std::cout << "[SERVER] : Commande complete\n";
-				if (buf[buf_len - 1] == '\n' )
-				{
-					if (_client_socket_v[i].getAuth_password() == 0)
-					{
-						buf.erase(buf.size() - 1, 1);
-						std::cout << buf << "|" << _password << "|" << std::endl;
-						if (!buf.compare(_password))
-						{
-
-							_client_socket_v[i].setAuth_passwordOK();
-							sendMessageSuccess(_client_socket_v[i].getFd(), "[SERVER] : authentication successful\n");
-							std::cout << "good password" << std::endl;
-						}
-						else
-						{
-							sendMessageUnSuccess(_client_socket_v[i].getFd(), "[SERVER] : Wrong password\n");
-						}
-						_client_socket_v[i].clearBuf();
-					}
-					else
-					{
-						_client_socket_v[i].setBuf(buf);
-						this->parsing_cmd( &_client_socket_v[i] );
-					}
-				}
-				else
-				{
-					std::cout << "[SERVER] : add to buf\n";
-					_client_socket_v[i].setBuf(buf);
-				}
-
+				std::cout << "HEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE" << std::endl;
+				_client_socket_v[i].setBuf(buf);
+				this->parsing_cmd( &_client_socket_v[i]);
 			}
 		}
 	}
 }
 
+std::pair<std::string, std::string>  first_word(std::string line)
+{
+	std::istringstream iss(line);
+	std::string word;
+	std::string	rest;
+
+	while (std::getline(iss, word, '\n'))
+	{
+		std::istringstream iss_word(word);
+		iss_word >> word;
+		rest = iss.str().substr(word.size() + 1);
+	}
+	return (std::make_pair(word, rest));
+}
+
+// void Server::parsing_cmd( User * user )
+// {
+// 	std::string cmd;
+// 	std::string rest;
+// 	std::vector<std::string> v_parse;
+
+
+// 	// for (size_t i = 0; i < user->getBuf().size(); i++)
+// 	// 	std::cout << (int)user->getBuf()[i] << std::endl;
+// 	// std::cout << "END buffer" << std::endl;
+
+// 	v_parse = split_string(user->getBuf());
+
+// 	// Affiche chaque élément du vecteur tokens
+// 	// for (std::vector<std::string>::iterator it = v_parse.begin(); it != v_parse.end(); ++it) {
+// 	// 	std::cout << *it << "|" << std::endl;
+// 	// }
+
+// 	if (v_parse[0][0] == '/')
+// 	{
+// 		std::cout << "[SERVER] : It's a commande: [" << v_parse[0] << "] !" << std::endl;
+// 		this->handleCommandServer(v_parse[0], v_parse[1], *user);
+// 		// user->handleCommand(v_parse[0], v_parse[1]);
+
+// 	}
+
+// 	user->clearBuf();
+// }
+
+
 void Server::parsing_cmd( User * user )
 {
-	std::string cmd;
-	std::string rest;
-	std::vector<std::string> v_parse;
+	std::string line;
+	std::istringstream stream(user->getBuf());  // créer un flux d'entrée à partir de la chaîne de caractères
 
-
-	// for (size_t i = 0; i < user->getBuf().size(); i++)
-	// 	std::cout << (int)user->getBuf()[i] << std::endl;
-	// std::cout << "END buffer" << std::endl;
-
-	v_parse = split_string(user->getBuf());
-
-	// Affiche chaque élément du vecteur tokens
-	// for (std::vector<std::string>::iterator it = v_parse.begin(); it != v_parse.end(); ++it) {
-	// 	std::cout << *it << "|" << std::endl;
-	// }
-
-	if (v_parse[0][0] == '/')
+	while (std::getline(stream, line))
 	{
-		std::cout << "[SERVER] : It's a commande: [" << v_parse[0] << "] !" << std::endl;
-		this->handleCommandServer(v_parse[0], v_parse[1], *user);
-		// user->handleCommand(v_parse[0], v_parse[1]);
+		std::pair<std::string, std::string>	arg;
+		std::string cmd;
+		std::string	rest;
+		std::cout << "-------------------------------------->\n";
+		arg = first_word(line);
+		cmd = arg.first;
+		rest = arg.second;
+		std::cout << RED << cmd << std::endl << rest << END << std::endl;
+		std::cout << "-------------------------------------->\n";
+
+		this->handleCommandServer(cmd, rest, *user);
 
 	}
 
@@ -296,14 +303,17 @@ void Server::parsing_cmd( User * user )
 
 static Command option(const std::string& cmd)
 {
-	if (!cmd.compare("/NICK")) return (Nick);
-	if (!cmd.compare("/JOIN")) return (Join);
-	if (!cmd.compare("/NAMES")) return (Names);
-	if (!cmd.compare("/LIST")) return (List);
-	if (!cmd.compare("/WHOIS")) return (Whois);
-	if (!cmd.compare("/PART")) return (Part);
+	if (!cmd.compare("NICK")) return (Nick);
+	if (!cmd.compare("JOIN")) return (Join);
+	if (!cmd.compare("NAMES")) return (Names);
+	if (!cmd.compare("LIST")) return (List);
+	if (!cmd.compare("WHOIS")) return (Whois);
+	if (!cmd.compare("PART")) return (Part);
+	if (!cmd.compare("PING")) return (Ping);
 	return (Unknown);
 }
+
+
 
 void	Server::handleCommandServer(std::string const& cmd, std::string const& rest, User& user)
 {
@@ -330,8 +340,26 @@ void	Server::handleCommandServer(std::string const& cmd, std::string const& rest
 		case Part:
 			this->cmd_Part(user, rest);
 			break;
+		case Ping:
+			this->cmd_Ping(rest);
+			break;
 	}
 }
+		// if (!cmd.compare("NICK"))
+		// {
+		// 	sendMessage(user->getFd(), ":127.0.0.1 001 aptive Welcome to the IRC Network aptive!aptive@127.0.0.1\r\n");
+
+		// }
+		// if (!cmd.compare("USER"))
+		// {
+		// 	sendMessage(user->getFd(), ":127.0.0.1 002 aptive Your host is Aptive-PC, running version 4.2\r\n");
+		// 	// sendMessage(_client_socket_v[i].getFd(), "::127.0.0.1 003 aptive This server was created Fri Apr 21 16:23:56 2023\r\n");
+		// }
+		// if (!cmd.compare("PING"))
+		// {
+		// 	sendMessage(user->getFd(), ":127.0.0.1 PONG :aptive\r\n");
+		// 	// sendMessage(_client_socket_v[i].getFd(), "::127.0.0.1 003 aptive This server was created Fri Apr 21 16:23:56 2023\r\n");
+		// } 
 
 bool	Server::channel_exist(std::string const& cnl_name)
 {
@@ -401,7 +429,7 @@ void	Server::cmd_JoinChannel(std::string const& rest, User& user)
 		}
 		else // Le channel est cree
 		{
-			if (cnl[i][0] != '&' || cnl[i].size() > 50)
+			if (cnl[i][0] != '#' || cnl[i].size() > 50)
 				break;
 				// throw std::string("Invalid channel name !");
 			Channel chan;
@@ -472,6 +500,11 @@ void	Server::cmd_Part(User& user, std::string const& rest)
 	for (size_t	i(0); i < cnl.size(); i++)
 		for (size_t i(0); i < this->_channel.size(); i++)
 			user.setRmCnlMembership(this->_channel[i]);
+}
+
+void	Server::cmd_Ping(std::string const& rest)
+{
+	(void)rest;
 }
 
 /*

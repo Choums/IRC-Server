@@ -6,7 +6,7 @@
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/14 17:32:55 by aptive            #+#    #+#             */
-/*   Updated: 2023/04/21 16:46:33 by root             ###   ########.fr       */
+/*   Updated: 2023/04/23 11:57:24 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,7 @@ class Server
 		void	cmd_DisplayChannel(User const& user) const;
 		void	cmd_Whois(User const& user, std::string const& target) const;
 		void	cmd_Part(User& user, std::string const& rest);
+		void	cmd_Ping(std::string const& rest);
 		
 		// ** --------------------------------- ACCESSOR ---------------------------------
 
