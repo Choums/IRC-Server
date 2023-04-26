@@ -6,7 +6,7 @@
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/12 18:44:15 by aptive            #+#    #+#             */
-/*   Updated: 2023/04/21 11:30:58 by root             ###   ########.fr       */
+/*   Updated: 2023/04/26 19:04:02 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,8 @@ class User
 		// ** --------------------------------- ACCESSOR ---------------------------------
 		int				getFd(void) const;
 		int				getId(void) const;
+		std::string		getUsername() const;
+		std::string		getHostname() const;
 		std::string		getNickname(void) const;
 		std::string		getBuf(void) const;
 		bool			getAdmin(void) const;
@@ -42,6 +44,8 @@ class User
 		std::string		getListCnl() const;
 
 		// ** --------------------------------- SETTER ---------------------------------
+		void	setUsername(std::string const& name);
+		void	setHostname(std::string const& host);
 		void	setNickname(const std::string& rest);
 		void	setBuf(const std::string& buf);
 		void	setAdmin(const bool & admin);
@@ -52,7 +56,9 @@ class User
 	private:
 		int						_fd;
 		int						_id;
+		std::string				_username;
 		std::string				_nickname;
+		std::string				_hostname;
 		std::string				_buf;
 		bool					_admin;
 		bool					_auth_password;

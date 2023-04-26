@@ -6,7 +6,7 @@
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/14 17:32:55 by aptive            #+#    #+#             */
-/*   Updated: 2023/04/23 11:57:24 by root             ###   ########.fr       */
+/*   Updated: 2023/04/26 18:59:03 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ class Server
 		void	gestion_activite_client(fd_set * read_sockets,fd_set * temp);
 		void	parsing_cmd( User * user );
 
-		void	verif_password(void);
+		bool	verif_password(User& user, std::string const& pass);
 
 
 
@@ -53,15 +53,21 @@ class Server
 		void	cmd_Whois(User const& user, std::string const& target) const;
 		void	cmd_Part(User& user, std::string const& rest);
 		void	cmd_Ping(std::string const& rest);
-		
+		void	cmd_Nick(User& user, std::string const& nick);
+		bool	is_Used(std::string const& nick);
+		bool	is_valid(std::string const& nick);
+		void	cmd_Ping(User& user, std::string const& target);
+		void	cmd_User(User& user, std::string const& rest);
 		// ** --------------------------------- ACCESSOR ---------------------------------
 
+		std::string				getHostname() const;
 		int						getServer_fd(void) const;
 		struct sockaddr_in		getAddr(void) const;
 		int						getPort(void) const;
 		std::string				getPassword(void) const;
 
 		// ** --------------------------------- SETTER ---------------------------------
+		// void				setHostname(std::string const& host);
 		void				setServer_fd(const int & server_fd);
 		void				setAddr(const struct sockaddr_in & addr);
 		void				setPort(const int & port);
@@ -70,7 +76,9 @@ class Server
 		void				setNewChannel(Channel& cnl);
 		void				setRmChannel(Channel& cnl);
 
+		static	Server* running_serv;
 	private:
+		std::string				_hostname;
 		int						_server_fd;
 		struct sockaddr_in		_addr;
 		int						_port;

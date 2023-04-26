@@ -6,7 +6,7 @@
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/14 17:37:42 by aptive            #+#    #+#             */
-/*   Updated: 2023/04/23 12:20:59 by root             ###   ########.fr       */
+/*   Updated: 2023/04/26 19:34:53 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@ Server::Server(int port, std::string password)
 {
 	std::cout << "[SERVER] Configuration server en cours ..." << std::endl;
 
+	this->_hostname = "localhost";
 	this->_port = port;
 	this->_password = password;
 
@@ -156,9 +157,25 @@ void	Server::boucle_server( void )
 	}
 }
 
-void	verif_password(void)
+bool	Server::verif_password(User& user, std::string const& pass)
 {
-
+	std::string	str;
+	if (pass.empty())
+	{
+		str = ERR_NEEDMOREPARAMS(user, "PASS");
+		send(user.getFd(), str.c_str(), str.size(), 0);
+		return (false);
+	}
+	if (!this->_password.compare(pass))
+	{
+		std::cout << "|" << this->_password << "| == |" << pass << "|" << std::endl;
+		str = ERR_PASSWDMISMATCH(user);
+		send(user.getFd(), str.c_str(), str.size(), 0);
+		return (false);
+	}
+	str = "[SERVER] : Password correct, Connection established !\n";
+	send(user.getFd(), str.c_str(), str.size(), 0);
+	return (true);
 }
 
 
@@ -303,6 +320,8 @@ void Server::parsing_cmd( User * user )
 
 static Command option(const std::string& cmd)
 {
+	if (!cmd.compare("CAP")) return (Cap);
+	if (!cmd.compare("PASS")) return (Pass);
 	if (!cmd.compare("NICK")) return (Nick);
 	if (!cmd.compare("JOIN")) return (Join);
 	if (!cmd.compare("NAMES")) return (Names);
@@ -310,6 +329,7 @@ static Command option(const std::string& cmd)
 	if (!cmd.compare("WHOIS")) return (Whois);
 	if (!cmd.compare("PART")) return (Part);
 	if (!cmd.compare("PING")) return (Ping);
+	if (!cmd.compare("USER")) return (User_cmd);
 	return (Unknown);
 }
 
@@ -322,8 +342,13 @@ void	Server::handleCommandServer(std::string const& cmd, std::string const& rest
 		case Unknown:
 			// throw std::string("Unknown Command !");
 			break;
+		case Cap:
+			break;
+		case Pass:
+			this->verif_password(user, rest);
+			break;
 		case Nick:
-			user.setNickname(rest);
+			this->cmd_Nick(user, rest);
 			break;
 		case Join:
 			this->cmd_JoinChannel(rest, user);
@@ -342,6 +367,9 @@ void	Server::handleCommandServer(std::string const& cmd, std::string const& rest
 			break;
 		case Ping:
 			this->cmd_Ping(rest);
+			break;
+		case User_cmd:
+			
 			break;
 	}
 }
@@ -510,6 +538,11 @@ void	Server::cmd_Ping(std::string const& rest)
 /*
 ** --------------------------------- ACCESSOR ---------------------------------
 */
+
+std::string	Server::getHostname() const
+{
+	return (this->_hostname);
+}
 int					Server::getServer_fd() const
 {
 	return this->_server_fd;

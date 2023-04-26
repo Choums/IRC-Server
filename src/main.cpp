@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aptive <aptive@student.42.fr>              +#+  +:+       +#+        */
+/*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/07 18:15:00 by aptive            #+#    #+#             */
-/*   Updated: 2023/04/19 18:38:10 by aptive           ###   ########.fr       */
+/*   Updated: 2023/04/26 19:01:50 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,23 @@ void sendMessage(int fd, std::string message)
 	send(fd, message.c_str(), message.size(), 0);
 }
 
+// RPL_WELCOME (001) : Ce code est envoyé en premier pour accueillir le client sur le serveur et pour lui indiquer que la connexion a réussi.
+// 001 "Welcome to the Internet Relay Network <nick>!<user>@<host>"
+// RPL_YOURHOST (002) : Ce code est utilisé pour indiquer au client le nom et la version du serveur IRC auquel il est connecté.
+// 002 "Your host is <servername>, running version <ver>"
+// RPL_CREATED (003) : Ce code est envoyé pour indiquer au client la date de création du serveur IRC.
+// 003 "This server was created <date>"
+// RPL_MYINFO (004) : Ce code fournit au client des informations sur le serveur IRC, y compris son nom, sa version, les modes pris en charge et les extensions disponibles.
+// 004 "<servername> <version> <available user modes> <available channel modes>"
+void	welcome(User& user)
+{
+	std::string	str = RPL_WELCOME(user) + RPL_YOURHOST(user) + RPL_CREATED(user) + RPL_MYINFO(user);
+
+	send(user.getFd(), str.c_str(), str.size(), 0);
+}
+
+Server* Server::running_serv = NULL;
+
 int main(int argc, char ** argv)
 {
 	int port;
@@ -62,7 +79,7 @@ int main(int argc, char ** argv)
 
 		Server server(port, password);
 		std::cout << server;
-
+		Server::running_serv = &server;
 		// Configuration socket et adresse server ------------------------------------------
 		// ft_socket_addr_server(&server_fd, &addr, port);
 

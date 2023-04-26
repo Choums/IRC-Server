@@ -6,7 +6,7 @@
 #    By: root <root@student.42.fr>                  +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/12/05 17:28:02 by aptive            #+#    #+#              #
-#    Updated: 2023/04/20 19:22:46 by root             ###   ########.fr        #
+#    Updated: 2023/04/26 16:03:01 by root             ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,6 +17,7 @@ OS		= $(shell uname)
 SRCDIR		=	./src
 INCDIR		=	./includes
 OBJDIR		=	./obj
+# CMDDIR		=	/Commands/
 
 # src / obj files
 SRC		=	main.cpp\
@@ -28,7 +29,8 @@ SRC		=	main.cpp\
 			User.cpp\
 			Server.cpp\
 			Channel.cpp\
-			command_utils.cpp
+			command_utils.cpp\
+			Nick.cpp
 
 
 # nommage automatique des fichiers objets d'apres les noms des sources C

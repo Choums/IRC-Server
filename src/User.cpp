@@ -6,7 +6,7 @@
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/12 18:50:55 by aptive            #+#    #+#             */
-/*   Updated: 2023/04/23 12:17:27 by root             ###   ########.fr       */
+/*   Updated: 2023/04/26 19:05:21 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,11 +22,11 @@ User::User()
 
 }
 
-User::User(User const & src) : _fd(src.getFd()), _id(src.getId()), _nickname(src.getNickname()), _auth_password(src.getAuth_password())
+User::User(User const & src) : _fd(src.getFd()), _id(src.getId()), _username(src.getUsername()), _nickname(src.getNickname()), _hostname(src.getHostname()), _auth_password(src.getAuth_password())
 {
 }
 
-User::User(int fd) : _fd(fd)
+User::User(int fd) : _fd(fd), _hostname("127.0.0.1")
 {
 	// init _id
 	static int id = 0;
@@ -167,9 +167,19 @@ int User::getId( void ) const
 	return this->_id;
 }
 
+std::string		User::getUsername() const
+{
+	return (this->_username);
+}
+
 std::string		User::getNickname(void) const
 {
 	return this->_nickname;
+}
+
+std::string	User::getHostname() const
+{
+	return (this->_hostname);
 }
 
 std::string		User::getBuf(void) const
@@ -207,15 +217,25 @@ std::string	User::getListCnl() const
 ** --------------------------------- SETTER ---------------------------------
 */
 
+void	User::setUsername(std::string const& name)
+{
+	this->_username = name;
+}
+
 void User::setNickname(const std::string& nick)
 {
 	// std::cout << "setNickname : " << std::endl;
 	// std::cout << "setNickname : " << nickname << std::endl;
 
 
-	std::string message = "[Server] : " + this->_nickname + " nickname has been changed to " + nick + "\n";
+	// std::string message = "[Server] : " + this->_nickname + " nickname has been changed to " + nick + "\n";
 	this->_nickname = nick;
-	this->sendMessage(message);
+	// this->sendMessage(message);
+}
+
+void	User::setHostname(std::string const& host)
+{
+	this->_hostname = host;
 }
 
 void	User::setAdmin(const bool & admin)

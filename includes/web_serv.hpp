@@ -6,7 +6,7 @@
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/07 18:14:43 by aptive            #+#    #+#             */
-/*   Updated: 2023/04/23 11:55:20 by root             ###   ########.fr       */
+/*   Updated: 2023/04/26 18:54:16 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,13 +38,17 @@
 
 #include "User.hpp"
 #include "Channel.hpp"
+#include "Macro.hpp"
 
 # define RED "\033[1;31m"
 # define GREEN "\033[1;32m"
 # define YELLOW "\033[1;33m"
 # define END "\033[0m"
 
+
 enum Command {
+	Cap = -2,
+	Pass = -1,
 	Nick = 1,
 	Join = 2,
 	Names = 3,
@@ -52,8 +56,11 @@ enum Command {
 	Whois = 5,
 	Part = 6,
 	Ping = 7,
+	User_cmd = 8,
 	Unknown = 0
 };
+
+void	welcome(User& user);
 
 void sendMessage(int fd, std::string message);
 void sendMessageSuccess(int fd, std::string message);
