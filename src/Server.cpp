@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/14 17:37:42 by aptive            #+#    #+#             */
-/*   Updated: 2023/04/26 19:34:53 by root             ###   ########.fr       */
+/*   Updated: 2023/04/27 17:32:15 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -163,18 +163,18 @@ bool	Server::verif_password(User& user, std::string const& pass)
 	if (pass.empty())
 	{
 		str = ERR_NEEDMOREPARAMS(user, "PASS");
-		send(user.getFd(), str.c_str(), str.size(), 0);
+		send(user.getFd(), str.c_str(), str.size(), MSG_NOSIGNAL);
 		return (false);
 	}
 	if (!this->_password.compare(pass))
 	{
 		std::cout << "|" << this->_password << "| == |" << pass << "|" << std::endl;
 		str = ERR_PASSWDMISMATCH(user);
-		send(user.getFd(), str.c_str(), str.size(), 0);
+		send(user.getFd(), str.c_str(), str.size(), MSG_NOSIGNAL);
 		return (false);
 	}
 	str = "[SERVER] : Password correct, Connection established !\n";
-	send(user.getFd(), str.c_str(), str.size(), 0);
+	send(user.getFd(), str.c_str(), str.size(), MSG_NOSIGNAL);
 	return (true);
 }
 
@@ -369,7 +369,7 @@ void	Server::handleCommandServer(std::string const& cmd, std::string const& rest
 			this->cmd_Ping(rest);
 			break;
 		case User_cmd:
-			
+			this->cmd_User(user, rest);
 			break;
 	}
 }

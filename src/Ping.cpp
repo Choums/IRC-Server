@@ -3,28 +3,29 @@
 /*                                                        :::      ::::::::   */
 /*   Ping.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/26 16:19:37 by root              #+#    #+#             */
-/*   Updated: 2023/04/26 16:43:51 by root             ###   ########.fr       */
+/*   Updated: 2023/04/27 17:31:32 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/Server.hpp"
 
 // Check le server
+// PING <username>
 void	Server::cmd_Ping(User& user, std::string const& target)
 {
 	std::string str;
 	if (target.empty())
 	{
 		str = ERR_NOORIGIN();
-		send(user.getFd(), str.c_str(), str.size(), 0);
+		send(user.getFd(), str.c_str(), str.size(), MSG_NOSIGNAL);
 		return ;
 	}
 	else
 	{
 		str = PONG(user);
-		send(user.getFd(), str.c_str(), str.size(), 0);
+		send(user.getFd(), str.c_str(), str.size(), MSG_NOSIGNAL);
 	}
 }

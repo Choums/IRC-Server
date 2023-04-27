@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   User.hpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/12 18:44:15 by aptive            #+#    #+#             */
-/*   Updated: 2023/04/26 19:04:02 by root             ###   ########.fr       */
+/*   Updated: 2023/04/27 11:29:03 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,8 +31,11 @@ class User
 		void	sendMessage(const std::string& message) const;
 		void	clearBuf( void );
 		void	LeaveCnls();
-
+		bool	is_set();
+		
 		// ** --------------------------------- ACCESSOR ---------------------------------
+		
+		bool			getSet() const;
 		int				getFd(void) const;
 		int				getId(void) const;
 		std::string		getUsername() const;
@@ -44,6 +47,8 @@ class User
 		std::string		getListCnl() const;
 
 		// ** --------------------------------- SETTER ---------------------------------
+		
+		void	setSetUser();
 		void	setUsername(std::string const& name);
 		void	setHostname(std::string const& host);
 		void	setNickname(const std::string& rest);
@@ -54,9 +59,10 @@ class User
 		void	setAddListCnlMember(Channel& cnl);
 
 	private:
+		bool					_set;
 		int						_fd;
 		int						_id;
-		std::string				_username;
+		std::string				_username; // Lu'ser sera set une fois que user, nick soit set
 		std::string				_nickname;
 		std::string				_hostname;
 		std::string				_buf;

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/07 18:15:00 by aptive            #+#    #+#             */
-/*   Updated: 2023/04/26 19:01:50 by root             ###   ########.fr       */
+/*   Updated: 2023/04/27 17:31:04 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,31 +17,31 @@
 void sendMessageSuccess(int fd, std::string message)
 {
 	std::string send_msg = GREEN + message + END;
-	send(fd, send_msg.c_str(), send_msg.size(), 0);
+	send(fd, send_msg.c_str(), send_msg.size(), MSG_NOSIGNAL);
 }
 
 void sendMessageUnSuccess(int fd, std::string message)
 {
 	std::string send_msg = RED + message + END;
-	send(fd, send_msg.c_str(), send_msg.size(), 0);
+	send(fd, send_msg.c_str(), send_msg.size(), MSG_NOSIGNAL);
 }
 
 void sendMessageWarning(int fd, std::string message)
 {
 	std::string send_msg = YELLOW + message + END;
-	send(fd, send_msg.c_str(), send_msg.size(), 0);
+	send(fd, send_msg.c_str(), send_msg.size(), MSG_NOSIGNAL);
 }
 
 
 void sendMessageSucces(int fd, std::string message)
 {
 	std::string send_msg = GREEN + message + END;
-	send(fd, send_msg.c_str(), send_msg.size(), 0);
+	send(fd, send_msg.c_str(), send_msg.size(), MSG_NOSIGNAL);
 }
 
 void sendMessage(int fd, std::string message)
 {
-	send(fd, message.c_str(), message.size(), 0);
+	send(fd, message.c_str(), message.size(), MSG_NOSIGNAL);
 }
 
 // RPL_WELCOME (001) : Ce code est envoyé en premier pour accueillir le client sur le serveur et pour lui indiquer que la connexion a réussi.
@@ -56,7 +56,7 @@ void	welcome(User& user)
 {
 	std::string	str = RPL_WELCOME(user) + RPL_YOURHOST(user) + RPL_CREATED(user) + RPL_MYINFO(user);
 
-	send(user.getFd(), str.c_str(), str.size(), 0);
+	send(user.getFd(), str.c_str(), str.size(), MSG_NOSIGNAL);
 }
 
 Server* Server::running_serv = NULL;

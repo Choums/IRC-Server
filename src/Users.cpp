@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Users.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/26 17:04:55 by root              #+#    #+#             */
-/*   Updated: 2023/04/26 17:46:36 by root             ###   ########.fr       */
+/*   Updated: 2023/04/27 17:32:40 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ void	Server::cmd_User(User& user, std::string const& rest)
 	if (rest.empty())
 	{
 		str = ERR_NEEDMOREPARAMS(user, "USER");
-		send(user.getFd(), str.c_str(), str.size(), 0);
+		send(user.getFd(), str.c_str(), str.size(), MSG_NOSIGNAL);
 		return ;
 	}
 	std::istringstream	iss(rest);
@@ -41,7 +41,7 @@ void	Server::cmd_User(User& user, std::string const& rest)
 	else
 	{
 		str = ERR_NEEDMOREPARAMS(user, "USER");
-		send(user.getFd(), str.c_str(), str.size(), 0);
+		send(user.getFd(), str.c_str(), str.size(), MSG_NOSIGNAL);
 		return ;
 	}
 	
@@ -50,7 +50,17 @@ void	Server::cmd_User(User& user, std::string const& rest)
 	else
 	{
 		str = ERR_NEEDMOREPARAMS(user, "USER");
-		send(user.getFd(), str.c_str(), str.size(), 0);
+		send(user.getFd(), str.c_str(), str.size(), MSG_NOSIGNAL);
 		return ;
 	}
+
+	std::cout << "END USER CMD" << std::endl;
+
+	if (user.is_set() && !user.getSet())
+	{
+		std::cout << GREEN << "WELCOME" << END << std::endl;
+		user.setSetUser();
+		welcome(user);
+	}
+		
 }

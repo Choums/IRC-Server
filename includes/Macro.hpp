@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Macro.hpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/21 17:04:51 by root              #+#    #+#             */
-/*   Updated: 2023/04/26 19:01:20 by root             ###   ########.fr       */
+/*   Updated: 2023/04/27 17:26:32 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,14 +21,13 @@
 // PING
 #define PONG(user) (":" + user.getHostname() + " PONG :" + user.getNickname() + "\r\n")
 #define ERR_NOORIGIN() ": No origin specified\n"
-// #define ERR_NOSUCHSERVER() "<server name> :No such server"
 
 // PASS
 #define ERR_PASSWDMISMATCH(user) (":" + user.getNickname() + " 464 " + user.getNickname() + " :" + user.getHostname() + " PASSWORD MISSMATCH\n")
 
 
 // NICK
-#define NICK(user, nick) (":" + user.getNickname() + " NICK " + nick + "\r\n")
+#define NICK(user, nick) (":" + user.getUsername() + " NICK " + nick + "\r\n")
 #define ERR_NICKNAMEINUSE(user, nick) (":" + user.getHostname() + " 433 " + user.getNickname() + " " + nick + " :Nickname is already in use.\r\n")
 #define ERR_ERRONEUSNICKNAME(user) (":" + user.getHostname() + " 432 " + user.getNickname() + " :Erroneous nickname\r\n")
 #define RPL_WHOISUSER(requester, target) (":" + (requester).getUsername() + " 311 " + (requester).getNickname() + " " + (target).getNickname() + " " + (target).getUsername() + " " + (target).getHostname() + " * :" + (target)->getRealName() + "\r\n")

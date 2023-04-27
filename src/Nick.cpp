@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Nick.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/23 12:43:38 by root              #+#    #+#             */
-/*   Updated: 2023/04/26 19:30:21 by root             ###   ########.fr       */
+/*   Updated: 2023/04/27 17:31:27 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,26 +40,33 @@ void Server::cmd_Nick(User& user, std::string const& nick)
 	std::string str;
 	if (nick.empty()) // ERR_NEEDPARAMS
 	{
-		str = "err noparams\n";
-		send(user.getFd(), str.c_str(), str.size(), 0);
+		str = ERR_NEEDMOREPARAMS(user, "NICK");
+		send(user.getFd(), str.c_str(), str.size(), MSG_NOSIGNAL);
 		return ;
 	}
 
 	if (this->is_Used(nick)) // ERR_NICKNAMEINUSE
 	{
 		str = ERR_NICKNAMEINUSE(user, nick);
-		send(user.getFd(), str.c_str(), str.size(), 0);
+		send(user.getFd(), str.c_str(), str.size(), MSG_NOSIGNAL);
 	}
 	else if (!this->is_valid(nick)) // ERR_ERRONEUSNICKNAME
 	{
 		str = ERR_ERRONEUSNICKNAME(user);
-		send(user.getFd(), str.c_str(), str.size(), 0);
+		send(user.getFd(), str.c_str(), str.size(), MSG_NOSIGNAL);
 	}
-	// else if ()
 	else
 	{
 		str = NICK(user, nick);
-		std::cout << "||| " << str << " |||" << std::endl;
+		send(user.getFd(), str.c_str(), str.size(), MSG_NOSIGNAL);
+		// std::cout << "||| " << str << " |||" << std::endl;
 		user.setNickname(nick);
+
+		if (user.is_set() && !user.getSet())
+		{
+			user.setSetUser();
+			welcome(user);
+		}
 	}
+	
 }

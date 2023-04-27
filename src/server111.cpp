@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   server.cpp                                         :+:      :+:    :+:   */
+/*   server111.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aptive <aptive@student.42.fr>              +#+  +:+       +#+        */
+/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/12 13:44:23 by aptive            #+#    #+#             */
-/*   Updated: 2023/04/12 14:56:18 by aptive           ###   ########.fr       */
+/*   Updated: 2023/04/27 17:32:23 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ void todo_connexion(int fd)
 
 	affichage_socket(client_server_fd, client_addr);
 
-	send(client_server_fd, "Server : Salut de la part du server !", 38, 0);
+	send(client_server_fd, "Server : Salut de la part du server !", 38, MSG_NOSIGNAL);
 
 	// receive a message
 	// int ok = 1;

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   User.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/12 18:50:55 by aptive            #+#    #+#             */
-/*   Updated: 2023/04/26 19:05:21 by root             ###   ########.fr       */
+/*   Updated: 2023/04/27 17:32:29 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,11 +22,11 @@ User::User()
 
 }
 
-User::User(User const & src) : _fd(src.getFd()), _id(src.getId()), _username(src.getUsername()), _nickname(src.getNickname()), _hostname(src.getHostname()), _auth_password(src.getAuth_password())
+User::User(User const & src) : _set(src.getSet()), _fd(src.getFd()), _id(src.getId()), _username(src.getUsername()), _nickname(src.getNickname()), _hostname(src.getHostname()), _auth_password(src.getAuth_password())
 {
 }
 
-User::User(int fd) : _fd(fd), _hostname("127.0.0.1")
+User::User(int fd) : _set(false), _fd(fd), _username("X"), _nickname("X"), _hostname("X")
 {
 	// init _id
 	static int id = 0;
@@ -34,9 +34,9 @@ User::User(int fd) : _fd(fd), _hostname("127.0.0.1")
 	this->_id = id;
 
 	// init _nickname
-	std::stringstream ss;
-	ss << "Default_Nickname_" << id;
-	this->_nickname = ss.str();
+	// std::stringstream ss;
+	// ss << "Default_Nickname_" << id;
+	// this->_nickname = ss.str();
 
 	// init _admin
 
@@ -120,7 +120,7 @@ std::ostream &			operator<<( std::ostream & o, User const & i )
 void	User::sendMessage(const std::string& message) const
 {
 	std::cout << "[SEND] : to [" << _nickname << "] : " << message;
-	send(this->getFd(), message.c_str(), message.length(), 0);
+	send(this->getFd(), message.c_str(), message.length(), MSG_NOSIGNAL);
 }
 
 void	User::setBuf(const std::string& buf)
@@ -151,11 +151,21 @@ void	User::LeaveCnls()
 	}
 }
 
-
+bool	User::is_set()
+{
+	if (!this->_username.compare("X") || !this->_nickname.compare("X") || !this->_hostname.compare("X"))
+		return (false);
+	return (true);
+}
 
 /*
 ** --------------------------------- ACCESSOR ---------------------------------
 */
+
+bool	User::getSet() const
+{
+	return (this->_set ? true : false);
+}
 
 int User::getFd( void ) const
 {
@@ -216,6 +226,11 @@ std::string	User::getListCnl() const
 /*
 ** --------------------------------- SETTER ---------------------------------
 */
+
+void	User::setSetUser()
+{
+	this->_set = true;
+}
 
 void	User::setUsername(std::string const& name)
 {
