@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/21 17:04:51 by root              #+#    #+#             */
-/*   Updated: 2023/04/27 17:26:32 by marvin           ###   ########.fr       */
+/*   Updated: 2023/04/28 19:21:31 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,19 +44,20 @@
 
 // UNKNOWN
 #define ERR_NOTIMPLEMENTED(word) (":" + user.getHostname() + " 449 : " + word + " command not implemented\n")
-
+                    
 // CHAN
-#define PRIVMSGCHAN(sender, recv, word) (": " + user.getUserrname() + " PRIVMSG " + recv.getNickname() + " :" + word + "\r\n")
-#define ERR_NOSUCHCHANNEL(user, channel) (":" + user.getUserrname() + " 403 " + user.getNickname() + " " + channel + " :No such channel\r\n")
-#define ERR_NOSUCHUSERINCHANNEL(user, channel, target) (":" + user.getUsername() + " 441 " + user.getNickname() + " " + (target) + " " + (channel) + " :No such user in channel\n")
+#define PRIVMSGCHAN(sender, recv, word) (": " + user.getUsername() + " PRIVMSG " + recv.getNickname() + " :" + word + "\r\n")
+#define ERR_NOSUCHCHANNEL(user, channel) (":" + user.getUsername() + " 403 " + user.getNickname() + " " + channel + " :No such channel\r\n")
+#define ERR_NOUSERONCHANNEL(user, channel, target) (":" + user.getUsername() + " 441 " + user.getNickname() + " " + (target) + " " + (channel) + " :No such user in channel\n")
 #define ERR_USERONCHANNEL(user, nick, channel) ( ":" + user.getHostname() + " 443 " + user.getNickname() + " " + nick + " " + channel + " :is already on channel\n" )
 #define ERR_NOTONCHANNEL(user, channel) ( ":" + user.getHostname() + " 442 " + user.getNickname() + " " + channel + " :You're not on that channel" + "\n" )
 #define RPL_ADDEDCHANOPER(user, channel, operator) (":" + user.getUsername() + " 482 " + user.getNickname() + " " + (channel) + " :You have been added as a channel operator by operator : "+ operator.getNickname() + " \n")
 #define RPL_REMOVEDCHANOPER(user, channel, operator) (":" + user.getUsername() + " 482 " + user.getNickname() + " " + (channel) + " :You have been removed as a channel operator by operator : "+ operator.getNickname() + " \n")
 #define ERR_BANNEDFROMCHAN(user, channel) ( ":" + user.getHostname() + " 474 " + user.getNickname() + " " + channel.getUsername() + " :Cannot join " + channel.getUsername() + " (+b) - you are banned\n" )
-#define RPL_UNBANUSER(user, channel, operator) (":" + user.getUserrname() + " MODE " + channel.getUsername() + " -b " + user.getNickname() + " : You have been unbanned from " + channel.getUsername() + " by operator : "+ operator.getNickname() + " \r\n")
-#define ERR_NEEDINVITE(user, channel) ( ":" + user.getHostname() + " 473 " + user.getNickname() + " " + channel.getUsername() + " :Cannot join " + channel.getUsername() + " (+i) - you must be invited\n" )
-                    
+#define RPL_UNBANUSER(user, channel, operator) (":" + user.getUsername() + " MODE " + channel.getUsername() + " -b " + user.getNickname() + " : You have been unbanned from " + channel.getUsername() + " by operator : "+ operator.getNickname() + " \r\n")
+// #define ERR_NEEDINVITE(user, channel) ( ":" + user.getHostname() + " 473 " + user.getNickname() + " " + channel.getUsername() + " :Cannot join " + channel.getUsername() + " (+i) - you must be invited\n" )
+#define	RPL_INVITING(user, channel, new_user) ( ":" + user.getUsername() + " 341 " + channel + " " + new_user.getNickname() + "\n")
+
 //TOPIC
 #define RPL_TOPIC(user, channel, topic) (":" + user.getUsername() + " 332 " + user.getNickname() + " " + (channel) + " :" + (topic) + "\n")
 

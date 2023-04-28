@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/14 17:37:42 by aptive            #+#    #+#             */
-/*   Updated: 2023/04/27 17:32:15 by marvin           ###   ########.fr       */
+/*   Updated: 2023/04/28 19:28:20 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -366,28 +366,13 @@ void	Server::handleCommandServer(std::string const& cmd, std::string const& rest
 			this->cmd_Part(user, rest);
 			break;
 		case Ping:
-			this->cmd_Ping(rest);
+			this->cmd_Ping(user, rest);
 			break;
 		case User_cmd:
 			this->cmd_User(user, rest);
 			break;
 	}
 }
-		// if (!cmd.compare("NICK"))
-		// {
-		// 	sendMessage(user->getFd(), ":127.0.0.1 001 aptive Welcome to the IRC Network aptive!aptive@127.0.0.1\r\n");
-
-		// }
-		// if (!cmd.compare("USER"))
-		// {
-		// 	sendMessage(user->getFd(), ":127.0.0.1 002 aptive Your host is Aptive-PC, running version 4.2\r\n");
-		// 	// sendMessage(_client_socket_v[i].getFd(), "::127.0.0.1 003 aptive This server was created Fri Apr 21 16:23:56 2023\r\n");
-		// }
-		// if (!cmd.compare("PING"))
-		// {
-		// 	sendMessage(user->getFd(), ":127.0.0.1 PONG :aptive\r\n");
-		// 	// sendMessage(_client_socket_v[i].getFd(), "::127.0.0.1 003 aptive This server was created Fri Apr 21 16:23:56 2023\r\n");
-		// } 
 
 bool	Server::channel_exist(std::string const& cnl_name)
 {
@@ -401,74 +386,6 @@ bool	Server::channel_exist(std::string const& cnl_name)
 /*
 ** --------------------------------- COMMANDE ---------------------------------
 */
-
-/*
- *	Command: JOIN
- *	Parameters: ( <channel> *( "," <channel> ) [ <key> *( "," <key> ) ] )
- *            / "0"
- *	----------
- *	The JOIN command is used by a user to request to start listening to
- *		the specific channel.
- *
- *	Once a user has joined a channel, he receives information about
- *		all commands his server receives affecting the channel.
- *
- *	If a JOIN is successful, the user receives a JOIN message
- *		as confirmation and is then sent the channel's topic
- *			and the list of users who are on the channel,
- *				which MUST include the user joining.
- *
- *	Note that this message accepts a special argument ("0"), which is
- *		a special request to leave all channels the user is currently a member of.
- *
- * 	----------
- * @example
- * 	/join &foobar		|	Command to join channel &foobar.
- *	/join &foo,&bar		|	Command to join channels &foo and &bar.
- *	/join 0				|	Leave all currently joined channels.
- *
- *	----------
- *	Si le rest est "0", l'User quitte tout les channels dont il fait parti
- *	Le rest est une premiere fois parser, renvoie un vector avec le ou les channels
- *	Si le nom du Canal n'est pas connu, il est cree
- *	Sinon l'User est ajoute au Canal
-*/
-void	Server::cmd_JoinChannel(std::string const& rest, User& user)
-{
-	std::cout << RED << "rest: |" << rest << "|, " << rest.size() << END << std::endl;
-	if (rest.size() == 2 && rest[0] == '0')
-	{
-		std::cout << "[SERVER] : [" << user.getNickname() << "] leaving all channels" << std::endl;
-		user.LeaveCnls();
-		return ;
-	}
-	std::vector<std::string> cnl = parse_cnl_name(rest);
-
-	for (size_t	i(0); i < cnl.size(); i++)
-	{
-		if (channel_exist(cnl[i])) // Verif que le channel existe dans le serveur
-		{
-			// std::cout << "there\n" ;
-			for (size_t i(0); i < this->_channel.size(); i++)
-				if (!cnl[i].compare(this->_channel[i].getName()))
-					this->_channel[i].AddUser(user, false);
-			user.setAddListCnlMember(this->_channel[i]);
-			// this->_channel[i].getUsers();
-		}
-		else // Le channel est cree
-		{
-			if (cnl[i][0] != '#' || cnl[i].size() > 50)
-				break;
-				// throw std::string("Invalid channel name !");
-			Channel chan;
-			chan.setName(rest);
-			chan.AddUser(user, true);
-			this->setNewChannel(chan);
-			user.setAddListCnlMember(chan);
-		}
-
-	}
-}
 
 void	Server::commandeServer_name( const User & user )
 {
@@ -530,11 +447,6 @@ void	Server::cmd_Part(User& user, std::string const& rest)
 			user.setRmCnlMembership(this->_channel[i]);
 }
 
-void	Server::cmd_Ping(std::string const& rest)
-{
-	(void)rest;
-}
-
 /*
 ** --------------------------------- ACCESSOR ---------------------------------
 */
@@ -543,22 +455,53 @@ std::string	Server::getHostname() const
 {
 	return (this->_hostname);
 }
-int					Server::getServer_fd() const
+
+int	Server::getServer_fd() const
 {
 	return this->_server_fd;
 }
+
 struct sockaddr_in	Server::getAddr() const
 {
 	return this->_addr;
 }
-int					Server::getPort() const
+
+int	Server::getPort() const
 {
 	return this->_port;
 }
 
-std::string			Server::getPassword() const
+std::string	Server::getPassword() const
 {
 	return this->_password;
+}
+
+User_iter	Server::get_User(std::string const& user)
+{
+	User_iter it = this->_client_socket_v.begin();
+	User_iter ite = this->_client_socket_v.end();
+
+	while (it != ite)
+	{
+		if (!user.compare(it->getNickname()))
+			return (it);
+		it++;
+	}
+	return (ite);
+}
+
+Chan_iter Server::get_Channel(std::string const& channel)
+{
+	Chan_iter it = this->_channel.begin();
+	Chan_iter ite = this->_channel.end();
+
+	while (it != ite)
+	{
+		if (!channel.compare(it->getName()))
+			return (it);
+		it++;
+	}
+	return (ite);
 }
 
 /*

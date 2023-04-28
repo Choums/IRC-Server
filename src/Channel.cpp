@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/19 08:47:29 by root              #+#    #+#             */
-/*   Updated: 2023/04/21 13:03:40 by root             ###   ########.fr       */
+/*   Updated: 2023/04/28 19:29:55 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@ Channel::~Channel()
 	this->_privilege.clear();
 }
 
+// Add un user au channel avec ses privileges (ope ou standard)
 void	Channel::AddUser(User& new_user, bool priv) // check user existant
 {
 	if (this->_users.find(new_user.getFd()) != this->_users.end())
@@ -33,6 +34,26 @@ void	Channel::AddUser(User& new_user, bool priv) // check user existant
 	
 	this->_users.insert(std::pair<int, User *>(new_user.getFd(), &new_user));
 	this->_privilege.insert(std::pair<int, bool>(new_user.getFd(), priv));
+}
+
+// Ajoute un nouvel User en tant qu'inviter dans le channel
+// 341    RPL_INVITING "<channel> <nick>"
+// Returned by the server to indicate that the
+// attempted INVITE message was successful and is
+// being passed onto the end client.
+// -------
+// Only the user inviting and the user being invited will receive
+//	notification of the invitation.  Other channel members are not notified.
+void	Channel::InvUser(User& user, User& new_user)
+{	
+	this->_users.insert(std::pair<int, User *>(new_user.getFd(), &new_user));
+	this->_privilege.insert(std::pair<int, bool>(new_user.getFd(), false));
+	this->_invited.insert(std::pair<int, bool>(new_user.getFd(), true));
+
+	std::string	str = RPL_INVITING(user, this->_name, new_user);
+	
+	send(user.getFd(), str.c_str(), str.size(), MSG_NOSIGNAL);
+	send(new_user.getFd(), str.c_str(), str.size(), MSG_NOSIGNAL);
 }
 
 /*	Find l'user via son fd comme key et l'erase de la map
@@ -76,6 +97,31 @@ void	Channel::RmUser(std::string name)
 	std::cout << "[" << this->_name << "] : [" << it->second->getNickname() << "] has been removed" << std::endl;
 }
 
+
+bool	Channel::Is_Ban(User& user)
+{
+	std::map<int, bool>::iterator it = this->_ban.find(user.getFd());
+	return (it->second);
+}
+
+bool	Channel::Is_Ope(User& user)
+{
+	std::map<int, bool>::iterator it = this->_privilege.find(user.getFd());
+	return (it->second);
+}
+
+bool	Channel::Is_Inv(User& user)
+{
+	std::map<int, bool>::iterator it = this->_invited.find(user.getFd());
+	return (it->second);
+}
+
+bool	Channel::Is_Present(std::string const& user)
+{
+	return (this->getUser(user) ? true : false);
+}
+
+
 		/*	Getters */
 
 std::string	Channel::getName() const
@@ -94,6 +140,14 @@ std::vector<User *>	Channel::getUsers()
 		std::cout << it->second->getNickname() << std::endl;
 	}
 	return (list_user);	
+}
+
+User*	Channel::getUser(std::string const& user)
+{
+	for (std::map<int, User*>::iterator	it = this->_users.begin(); it != this->_users.end(); it++)
+		if (!user.compare(it->second->getNickname()))
+			return(it->second);
+	return (NULL);
 }
 
 bool	Channel::getUserPrivilege(int user_fd) const

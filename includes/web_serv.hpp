@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   web_serv.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/07 18:14:43 by aptive            #+#    #+#             */
-/*   Updated: 2023/04/26 18:54:16 by root             ###   ########.fr       */
+/*   Updated: 2023/04/28 19:23:31 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -133,4 +133,19 @@ void affichage_vector(std::vector<T> v)
 
 }
 
+// Retourne un iterator sur la value recherchee dans le vector template
+template <typename T>
+typename std::vector<T>::iterator	get_Iter_vector(std::vector<T> v, T value)
+{
+	typename std::vector<T>::iterator it = v.begin();
+	typename std::vector<T>::iterator ite = v.end();
+
+	while (it != ite)
+	{
+		if (it == value)
+			return (it);
+		it++;
+	}
+	return (ite);
+}
 #endif
