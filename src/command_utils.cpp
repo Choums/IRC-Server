@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   command_utils.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/19 13:16:54 by root              #+#    #+#             */
-/*   Updated: 2023/04/19 17:49:52 by root             ###   ########.fr       */
+/*   Updated: 2023/04/29 16:25:31 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,11 +22,13 @@
 */
 std::vector<std::string>	parse_cnl_name(std::string const& rest)
 {
-	if (rest.find(" ") != std::string::npos)
-		throw std::string("Invalid argument format !");
+	// if (rest.find(" ") != std::string::npos)
+	// 	throw std::string("Invalid argument format !");
 
 	std::vector<std::string>	cnl;
 
+	if (rest.empty())
+		return (cnl);
 	// RECUPERATION DES NOMS DE CANALS
 	if (rest.find(",") == std::string::npos)
 		cnl.push_back(rest);

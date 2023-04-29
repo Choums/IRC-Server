@@ -42,6 +42,8 @@
  *	Le rest est une premiere fois parser, renvoie un vector avec le ou les channels
  *	Si le nom du Canal n'est pas connu, il est cree
  *	Sinon l'User est ajoute au Canal
+ *
+ * ERR_NOSUCHCHANNEL	ERR_BANNEDFROMCHAN	
 */
 void	Server::cmd_JoinChannel(std::string const& rest, User& user)
 {
@@ -52,13 +54,29 @@ void	Server::cmd_JoinChannel(std::string const& rest, User& user)
 		user.LeaveCnls();
 		return ;
 	}
+	std::string	str;
 	std::vector<std::string> cnl = parse_cnl_name(rest);
+
+	if (cnl.empty())
+	{
+		str = ERR_NEEDMOREPARAMS(user, "JOIN");
+		send(user.getFd(), str.c_str(), str.size(), MSG_NOSIGNAL);
+		return ;
+	}
 
 	for (size_t	i(0); i < cnl.size(); i++)
 	{
 		if (channel_exist(cnl[i])) // Verif que le channel existe dans le serveur
 		{
 			// std::cout << "there\n" ;
+			Chan_iter	it = this->get_Channel(cnl[i]);
+			if (it->Is_Ban(user))
+			{
+				str = ERR_BANNEDFROMCHAN(user, (*it));
+				send(user.getFd(), str.c_str(), str.size(), MSG_NOSIGNAL);
+				return ;
+			}
+			
 			for (size_t i(0); i < this->_channel.size(); i++)
 				if (!cnl[i].compare(this->_channel[i].getName()))
 					this->_channel[i].AddUser(user, false);

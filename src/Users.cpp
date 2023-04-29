@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/26 17:04:55 by root              #+#    #+#             */
-/*   Updated: 2023/04/27 17:32:40 by marvin           ###   ########.fr       */
+/*   Updated: 2023/04/29 10:06:01 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ void	Server::cmd_User(User& user, std::string const& rest)
 
 	if (user.is_set() && !user.getSet())
 	{
-		std::cout << GREEN << "WELCOME" << END << std::endl;
+		std::cout << GREEN << "\t--- WELCOME ---\t" << END << std::endl;
 		user.setSetUser();
 		welcome(user);
 	}

@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/14 17:37:42 by aptive            #+#    #+#             */
-/*   Updated: 2023/04/28 19:28:20 by marvin           ###   ########.fr       */
+/*   Updated: 2023/04/29 09:59:52 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -330,6 +330,7 @@ static Command option(const std::string& cmd)
 	if (!cmd.compare("PART")) return (Part);
 	if (!cmd.compare("PING")) return (Ping);
 	if (!cmd.compare("USER")) return (User_cmd);
+	if (!cmd.compare("INVITE")) return (Invite);
 	return (Unknown);
 }
 
@@ -370,6 +371,9 @@ void	Server::handleCommandServer(std::string const& cmd, std::string const& rest
 			break;
 		case User_cmd:
 			this->cmd_User(user, rest);
+			break;
+		case Invite:
+			this->cmd_Invite(user, rest);
 			break;
 	}
 }

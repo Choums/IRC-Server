@@ -42,7 +42,7 @@ void	Server::cmd_Invite(User& user, std::string const& rest)
 
 	iss >> target;
 	iss >> chan;
-
+	std::cout << RED << "Tyring to invite " << target << " to " << chan << END << std::endl;
 	if (!rest.empty() || !target.empty() || !chan.empty()) // Check Params
 	{
 		Chan_iter it = this->get_Channel(chan);
@@ -54,11 +54,23 @@ void	Server::cmd_Invite(User& user, std::string const& rest)
 				{
 					if (this->is_Present(target)) // Check target exists, NOSUCHNICK
 					{
-						if (!it->Is_Present(target)) // Check target not already in Channel, USERONCHANNEL
-							it->InvUser(user, *(this->get_User(target))); // Invitation complete !
+						if (it->Is_Ban(*(this->get_User(target))))
+						{
+							if (!it->Is_Present(target)) // Check target not already in Channel, USERONCHANNEL
+							{
+								std::cout << GREEN << "All condition are passed, adding " << target << " to " << chan << END << std::endl;
+								it->InvUser(user, *(this->get_User(target))); // Invitation complete !
+							}
+							else
+							{
+								str = ERR_USERONCHANNEL(user, target, chan);
+								send(user.getFd(), str.c_str(), str.size(), MSG_NOSIGNAL);
+								return ;
+							}
+						}
 						else
 						{
-							str = ERR_USERONCHANNEL(user, target, chan);
+							str = ERR_BANNEDFROMCHAN(user, (*it));
 							send(user.getFd(), str.c_str(), str.size(), MSG_NOSIGNAL);
 							return ;
 						}

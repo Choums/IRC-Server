@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/19 08:28:18 by root              #+#    #+#             */
-/*   Updated: 2023/04/28 19:14:30 by marvin           ###   ########.fr       */
+/*   Updated: 2023/04/29 17:27:11 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,9 @@ class	Channel {
 		Channel();
 		virtual ~Channel();
 
+		void	Privmsg();
+		void	Broadcast(std::string const& msg);
+		void	Broadcast_topic();
 
 		void	AddUser(User& new_user, bool priv);
 		void	InvUser(User& user, User& new_user);
@@ -31,7 +34,6 @@ class	Channel {
 		void	KickUser();
 		void	RmUser(int user_fd);
 		void	RmUser(std::string name);
-		// void	sendMessage();
 		bool	Is_Ban(User& user);
 		bool	Is_Ope(User& user);
 		bool	Is_Inv(User& user);

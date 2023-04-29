@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/19 08:47:29 by root              #+#    #+#             */
-/*   Updated: 2023/04/28 19:29:55 by marvin           ###   ########.fr       */
+/*   Updated: 2023/04/29 17:55:47 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,17 +23,62 @@ Channel::~Channel()
 {
 	this->_users.clear();
 	this->_privilege.clear();
+	this->_ban.clear();
+	this->_invited.clear();
+}
+
+void	Channel::Privmsg()
+{}
+
+// Send le msg a tout les users du Canal
+void	Channel::Broadcast(std::string const& msg)
+{
+	std::map<int, User*>::iterator	it = this->_users.begin();
+	std::map<int, User*>::iterator	ite = this->_users.end();
+
+	while (it != ite)
+	{
+		send(it->first, msg.c_str(), msg.size(), MSG_NOSIGNAL);
+		std::cout << RED<< "<" << this->_name << ">: BROADCAST TO " << it->first << ", " << it->second->getNickname()  << END << std::endl;
+		it++;
+	}
+}
+
+// Send le topic a tout les users du Canal, Command /topic
+void	Channel::Broadcast_topic()
+{
+	std::map<int, User*>::iterator	it = this->_users.begin();
+	std::map<int, User*>::iterator	ite = this->_users.end();
+
+	std::string	topic;
+
+	while (it != ite)
+	{
+		User	tmp = *(it->second);
+		topic = RPL_TOPIC(tmp, this->_name, this->_topic);
+		send(it->first, topic.c_str(), topic.size(), MSG_NOSIGNAL);
+		it++;
+	}
 }
 
 // Add un user au channel avec ses privileges (ope ou standard)
 void	Channel::AddUser(User& new_user, bool priv) // check user existant
 {
-	if (this->_users.find(new_user.getFd()) != this->_users.end())
-		return ;
+	// if (this->_users.find(new_user.getFd()) != this->_users.end())
+	// 	return ;
 		// throw UserAlreadyExists();
 	
+	if (!this->_topic.empty())
+	{
+		std::string	str = RPL_TOPIC(new_user, this->getName(), this->_topic);
+		send(new_user.getFd(), str.c_str(), str.size(), MSG_NOSIGNAL);
+	}
 	this->_users.insert(std::pair<int, User *>(new_user.getFd(), &new_user));
 	this->_privilege.insert(std::pair<int, bool>(new_user.getFd(), priv));
+
+	std::string msg = ":" + new_user.getNickname() + " has joined the channel !\r\n";
+	std::cerr << GREEN << "< " << this->_name << " >: " << msg << END << std::endl;
+	this->Broadcast(msg);
 }
 
 // Ajoute un nouvel User en tant qu'inviter dans le channel
@@ -160,7 +205,10 @@ void	Channel::setName(std::string name)
 {	this->_name = name; }
 
 void	Channel::setTopic(std::string topic)
-{	this->_topic = topic; }
+{
+	this->_topic = topic;
+	this->Broadcast_topic();	
+}
 
 void	Channel::setUserPrivilege(int user_fd, bool priv)
 {	(this->_privilege.find(user_fd))->second = priv; }

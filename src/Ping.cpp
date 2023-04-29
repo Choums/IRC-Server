@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/26 16:19:37 by root              #+#    #+#             */
-/*   Updated: 2023/04/27 18:13:48 by marvin           ###   ########.fr       */
+/*   Updated: 2023/04/29 10:04:16 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@ void	Server::cmd_Ping(User& user, std::string const& target)
 	}
 	else
 	{
+		std::cout << GREEN << "-- Ping response --" << END << std::endl;
 		str = PONG(user);
 		send(user.getFd(), str.c_str(), str.size(), MSG_NOSIGNAL);
 	}
