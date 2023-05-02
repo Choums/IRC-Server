@@ -48,13 +48,22 @@
 void	Server::cmd_JoinChannel(std::string const& rest, User& user)
 {
 	std::cout << RED << "rest: |" << rest << "|, " << rest.size() << END << std::endl;
+	std::string	str;
 	if (rest.size() == 2 && rest[0] == '0')
 	{
-		std::cout << "[SERVER] : [" << user.getNickname() << "] leaving all channels" << std::endl;
-		user.LeaveCnls();
+		std::cout <<RED << "[SERVER] : [" << user.getNickname() << "] leaving all channels" << END << std::endl;
+		
+		std::vector<Channel *>	list_cnls = user.getListCnl();
+		std::string	format;
+		for (size_t i(0); i < list_cnls.size(); i++)
+		{
+			format.append(list_cnls[i]->getName());
+			if (i + 1 != list_cnls.size())
+				format.push_back(',');
+		}
+		this->cmd_Part(user, format);
 		return ;
 	}
-	std::string	str;
 	std::vector<std::string> cnl = parse_cnl_name(rest);
 
 	if (cnl.empty())
@@ -70,7 +79,7 @@ void	Server::cmd_JoinChannel(std::string const& rest, User& user)
 		{
 			// std::cout << "there\n" ;
 			Chan_iter	it = this->get_Channel(cnl[i]);
-			if (it->Is_Ban(user))
+			if ((*it)->Is_Ban(user))
 			{
 				str = ERR_BANNEDFROMCHAN(user, (*it));
 				send(user.getFd(), str.c_str(), str.size(), MSG_NOSIGNAL);
@@ -78,19 +87,14 @@ void	Server::cmd_JoinChannel(std::string const& rest, User& user)
 			}
 			
 			for (size_t i(0); i < this->_channel.size(); i++)
-				if (!cnl[i].compare(this->_channel[i].getName()))
-					this->_channel[i].AddUser(user, false);
+				if (!cnl[i].compare(this->_channel[i]->getName()))
+					this->_channel[i]->AddUser(user, false);
 			user.setAddListCnlMember(this->_channel[i]);
 			// this->_channel[i].getUsers();
 		}
 		else // Le channel est cree
 		{
-			if (cnl[i][0] != '#' || cnl[i].size() > 50)
-				break;
-				// throw std::string("Invalid channel name !");
-			Channel chan;
-			chan.setName(rest);
-			chan.AddUser(user, true);
+			Channel *chan = new Channel(user, rest);
 			this->setNewChannel(chan);
 			user.setAddListCnlMember(chan);
 		}

@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/14 17:32:55 by aptive            #+#    #+#             */
-/*   Updated: 2023/04/28 19:27:34 by marvin           ###   ########.fr       */
+/*   Updated: 2023/05/02 17:21:13 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 # include "web_serv.hpp"
 
 typedef typename std::vector<User>::iterator User_iter;
-typedef typename std::vector<Channel>::iterator Chan_iter;
+typedef typename std::vector<Channel*>::iterator Chan_iter;
 
 class Server
 {
@@ -24,7 +24,7 @@ class Server
 			Server(void);
 			Server(int port, std::string password);
 			Server(Server const & src);
-			~Server(void);
+			virtual	~Server(void);
 
 		// ** --------------------------------- METHODS ----------------------------------
 		void	creation_socket_server( int * server_fd );
@@ -52,7 +52,7 @@ class Server
 
 		void	commandeServer_name( const User & user );
 		void	cmd_JoinChannel(std::string const& rest, User& user);
-		void	cmd_DisplayChannel(User const& user) const;
+		void	cmd_List(User& user, std::string const& rest);
 		void	cmd_Whois(User const& user, std::string const& target) const;
 		void	cmd_Part(User& user, std::string const& rest);
 		void	cmd_Nick(User& user, std::string const& nick);
@@ -79,8 +79,8 @@ class Server
 		void				setPort(const int & port);
 		void				setPassword(const std::string & password);
 		// void				setClient_socket_v(User user);
-		void				setNewChannel(Channel& cnl);
-		void				setRmChannel(Channel& cnl);
+		void				setNewChannel(Channel* cnl);
+		void				setRmChannel(Channel* cnl);
 
 		static	Server* running_serv;
 	private:
@@ -92,7 +92,7 @@ class Server
 		int						_max_socket_fd;
 
 		std::vector<User>		_client_socket_v;
-		std::vector<Channel>	_channel;
+		std::vector<Channel*>	_channel;
 
 };
 

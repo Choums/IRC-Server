@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/21 17:04:51 by root              #+#    #+#             */
-/*   Updated: 2023/04/29 17:46:07 by marvin           ###   ########.fr       */
+/*   Updated: 2023/05/02 17:41:00 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@
 
 // UNKNOWN
 #define ERR_NOTIMPLEMENTED(word) (":" + user.getHostname() + " 449 : " + word + " command not implemented\n")
-                    
+               
 // CHAN
 #define PRIVMSGCHAN(sender, recv, word) (": " + user.getUsername() + " PRIVMSG " + recv.getNickname() + " :" + word + "\r\n")
 #define ERR_NOSUCHCHANNEL(user, channel) (":" + user.getUsername() + " 403 " + user.getNickname() + " " + channel + " :No such channel\r\n")
@@ -52,10 +52,15 @@
 #define ERR_NOTONCHANNEL(user, channel) ( ":" + user.getHostname() + " 442 " + user.getNickname() + " " + channel + " :You're not on that channel" + "\n" )
 #define RPL_ADDEDCHANOPER(user, channel, operator) (":" + user.getUsername() + " 482 " + user.getNickname() + " " + (channel) + " :You have been added as a channel operator by operator : "+ operator.getNickname() + " \n")
 #define RPL_REMOVEDCHANOPER(user, channel, operator) (":" + user.getUsername() + " 482 " + user.getNickname() + " " + (channel) + " :You have been removed as a channel operator by operator : "+ operator.getNickname() + " \n")
-#define ERR_BANNEDFROMCHAN(user, channel) ( ":" + user.getHostname() + " 474 " + user.getNickname() + " " + channel.getName() + " :Cannot join " + channel.getName() + " (+b) - you are banned\n" )
-#define RPL_UNBANUSER(user, channel, operator) (":" + user.getUsername() + " MODE " + channel.getUsername() + " -b " + user.getNickname() + " : You have been unbanned from " + channel.getName() + " by operator : "+ operator.getNickname() + " \r\n")
-// #define ERR_NEEDINVITE(user, channel) ( ":" + user.getHostname() + " 473 " + user.getNickname() + " " + channel.getUsername() + " :Cannot join " + channel.getUsername() + " (+i) - you must be invited\n" )
+#define ERR_BANNEDFROMCHAN(user, channel) ( ":" + user.getHostname() + " 474 " + user.getNickname() + " " + channel->getName() + " :Cannot join " + channel->getName() + " (+b) - you are banned\n" )
+#define RPL_UNBANUSER(user, channel, operator) (":" + user.getUsername() + " MODE " + channel->getUsername() + " -b " + user.getNickname() + " : You have been unbanned from " + channel->getName() + " by operator : "+ operator.getNickname() + " \r\n")
+// #define ERR_NEEDINVITE(user, channel) ( ":" + user.getHostname() + " 473 " + user.getNickname() + " " + channel->getUsername() + " :Cannot join " + channel->getUsername() + " (+i) - you must be invited\n" )
 #define	RPL_INVITING(user, channel, new_user) ( ":" + user.getUsername() + " 341 " + user.getNickname() + " has invited on " + channel + " " + new_user.getNickname() + "\n")
+
+
+//LIST
+#define RPL_LIST(user, channel, topic) (": " + user.getUsername() + " 322 " + user.getNickname() + " " + channel->getName() + " " + channel->getSNumUsers() + " " + (topic) + "\n")
+#define RPL_LISTEND(user) (": " + user.getUsername() + " 323 " + user.getNickname() + " :End of LIST\n")
 
 //TOPIC
 #define RPL_TOPIC(user, channel, topic) (":" + user.getUsername() + " 332 " + user.getNickname() + " " + (channel) + " :" + (topic) + "\n")

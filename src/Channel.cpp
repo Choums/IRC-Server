@@ -6,17 +6,20 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/19 08:47:29 by root              #+#    #+#             */
-/*   Updated: 2023/04/29 17:55:47 by marvin           ###   ########.fr       */
+/*   Updated: 2023/05/02 19:44:54 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/Channel.hpp"
 
-Channel::Channel()
+Channel::Channel(User& user, std::string const& name)
 {
 	std::cout << "---------------------------------------" << std::endl;
-	std::cout << "Creation d'un nouveau Canal" << std::endl;
+	std::cout << "Creation d'un nouveau Canal: "<< GREEN << "<" << name << ">" << END << std::endl;
 	std::cout << "---------------------------------------" << std::endl;
+
+	this->setName(name);
+	this->AddUser(user, true);
 }
 
 Channel::~Channel()
@@ -76,8 +79,8 @@ void	Channel::AddUser(User& new_user, bool priv) // check user existant
 	this->_users.insert(std::pair<int, User *>(new_user.getFd(), &new_user));
 	this->_privilege.insert(std::pair<int, bool>(new_user.getFd(), priv));
 
-	std::string msg = ":" + new_user.getNickname() + " has joined the channel !\r\n";
-	std::cerr << GREEN << "< " << this->_name << " >: " << msg << END << std::endl;
+	std::string msg = ":" + new_user.getUsername() + " JOIN " + this->_name + "\r\n";
+	std::cout << GREEN << "< " << this->_name << " >: " << msg << END << std::endl;
 	this->Broadcast(msg);
 }
 
@@ -101,46 +104,63 @@ void	Channel::InvUser(User& user, User& new_user)
 	send(new_user.getFd(), str.c_str(), str.size(), MSG_NOSIGNAL);
 }
 
-/*	Find l'user via son fd comme key et l'erase de la map
- *	@exception User not found.
-*/
-void	Channel::RmUser(int user_fd)
+//Commande part
+// :<user> PART <channel> :<reason>
+// :John!~user@host PART #channel :Je reviendrai plus tard
+void	Channel::PartUser(User& user, std::string const& reason)
 {
-	std::map<int, User *>::iterator	it;
+	this->_users.erase(this->_users.find(user.getFd())); // Supp de la list des users
+
+	this->_privilege.erase(this->_privilege.find(user.getFd())); // Supp de la list des priv
 	
-	it = this->_users.find(user_fd);
-	
-	if (it != this->_users.end())
-		this->_users.erase(it);
-	else
-		return ;
-		// throw UserNotFound();
-	
-	std::map<int, bool>::iterator	pit;
-	pit = this->_privilege.find(user_fd);
-	if (pit != this->_privilege.end())
-		this->_privilege.erase(pit);
+	std::string	cast = ":" + user.getUsername() + " PART " + this->_name + " :" + reason + "\r\n";
+	this->Broadcast(cast); // Display a tout les users que l'user est parti
+
+	std::string	str = ":" + user.getUsername() + " PART " + this->_name + "\r\n";
+	send(user.getFd(), str.c_str(), str.size(), MSG_NOSIGNAL); // Confirmation a l'user que la commande est reussi
 }
 
-void	Channel::RmUser(std::string name)
-{
-	std::map<int, User *>::iterator	it = this->_users.begin();
-	while (it != this->_users.end())
-	{
-		std::cout << it->second->getNickname() << std::endl;
-		if (!name.compare(it->second->getNickname()))
-			this->_users.erase(it);
-		it++;
-	}
-	// if (it == this->_users.end())
-	// 	return ;
-		// throw UserNotFound();
+// /*	Find l'user via son fd comme key et l'erase de la map
+//  *	ERR_NOTONCHANNEL
+// */
+// void	Channel::RmUser(int user_fd)
+// {
+// 	std::string	str;
+// 	std::map<int, User *>::iterator	it;
+	
+// 	it = this->_users.find(user_fd);
+	
+// 	if (it != this->_users.end())
+// 		this->_users.erase(it);
+// 	else
+// 		return ;
+// 		// throw UserNotFound();
+	
+// 	std::map<int, bool>::iterator	pit;
+// 	pit = this->_privilege.find(user_fd);
+// 	if (pit != this->_privilege.end())
+// 		this->_privilege.erase(pit);
+// }
 
-	std::map<int, bool>::iterator	pit = this->_privilege.find(it->first);
-	this->_privilege.erase(pit);
+// void	Channel::RmUser(std::string name)
+// {
+// 	std::map<int, User *>::iterator	it = this->_users.begin();
+// 	while (it != this->_users.end())
+// 	{
+// 		std::cout << it->second->getNickname() << std::endl;
+// 		if (!name.compare(it->second->getNickname()))
+// 			this->_users.erase(it);
+// 		it++;
+// 	}
+// 	// if (it == this->_users.end())
+// 	// 	return ;
+// 		// throw UserNotFound();
 
-	std::cout << "[" << this->_name << "] : [" << it->second->getNickname() << "] has been removed" << std::endl;
-}
+// 	std::map<int, bool>::iterator	pit = this->_privilege.find(it->first);
+// 	this->_privilege.erase(pit);
+
+// 	std::cout << "[" << this->_name << "] : [" << it->second->getNickname() << "] has been removed" << std::endl;
+// }
 
 
 bool	Channel::Is_Ban(User& user)
@@ -185,6 +205,19 @@ std::vector<User *>	Channel::getUsers()
 		std::cout << it->second->getNickname() << std::endl;
 	}
 	return (list_user);	
+}
+
+size_t	Channel::getNumUsers() const
+{
+	return (this->_users.size());
+}
+
+std::string	Channel::getSNumUsers() const
+{
+	std::stringstream	ss;
+	ss << this->_users.size();
+	std::string	num = ss.str();
+	return (num);
 }
 
 User*	Channel::getUser(std::string const& user)

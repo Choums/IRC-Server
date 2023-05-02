@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/14 17:37:42 by aptive            #+#    #+#             */
-/*   Updated: 2023/04/29 09:59:52 by marvin           ###   ########.fr       */
+/*   Updated: 2023/05/02 20:16:25 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,14 @@ Server::Server(int port, std::string password)
 
 Server::~Server()
 {
-
+	Chan_iter	it = this->_channel.begin();
+	Chan_iter	ite = this->_channel.end();
+	
+	while (it != ite)
+	{
+		delete *it;
+		it++;
+	}
 }
 
 /*
@@ -358,7 +365,7 @@ void	Server::handleCommandServer(std::string const& cmd, std::string const& rest
 			this->commandeServer_name(user);
 			break;
 		case List:
-			this->cmd_DisplayChannel(user);
+			this->cmd_List(user, rest);
 			break;
 		case Whois:
 			this->cmd_Whois(user, rest);
@@ -381,7 +388,7 @@ void	Server::handleCommandServer(std::string const& cmd, std::string const& rest
 bool	Server::channel_exist(std::string const& cnl_name)
 {
 	for (size_t i(0); i < this->_channel.size(); i++)
-		if (!cnl_name.compare(this->_channel[i].getName()))
+		if (!cnl_name.compare(this->_channel[i]->getName()))
 			return (true);
 	return (false);
 }
@@ -407,17 +414,49 @@ void	Server::commandeServer_name( const User & user )
  *	Permet d'afficher tout les channels existant sur le serveur
  *	Concatene tout les noms de channel avec un nl en tant que separateur
  *	La list des channels est send a l'user
+ *
+ * The list command is used to list channels and their topics.  If the
+ * <channel> parameter is used, only the status of that channel is
+ * displayed.
+ * 322 MonPseudo #channel 10 :Discussion générale
+ * RPL_LIST
+ * RPL_LISTEND
+ * Si le Canal demandé n'existe pas, rien n'est renvoyé. Seul les Canaux existant seront renvoyer via RPL_LIST
 */
-void	Server::cmd_DisplayChannel(User const& user) const
+void	Server::cmd_List(User& user, std::string const& rest)
 {
-	std::cout << "[Display Channels]" << std::endl;
-	std::string	list_channel;
-	for (size_t i(0); i < this->_channel.size(); i++)
+	std::cout << YELLOW << "--- LIST ---" << END << std::endl;
+	std::string	str;
+	// std::cout << RED << "|" << rest.size() << "|" << END << std::endl;
+	if (rest.size() == 2) // Display tout les Canaux du serveur
 	{
-		list_channel.append(this->_channel[i].getName());
-		list_channel.push_back('\n');
+		std::cout << GREEN << "[Display All Channels]" << END << std::endl;
+		for (size_t i(0); i < this->_channel.size(); i++)
+		{
+			str = RPL_LIST(user, this->_channel[i], this->_channel[i]->getTopic());	
+			std::cerr << RED << str << END << std::endl;
+			send(user.getFd(), str.c_str(), str.size(), MSG_NOSIGNAL);
+		}
+		
+		return ;
 	}
-	user.sendMessage(list_channel);
+	else // Display uniquement les Canaux demandés et existant
+	{
+		std::cout << GREEN << "[Display Asked Channels]" << END << std::endl;
+		std::vector<std::string>	list_channels =	parse_cnl_name(rest);
+		
+		for (size_t i(0); i < list_channels.size(); i++)
+		{
+			Chan_iter	tmp = this->get_Channel(list_channels[i]);
+			if (tmp != this->_channel.end())
+			{
+				str = RPL_LIST(user, (*tmp), (*tmp)->getTopic());	
+				send(user.getFd(), str.c_str(), str.size(), MSG_NOSIGNAL);
+			}
+		}
+	}
+	str = RPL_LISTEND(user);	
+	send(user.getFd(), str.c_str(), str.size(), MSG_NOSIGNAL);
 }
 
 /*
@@ -430,25 +469,17 @@ void	Server::cmd_DisplayChannel(User const& user) const
 void	Server::cmd_Whois(User const& user, std::string const& target) const
 {
 	std::cout << "target: " << target << std::endl;
+	(void)user;
 	for (size_t i(0); i < this->_client_socket_v.size(); i++)
 	{
 		if (!target.compare(this->_client_socket_v[i].getNickname()))
 		{			
-			std::string	list = this->_client_socket_v[i].getListCnl();
-			user.sendMessage(list);
+			// std::string	list = this->_client_socket_v[i].getListCnl();
+			// user.sendMessage(list);
 			return ;
 		}
 	}
 	// throw std::string("Unknown User");
-}
-
-void	Server::cmd_Part(User& user, std::string const& rest)
-{
-	std::vector<std::string> cnl = parse_cnl_name(rest);
-	
-	for (size_t	i(0); i < cnl.size(); i++)
-		for (size_t i(0); i < this->_channel.size(); i++)
-			user.setRmCnlMembership(this->_channel[i]);
 }
 
 /*
@@ -501,7 +532,7 @@ Chan_iter Server::get_Channel(std::string const& channel)
 
 	while (it != ite)
 	{
-		if (!channel.compare(it->getName()))
+		if (!channel.compare((*it)->getName()))
 			return (it);
 		it++;
 	}
@@ -531,18 +562,15 @@ void	Server::setPassword(const std::string & password)
 	this->_password = password;
 }
 
-void	Server::setRmChannel(Channel& cnl)
+void	Server::setRmChannel(Channel* cnl)
 {
-	std::vector<Channel>::iterator it = this->_channel.begin();
-	while (it != this->_channel.end())
-	{
-		if (!cnl.getName().compare(it->getName()))
-			this->_channel.erase(it);
-		it++;
-	}
+	Chan_iter	it = this->get_Channel(cnl->getName());
+
+	delete cnl;	
+	this->_channel.erase(it);	
 }
 
-void	Server::setNewChannel(Channel& cnl)
+void	Server::setNewChannel(Channel* cnl)
 {
 	this->_channel.push_back(cnl);
 }

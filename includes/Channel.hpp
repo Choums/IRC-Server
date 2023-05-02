@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/19 08:28:18 by root              #+#    #+#             */
-/*   Updated: 2023/04/29 17:27:11 by marvin           ###   ########.fr       */
+/*   Updated: 2023/05/02 19:22:15 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ class User;
 
 class	Channel {
 	public:
-		Channel();
+		Channel(User& user, std::string const& name);
 		virtual ~Channel();
 
 		void	Privmsg();
@@ -29,11 +29,12 @@ class	Channel {
 		void	InvUser(User& user, User& new_user);
 		void	AddOpe(User& user);
 		void	RmOpe(User& user);
+		void	PartUser(User& user, std::string const& reason);
 		void	BanUser();
 		void	UnBanUser();
 		void	KickUser();
-		void	RmUser(int user_fd);
-		void	RmUser(std::string name);
+		// void	RmUser(int user_fd);
+		// void	RmUser(std::string name);
 		bool	Is_Ban(User& user);
 		bool	Is_Ope(User& user);
 		bool	Is_Inv(User& user);
@@ -43,6 +44,8 @@ class	Channel {
 		std::string			getName() const;
 		std::string			getTopic() const;
 		std::vector<User*>	getUsers();
+		size_t				getNumUsers() const;
+		std::string			getSNumUsers() const;
 		User*				getUser(std::string const& user);
 		bool				getUserPrivilege(int user_fd) const;
 

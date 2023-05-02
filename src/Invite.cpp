@@ -48,18 +48,18 @@ void	Server::cmd_Invite(User& user, std::string const& rest)
 		Chan_iter it = this->get_Channel(chan);
 		if (it != this->_channel.end()) // Check Channel exists, NOSUCHCHANNEL 
 		{
-			if (it->Is_Present(user.getNickname())) // Check User is on Channel, NOTONCHANNEL
+			if ((*it)->Is_Present(user.getNickname())) // Check User is on Channel, NOTONCHANNEL
 			{
-				if (it->Is_Ope(user)) // Check User has priv, CHANOPRIVSNEEDED
+				if ((*it)->Is_Ope(user)) // Check User has priv, CHANOPRIVSNEEDED
 				{
 					if (this->is_Present(target)) // Check target exists, NOSUCHNICK
 					{
-						if (it->Is_Ban(*(this->get_User(target))))
+						if ((*it)->Is_Ban(*(this->get_User(target))))
 						{
-							if (!it->Is_Present(target)) // Check target not already in Channel, USERONCHANNEL
+							if (!(*it)->Is_Present(target)) // Check target not already in Channel, USERONCHANNEL
 							{
 								std::cout << GREEN << "All condition are passed, adding " << target << " to " << chan << END << std::endl;
-								it->InvUser(user, *(this->get_User(target))); // Invitation complete !
+								(*it)->InvUser(user, *(this->get_User(target))); // Invitation complete !
 							}
 							else
 							{

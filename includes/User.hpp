@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/12 18:44:15 by aptive            #+#    #+#             */
-/*   Updated: 2023/04/27 11:29:03 by marvin           ###   ########.fr       */
+/*   Updated: 2023/05/02 20:01:19 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,21 +30,20 @@ class User
 		// void	handleCommand(const std::string& cmd, const std::string& rest);
 		void	sendMessage(const std::string& message) const;
 		void	clearBuf( void );
-		void	LeaveCnls();
 		bool	is_set();
 		
 		// ** --------------------------------- ACCESSOR ---------------------------------
 		
-		bool			getSet() const;
-		int				getFd(void) const;
-		int				getId(void) const;
-		std::string		getUsername() const;
-		std::string		getHostname() const;
-		std::string		getNickname(void) const;
-		std::string		getBuf(void) const;
-		bool			getAdmin(void) const;
-		bool			getAuth_password(void) const;
-		std::string		getListCnl() const;
+		bool					getSet() const;
+		int						getFd(void) const;
+		int						getId(void) const;
+		std::string				getUsername() const;
+		std::string				getHostname() const;
+		std::string				getNickname(void) const;
+		std::string				getBuf(void) const;
+		bool					getAdmin(void) const;
+		bool					getAuth_password(void) const;
+		std::vector<Channel*>	getListCnl();
 
 		// ** --------------------------------- SETTER ---------------------------------
 		
@@ -55,20 +54,20 @@ class User
 		void	setBuf(const std::string& buf);
 		void	setAdmin(const bool & admin);
 		void	setAuth_passwordOK( void );
-		void	setRmCnlMembership(Channel& cnl);
-		void	setAddListCnlMember(Channel& cnl);
+		void	setRmCnlMembership(Channel* cnl);
+		void	setAddListCnlMember(Channel* cnl);
 
 	private:
 		bool					_set;
 		int						_fd;
 		int						_id;
-		std::string				_username; // Lu'ser sera set une fois que user, nick soit set
+		std::string				_username; // L'user sera set une fois que les cmd User, Nick soient appelées
 		std::string				_nickname;
 		std::string				_hostname;
 		std::string				_buf;
 		bool					_admin;
 		bool					_auth_password;
-		std::vector<Channel>	_list_cnl;
+		std::vector<Channel*>	_list_cnl;
 };
 
 std::ostream &			operator<<( std::ostream & o, User const & i );

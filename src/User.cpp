@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/12 18:50:55 by aptive            #+#    #+#             */
-/*   Updated: 2023/04/27 17:32:29 by marvin           ###   ########.fr       */
+/*   Updated: 2023/05/02 20:01:28 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,6 +69,7 @@ std::ostream &			operator<<( std::ostream & o, User const & i )
 {
 	o << "User		:	" << i.getId() << std::endl;
 	o << "fd		:	" << i.getFd() << std::endl;
+	o << "Username	:	" << i.getUsername() << std::endl;
 	o << "Nickname	:	" << i.getNickname() << std::endl;
 	if (i.getAdmin() == true)
 		o << "Operator	:	" << "admin" << std::endl;
@@ -141,15 +142,16 @@ void	User::clearBuf( void )
  *	Quitte tout les Canals dont l'user fait parti
  *	Parcours la liste des Canals, pour chaque Canal -> RmCnlMembership
 */
-void	User::LeaveCnls()
-{
-	std::cout << "list part of cnl " << this->getListCnl() << std::endl;
-	for (std::vector<Channel>::iterator it = this->_list_cnl.begin(); it != this->_list_cnl.end(); it++)
-	{
-		it->RmUser(this->_nickname);
-		this->_list_cnl.erase(it);
-	}
-}
+// void	User::LeaveCnls()
+// {
+// 	std::cout << "list part of cnl " << this->getListCnl() << std::endl;
+// 	for (std::vector<Channel*>::iterator it = this->_list_cnl.begin(); it != this->_list_cnl.end(); it++)
+// 	{
+		
+// 		(*it)->RmUser(this->_nickname);
+// 		this->_list_cnl.erase(it);
+// 	}
+// }
 
 bool	User::is_set()
 {
@@ -208,19 +210,10 @@ bool		User::getAuth_password(void) const
 	return this->_auth_password;
 }
 
-// Renvoie une string avec tout les channels dont est present l'user
-std::string	User::getListCnl() const
+// Renvoie tout les channels dont est present l'user
+std::vector<Channel *>	User::getListCnl()
 {
-	std::string list_channel;
-	std::cout << "list: [ ";
-	for (size_t i(0); i < this->_list_cnl.size(); i++)
-	{
-		std::cout << this->_list_cnl[i].getName() << " ";
-		list_channel.append(this->_list_cnl[i].getName());
-		list_channel.push_back('\n');
-	}
-	std::cout << "]" << std::endl;
-	return (list_channel);
+	return (this->_list_cnl);
 }
 
 /*
@@ -265,19 +258,17 @@ void	User::setAuth_passwordOK( void )
 }
 
 // Ajoute le nouveau channel a la liste des channels dont l'user fait partie
-void	User::setAddListCnlMember(Channel& cnl)
+void	User::setAddListCnlMember(Channel* cnl)
 {
 	this->_list_cnl.push_back(cnl);
 }
 
 // Retire le channel de la liste des channels dont l'user fait partie
-// L'user est par la meme occassion retirer au sein du channel
-void	User::setRmCnlMembership(Channel& cnl)
+void	User::setRmCnlMembership(Channel* cnl)
 {
-	cnl.RmUser(this->getNickname());
-	for (std::vector<Channel>::iterator it = this->_list_cnl.begin(); it != this->_list_cnl.end(); it++)
+	for (std::vector<Channel*>::iterator it = this->_list_cnl.begin(); it != this->_list_cnl.end(); it++)
 	{
-		if (*it == cnl)
+		if ((*it) == cnl)
 		{
 			this->_list_cnl.erase(it);
 			return ;
