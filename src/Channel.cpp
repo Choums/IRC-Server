@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/19 08:47:29 by root              #+#    #+#             */
-/*   Updated: 2023/05/02 19:44:54 by marvin           ###   ########.fr       */
+/*   Updated: 2023/05/03 17:02:15 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,8 +30,19 @@ Channel::~Channel()
 	this->_invited.clear();
 }
 
-void	Channel::Privmsg()
-{}
+void	Channel::Privmsg(User& user, std::string const& msg)
+{
+	std::map<int, User*>::iterator	it = this->_users.begin();
+	std::map<int, User*>::iterator	ite = this->_users.end();
+
+	std::string	privmsg = ":" + user.getUsername() + " PRIVMSG " + this->_name + msg + "\r\n";
+	
+	while (it != ite)
+	{
+		send(it->first, privmsg.c_str(), privmsg.size(), MSG_NOSIGNAL);
+		it++;
+	}
+}
 
 // Send le msg a tout les users du Canal
 void	Channel::Broadcast(std::string const& msg)
@@ -67,10 +78,6 @@ void	Channel::Broadcast_topic()
 // Add un user au channel avec ses privileges (ope ou standard)
 void	Channel::AddUser(User& new_user, bool priv) // check user existant
 {
-	// if (this->_users.find(new_user.getFd()) != this->_users.end())
-	// 	return ;
-		// throw UserAlreadyExists();
-	
 	if (!this->_topic.empty())
 	{
 		std::string	str = RPL_TOPIC(new_user, this->getName(), this->_topic);
@@ -78,8 +85,8 @@ void	Channel::AddUser(User& new_user, bool priv) // check user existant
 	}
 	this->_users.insert(std::pair<int, User *>(new_user.getFd(), &new_user));
 	this->_privilege.insert(std::pair<int, bool>(new_user.getFd(), priv));
-
 	std::string msg = ":" + new_user.getUsername() + " JOIN " + this->_name + "\r\n";
+
 	std::cout << GREEN << "< " << this->_name << " >: " << msg << END << std::endl;
 	this->Broadcast(msg);
 }
@@ -113,6 +120,8 @@ void	Channel::PartUser(User& user, std::string const& reason)
 
 	this->_privilege.erase(this->_privilege.find(user.getFd())); // Supp de la list des priv
 	
+	std::cout << YELLOW << "PART " << user.getNickname() << " has been deleted from " << this->_name << END << std::endl;
+
 	std::string	cast = ":" + user.getUsername() + " PART " + this->_name + " :" + reason + "\r\n";
 	this->Broadcast(cast); // Display a tout les users que l'user est parti
 
@@ -183,6 +192,10 @@ bool	Channel::Is_Inv(User& user)
 
 bool	Channel::Is_Present(std::string const& user)
 {
+	if (this->getUser(user) == NULL)
+		std::cout << RED << "-User is not  present-" << END << std::endl;
+	else
+		std::cout << GREEN << "-User is present-" << END << std::endl;
 	return (this->getUser(user) ? true : false);
 }
 
@@ -202,7 +215,7 @@ std::vector<User *>	Channel::getUsers()
 	for (std::map<int, User *>::iterator it = this->_users.begin(); it != this->_users.end(); it++)
 	{
 		list_user.push_back(it->second);
-		std::cout << it->second->getNickname() << std::endl;
+		std::cout << it->second->getUsername() << std::endl;
 	}
 	return (list_user);	
 }
@@ -223,14 +236,16 @@ std::string	Channel::getSNumUsers() const
 User*	Channel::getUser(std::string const& user)
 {
 	for (std::map<int, User*>::iterator	it = this->_users.begin(); it != this->_users.end(); it++)
-		if (!user.compare(it->second->getNickname()))
-			return(it->second);
+	{
+		User *tmp = it->second;	
+		if (!user.compare(tmp->getNickname()))
+			return(tmp);
+	}
 	return (NULL);
 }
 
 bool	Channel::getUserPrivilege(int user_fd) const
 {	return ((this->_privilege.find(user_fd)->second)); }
-
 
 		/*	Setters */
 

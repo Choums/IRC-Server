@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/19 08:28:18 by root              #+#    #+#             */
-/*   Updated: 2023/05/02 19:22:15 by marvin           ###   ########.fr       */
+/*   Updated: 2023/05/03 07:42:02 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ class	Channel {
 		Channel(User& user, std::string const& name);
 		virtual ~Channel();
 
-		void	Privmsg();
+		void	Privmsg(User& user, std::string const& msg);
 		void	Broadcast(std::string const& msg);
 		void	Broadcast_topic();
 

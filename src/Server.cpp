@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/14 17:37:42 by aptive            #+#    #+#             */
-/*   Updated: 2023/05/02 20:16:25 by marvin           ###   ########.fr       */
+/*   Updated: 2023/05/03 16:35:30 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -248,7 +248,7 @@ void Server::gestion_activite_client(fd_set * read_sockets, fd_set * temp)
 			}
 			else
 			{
-				std::cout << "HEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE" << std::endl;
+				// std::cout << "HEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE" << std::endl;
 				_client_socket_v[i].setBuf(buf);
 				this->parsing_cmd( &_client_socket_v[i]);
 			}
@@ -436,9 +436,7 @@ void	Server::cmd_List(User& user, std::string const& rest)
 			str = RPL_LIST(user, this->_channel[i], this->_channel[i]->getTopic());	
 			std::cerr << RED << str << END << std::endl;
 			send(user.getFd(), str.c_str(), str.size(), MSG_NOSIGNAL);
-		}
-		
-		return ;
+		}	
 	}
 	else // Display uniquement les Canaux demandés et existant
 	{
@@ -530,10 +528,15 @@ Chan_iter Server::get_Channel(std::string const& channel)
 	Chan_iter it = this->_channel.begin();
 	Chan_iter ite = this->_channel.end();
 
+	std::cout << RED << "-Looking for channel-" << END << std::endl;
 	while (it != ite)
 	{
-		if (!channel.compare((*it)->getName()))
+		Channel *tmp = *it;
+		if (!channel.compare(tmp->getName()))
+		{
+			// std::cout <<GREEN << "found => " << tmp->getName() << END << std::endl;
 			return (it);
+		}
 		it++;
 	}
 	return (ite);

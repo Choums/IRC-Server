@@ -47,7 +47,7 @@
 */
 void	Server::cmd_JoinChannel(std::string const& rest, User& user)
 {
-	std::cout << RED << "rest: |" << rest << "|, " << rest.size() << END << std::endl;
+	// std::cout << RED << "rest: |" << rest << "|, " << rest.size() << END << std::endl;
 	std::string	str;
 	if (rest.size() == 2 && rest[0] == '0')
 	{
@@ -64,6 +64,7 @@ void	Server::cmd_JoinChannel(std::string const& rest, User& user)
 		this->cmd_Part(user, format);
 		return ;
 	}
+
 	std::vector<std::string> cnl = parse_cnl_name(rest);
 
 	if (cnl.empty())
@@ -77,7 +78,6 @@ void	Server::cmd_JoinChannel(std::string const& rest, User& user)
 	{
 		if (channel_exist(cnl[i])) // Verif que le channel existe dans le serveur
 		{
-			// std::cout << "there\n" ;
 			Chan_iter	it = this->get_Channel(cnl[i]);
 			if ((*it)->Is_Ban(user))
 			{
@@ -94,7 +94,8 @@ void	Server::cmd_JoinChannel(std::string const& rest, User& user)
 		}
 		else // Le channel est cree
 		{
-			Channel *chan = new Channel(user, rest);
+			std::cout << RED << "==>>>> |" << cnl[i] << "| <<<<==" << END << std::endl;
+			Channel *chan = new Channel(user, cnl[i]);
 			this->setNewChannel(chan);
 			user.setAddListCnlMember(chan);
 		}

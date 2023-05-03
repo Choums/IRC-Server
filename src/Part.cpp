@@ -28,27 +28,37 @@ void	Server::cmd_Part(User& user, std::string const& rest)
 	std::vector<std::string> cnl = parse_cnl_name(chans);
 	
 	std::string	str;
-	if (cnl.empty())
+	if (cnl.size() == 0)
 	{
+		std::cout << RED << "PART -No params given-" << END << std::endl;
 		str = ERR_NEEDMOREPARAMS(user, "PART");
 		send(user.getFd(), str.c_str(), str.size(), MSG_NOSIGNAL);
 		return ;
 	}
 	std::cout << RED << reason.size() << "|" << reason << "|" << END << std::endl;
-	if (reason.empty())
+	if (reason.size() == 1)
+	{
+		std::cout << "reason empty, default used\n";
 		reason = "Bye Bye\n"; // Reason par defaut si l'user n'en fournit pas
+	}
 
 	for (size_t	i(0); i < cnl.size(); i++)
 	{
+		std::cout << RED << "Channel: <" << cnl[i] << ">" << END << std::endl; 
+		
 		Chan_iter	it = this->get_Channel(cnl[i]);
+
 		if (it != this->_channel.end())
 		{
-			if ((*it)->Is_Present(user.getUsername()))
+			Channel *tmp = *it;
+			std::cout << GREEN << "Found Channel: <" << tmp->getName() << ">" << END << std::endl; 
+			if (tmp->Is_Present(user.getNickname()))
 			{
-				(*it)->PartUser(user, reason);
-				user.setRmCnlMembership(*it);
-				if ((*it)->getNumUsers() == 0) // Si l'user etait le dernier du Canal, le Canal est fermé
-					this->setRmChannel(*it);
+				
+				tmp->PartUser(user, reason);
+				user.setRmCnlMembership(tmp);
+				if (tmp->getNumUsers() == 0) // Si l'user etait le dernier du Canal, le Canal est fermé
+					this->setRmChannel(tmp);
 			}
 			else
 			{

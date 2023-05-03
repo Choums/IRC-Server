@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/14 17:32:55 by aptive            #+#    #+#             */
-/*   Updated: 2023/05/02 17:21:13 by marvin           ###   ########.fr       */
+/*   Updated: 2023/05/03 16:22:22 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,6 +98,6 @@ class Server
 
 std::ostream &			operator<<( std::ostream & o, Server const & i );
 
-std::vector<std::string>	parse_cnl_name(std::string const& rest);
+std::vector<std::string>	parse_cnl_name(std::string const& line);
 
 #endif
