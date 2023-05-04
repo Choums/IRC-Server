@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/19 08:47:29 by root              #+#    #+#             */
-/*   Updated: 2023/05/03 17:02:15 by marvin           ###   ########.fr       */
+/*   Updated: 2023/05/04 19:46:36 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@ Channel::Channel(User& user, std::string const& name)
 
 	this->setName(name);
 	this->AddUser(user, true);
+	this->_InvOnly = false;
 }
 
 Channel::~Channel()
@@ -39,6 +40,7 @@ void	Channel::Privmsg(User& user, std::string const& msg)
 	
 	while (it != ite)
 	{
+		// str = PRIVMSGCHAN();
 		send(it->first, privmsg.c_str(), privmsg.size(), MSG_NOSIGNAL);
 		it++;
 	}
@@ -85,7 +87,7 @@ void	Channel::AddUser(User& new_user, bool priv) // check user existant
 	}
 	this->_users.insert(std::pair<int, User *>(new_user.getFd(), &new_user));
 	this->_privilege.insert(std::pair<int, bool>(new_user.getFd(), priv));
-	std::string msg = ":" + new_user.getUsername() + " JOIN " + this->_name + "\r\n";
+	std::string msg = ":" + new_user.getNickname() + "!user@host JOIN " + this->_name + "\r\n";
 
 	std::cout << GREEN << "< " << this->_name << " >: " << msg << END << std::endl;
 	this->Broadcast(msg);
@@ -111,6 +113,11 @@ void	Channel::InvUser(User& user, User& new_user)
 	send(new_user.getFd(), str.c_str(), str.size(), MSG_NOSIGNAL);
 }
 
+// void	Channel::AddOpe(User& user, User& new_oper)
+// {
+	
+// }
+
 //Commande part
 // :<user> PART <channel> :<reason>
 // :John!~user@host PART #channel :Je reviendrai plus tard
@@ -119,13 +126,13 @@ void	Channel::PartUser(User& user, std::string const& reason)
 	this->_users.erase(this->_users.find(user.getFd())); // Supp de la list des users
 
 	this->_privilege.erase(this->_privilege.find(user.getFd())); // Supp de la list des priv
-	
-	std::cout << YELLOW << "PART " << user.getNickname() << " has been deleted from " << this->_name << END << std::endl;
-
-	std::string	cast = ":" + user.getUsername() + " PART " + this->_name + " :" + reason + "\r\n";
+		
+	std::cout << YELLOW << "PART " << user.getUsername() << " has been deleted from " << this->_name << END << std::endl;
+	this->getUsers();
+	std::string	cast = ":" + user.getUsername() + "!user@localhost PART " + this->_name + " :" + reason + "\r\n";
 	this->Broadcast(cast); // Display a tout les users que l'user est parti
 
-	std::string	str = ":" + user.getUsername() + " PART " + this->_name + "\r\n";
+	std::string	str = ":" + user.getUsername() + "!user@localhost PART " + this->_name + "\r\n";
 	send(user.getFd(), str.c_str(), str.size(), MSG_NOSIGNAL); // Confirmation a l'user que la commande est reussi
 }
 

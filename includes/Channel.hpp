@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/19 08:28:18 by root              #+#    #+#             */
-/*   Updated: 2023/05/03 07:42:02 by marvin           ###   ########.fr       */
+/*   Updated: 2023/05/04 19:45:29 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,9 @@ class	Channel {
 		void	BanUser();
 		void	UnBanUser();
 		void	KickUser();
+
+		// void	Change_mode();
+
 		// void	RmUser(int user_fd);
 		// void	RmUser(std::string name);
 		bool	Is_Ban(User& user);
@@ -61,6 +64,7 @@ class	Channel {
 		std::map<int, bool>		_privilege;	//	Definis les privileges des differents users: Operateur ou standard
 		std::map<int, bool>		_ban;		//	Liste des Users bannis du Canal
 		std::map<int, bool>		_invited;	//	Liste des Users invites du Canal
+		bool					_InvOnly;
 		// Channel(Channel const& cpy);
 		// Channel&	operator=(Channel const& obj);
 

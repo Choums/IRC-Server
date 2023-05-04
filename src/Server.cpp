@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/14 17:37:42 by aptive            #+#    #+#             */
-/*   Updated: 2023/05/03 16:35:30 by marvin           ###   ########.fr       */
+/*   Updated: 2023/05/04 19:25:54 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -338,6 +338,7 @@ static Command option(const std::string& cmd)
 	if (!cmd.compare("PING")) return (Ping);
 	if (!cmd.compare("USER")) return (User_cmd);
 	if (!cmd.compare("INVITE")) return (Invite);
+	if (!cmd.compare("MODE")) return (Mode);
 	return (Unknown);
 }
 
@@ -382,7 +383,15 @@ void	Server::handleCommandServer(std::string const& cmd, std::string const& rest
 		case Invite:
 			this->cmd_Invite(user, rest);
 			break;
+		case Mode:
+			this->cmd_Mode(user, rest);
+			break;
 	}
+}
+
+bool	Server::is_Ope(User& user)
+{
+	return (user.getOper() ? true : false);
 }
 
 bool	Server::channel_exist(std::string const& cnl_name)
@@ -567,10 +576,21 @@ void	Server::setPassword(const std::string & password)
 
 void	Server::setRmChannel(Channel* cnl)
 {
-	Chan_iter	it = this->get_Channel(cnl->getName());
+	Chan_iter	it = this->_channel.begin();
 
-	delete cnl;	
-	this->_channel.erase(it);	
+	std::cout << RED << "-Fermeture channel " << cnl->getName() << "-" << END << std::endl;
+
+	while (it != this->_channel.end())
+	{
+		if (*it == cnl)
+		{
+			this->_channel.erase(it);
+			delete cnl;	
+			std::cout << GREEN << "-Fermeture successful-" << END << std::endl;
+			return ;
+		}
+		it++;
+	}
 }
 
 void	Server::setNewChannel(Channel* cnl)

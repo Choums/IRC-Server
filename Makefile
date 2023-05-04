@@ -6,7 +6,7 @@
 #    By: marvin <marvin@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/12/05 17:28:02 by aptive            #+#    #+#              #
-#    Updated: 2023/05/02 20:16:57 by marvin           ###   ########.fr        #
+#    Updated: 2023/05/04 18:57:47 by marvin           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -35,7 +35,8 @@ SRC		=	main.cpp\
 			Ping.cpp\
 			Join.cpp\
 			Invite.cpp\
-			Part.cpp
+			Part.cpp\
+			Mode.cpp
 
 
 # nommage automatique des fichiers objets d'apres les noms des sources C

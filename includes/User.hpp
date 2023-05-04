@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/12 18:44:15 by aptive            #+#    #+#             */
-/*   Updated: 2023/05/02 20:01:19 by marvin           ###   ########.fr       */
+/*   Updated: 2023/05/04 20:02:26 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,13 +41,14 @@ class User
 		std::string				getHostname() const;
 		std::string				getNickname(void) const;
 		std::string				getBuf(void) const;
-		bool					getAdmin(void) const;
+		bool					getOper(void) const;
 		bool					getAuth_password(void) const;
 		std::vector<Channel*>	getListCnl();
 
 		// ** --------------------------------- SETTER ---------------------------------
 		
 		void	setSetUser();
+		void	setUserMode(std::string const& mode);
 		void	setUsername(std::string const& name);
 		void	setHostname(std::string const& host);
 		void	setNickname(const std::string& rest);
@@ -65,7 +66,7 @@ class User
 		std::string				_nickname;
 		std::string				_hostname;
 		std::string				_buf;
-		bool					_admin;
+		bool					_oper;
 		bool					_auth_password;
 		std::vector<Channel*>	_list_cnl;
 };

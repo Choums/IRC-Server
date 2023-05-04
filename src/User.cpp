@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/12 18:50:55 by aptive            #+#    #+#             */
-/*   Updated: 2023/05/02 20:01:28 by marvin           ###   ########.fr       */
+/*   Updated: 2023/05/04 21:21:38 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,9 +38,9 @@ User::User(int fd) : _set(false), _fd(fd), _username("X"), _nickname("X"), _host
 	// ss << "Default_Nickname_" << id;
 	// this->_nickname = ss.str();
 
-	// init _admin
+	// init _oper
 
-	this->_admin = false;
+	this->_oper = false;
 	this->_auth_password = false;
 }
 
@@ -194,14 +194,14 @@ std::string	User::getHostname() const
 	return (this->_hostname);
 }
 
-std::string		User::getBuf(void) const
+std::string	User::getBuf(void) const
 {
 	return this->_buf;
 }
 
-bool		User::getAdmin(void) const
+bool		User::getOper(void) const
 {
-	return this->_admin;
+	return this->_oper;
 }
 
 bool		User::getAuth_password(void) const
@@ -223,6 +223,34 @@ std::vector<Channel *>	User::getListCnl()
 void	User::setSetUser()
 {
 	this->_set = true;
+}
+
+//	mode suit le schema ci-dessous
+//	*( ( "+" / "-" ) *( "i" / "w" / "o" / "r" ) )
+//	o => operator
+void	User::setUserMode(std::string const& mode)
+{
+	std::string	str;
+	bool		sign;
+	
+	size_t		i(0);
+	while (i < mode.size())
+	{
+		if (mode[i] == '+')
+			sign = true;
+		else if (mode[i] == '-')
+			sign = false;
+		else if (mode[i] == 'o' && sign)
+			this->_oper = true;
+		else if (mode[i] == 'o' && !sign)
+			this->_oper = false;
+		else
+		{
+			// str = ERR_NOTIMPLEMENTED()
+		}
+		
+		i++;
+	}
 }
 
 void	User::setUsername(std::string const& name)
@@ -248,7 +276,7 @@ void	User::setHostname(std::string const& host)
 
 void	User::setAdmin(const bool & admin)
 {
-	this->_admin = admin;
+	this->_oper = admin;
 }
 
 

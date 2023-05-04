@@ -57,6 +57,7 @@ void	Server::cmd_Part(User& user, std::string const& rest)
 				
 				tmp->PartUser(user, reason);
 				user.setRmCnlMembership(tmp);
+				std::cout << RED << "nbr users: " << tmp->getNumUsers() << END << std::endl;
 				if (tmp->getNumUsers() == 0) // Si l'user etait le dernier du Canal, le Canal est fermé
 					this->setRmChannel(tmp);
 			}
