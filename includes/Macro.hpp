@@ -6,17 +6,17 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/21 17:04:51 by root              #+#    #+#             */
-/*   Updated: 2023/05/04 21:40:38 by marvin           ###   ########.fr       */
+/*   Updated: 2023/05/05 17:42:16 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
 // HAND SHAKE
-#define RPL_WELCOME(user) (":" + user.getHostname() + " 001 " + " Welcome to the Internet Relay Network " + user.getUsername() + "\n")
-#define RPL_YOURHOST(user) (":" + user.getHostname() + " 002 " + " Your host is " + Server::running_serv->getHostname() + ", running version 4.2\n")
-#define RPL_CREATED(user) (":" + user.getHostname() + " 003 " + " This server was created " + "2023" + "\n")
-#define RPL_MYINFO(user) (":" + user.getHostname() + " 004 " + Server::running_serv->getHostname() + " v4.2 o iob\n")
+#define RPL_WELCOME(user) (":" + user.getHostname() + " 001 " + user.getNickname() + " Welcome to the Internet Relay Network " + user.getUsername() + "\n")
+#define RPL_YOURHOST(user) (":" + user.getHostname() + " 002 " + user.getNickname() + " Your host is " + Server::running_serv->getHostname() + ", running version 4.2\n")
+#define RPL_CREATED(user) (":" + user.getHostname() + " 003 " + user.getNickname() + " This server was created " + "2023" + "\n")
+#define RPL_MYINFO(user) (":" + user.getHostname() + " 004 " + user.getNickname() + Server::running_serv->getHostname() + " v4.2 oi iob\n")
 
 // PING
 #define PONG(user) (":" + user.getHostname() + " PONG :" + user.getNickname() + "\r\n")
@@ -39,11 +39,14 @@
 //MODE
 #define ERR_CHANOPRIVSNEEDED(user, channel) (":" + user.getUsername() + " 482 " + user.getNickname() + " " + (channel) + " :You're not channel operator\r\n")
 #define ERR_USERSDONTMATCH(user) (":" + user.getUsername() + " 502 " + user.getNickname() + " :Cannot change mode for other users\r\n")
-// :server_name 221 nick_name +iowBx (modes utilisateur)\
-// « nick@user!hostname MODE target [mode] »
+// :server_name 221 nick_name +iowBx (modes utilisateur)
 #define RPL_UMODEIS(server, user, mode) (":" + (server) + " 221 " + user.getNickname() + (mode) + "\r\n")
-// :server_name 381 nick_name You are now an IRC operator (message d'opérateur)
-// #define RPL_ISOPER(server, user) (":" + (server) + " 381 " + user.getNickname() + " :You are now an IRC operator\r\n")
+// « nick@user!hostname MODE target [mode] »
+#define USERMODE(user, mode) (":" + user.getNickname() + " MODE " + user.getNickname() + " :" + (mode) + "\r\n")
+// Broadcast to chan member
+#define CHANMODE(channel, mode) (":localhost MODE " + '#' + (channel) + " " + mode + "\r\n")
+#define RPL_CHANNELMODEIS(user, channel, mode) (":localhost 324 " + user.getNickname() + " #" + (channel) + " " + (mode) + "\r\n")
+
 
 // UNKNOWN
 #define ERR_NOTIMPLEMENTED(word) (":" + user.getHostname() + " 449 : " + word + " command not implemented\n")

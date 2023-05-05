@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/19 08:28:18 by root              #+#    #+#             */
-/*   Updated: 2023/05/04 19:45:29 by marvin           ###   ########.fr       */
+/*   Updated: 2023/05/05 17:25:42 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,17 +42,21 @@ class	Channel {
 		bool	Is_Ope(User& user);
 		bool	Is_Inv(User& user);
 		bool	Is_Present(std::string const& user);
+		bool	Is_InvOnly() const;
 
 				/*	Accesseurs */
+		std::vector<User*>	getUsers();
 		std::string			getName() const;
 		std::string			getTopic() const;
-		std::vector<User*>	getUsers();
+		std::string			getModes() const;
 		size_t				getNumUsers() const;
 		std::string			getSNumUsers() const;
 		User*				getUser(std::string const& user);
 		bool				getUserPrivilege(int user_fd) const;
 
 		void				setName(std::string name);
+		void				setChanModes(std::string const& mode);
+		void				setUserModes(User& user, std::string const& mode);
 		void				setTopic(std::string topic);
 		void				setUserPrivilege(int user_fd, bool priv);
 		
@@ -61,9 +65,9 @@ class	Channel {
 		std::string				_name;		//	nom du canal
 		std::string				_topic;		//	Definis le topic du Canal
 		std::map<int, User *>	_users;		//	liste tout les users presents sur le canal ainsi que leur fd
-		std::map<int, bool>		_privilege;	//	Definis les privileges des differents users: Operateur ou standard
-		std::map<int, bool>		_ban;		//	Liste des Users bannis du Canal
-		std::map<int, bool>		_invited;	//	Liste des Users invites du Canal
+		std::map<int, bool>		_privilege;	//	Definis les privileges des differents users: Operateur ou standard +o
+		std::map<int, bool>		_ban;		//	Liste des Users bannis du Canal +b
+		std::map<int, bool>		_invited;	//	Liste des Users invites du Canal +i
 		bool					_InvOnly;
 		// Channel(Channel const& cpy);
 		// Channel&	operator=(Channel const& obj);

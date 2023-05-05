@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/23 12:43:38 by root              #+#    #+#             */
-/*   Updated: 2023/04/27 17:31:27 by marvin           ###   ########.fr       */
+/*   Updated: 2023/05/05 15:11:32 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,10 +35,16 @@ bool	Server::is_valid(std::string const& nick)
 	return (true);
 }
 
-void Server::cmd_Nick(User& user, std::string const& nick)
+void Server::cmd_Nick(User& user, std::string const& nickname)
 {
 	std::string str;
-	if (nick.empty()) // ERR_NEEDPARAMS
+	std::stringstream	ss(nickname);
+	std::string	nick;
+	ss >> nick;
+	
+	std::cout << YELLOW << "-Nick Command-" << END << std::endl;
+	std::cout << RED << "<" << nick << ">" << END << std::endl;
+	if (nick.size() == 1) // ERR_NEEDPARAMS
 	{
 		str = ERR_NEEDMOREPARAMS(user, "NICK");
 		send(user.getFd(), str.c_str(), str.size(), MSG_NOSIGNAL);
@@ -57,6 +63,7 @@ void Server::cmd_Nick(User& user, std::string const& nick)
 	}
 	else
 	{
+		std::cout << GREEN << "Nickname has been changed to: [" << nick << "]" << END << std::endl;
 		str = NICK(user, nick);
 		send(user.getFd(), str.c_str(), str.size(), MSG_NOSIGNAL);
 		// std::cout << "||| " << str << " |||" << std::endl;

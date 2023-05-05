@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/19 08:47:29 by root              #+#    #+#             */
-/*   Updated: 2023/05/04 19:46:36 by marvin           ###   ########.fr       */
+/*   Updated: 2023/05/05 17:05:17 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -206,6 +206,10 @@ bool	Channel::Is_Present(std::string const& user)
 	return (this->getUser(user) ? true : false);
 }
 
+bool	Channel::Is_InvOnly() const
+{
+	return (this->_InvOnly ? true : false);
+}
 
 		/*	Getters */
 
@@ -214,6 +218,19 @@ std::string	Channel::getName() const
 
 std::string	Channel::getTopic() const
 {	return (this->_topic); }
+
+std::string	Channel::getModes() const
+{
+	std::string	modes;
+
+	if (this->Is_InvOnly())
+		modes.push_back('i');
+
+	modes.push_back('b');
+
+	std::cout << GREEN << "<" << this->_name << "> modes: [" << modes << "]" << END << std::endl;
+	return (modes);
+}
 
 std::vector<User *>	Channel::getUsers()
 {
@@ -258,6 +275,30 @@ bool	Channel::getUserPrivilege(int user_fd) const
 
 void	Channel::setName(std::string name)
 {	this->_name = name; }
+
+void	Channel::setModes(std::string const& mode)
+{
+	bool	sign;
+
+	size_t	i(0);
+	while (i < mode.size())
+	{
+		if (mode[i] == '+')
+			sign = true;
+		else if (mode[i] == '-')
+			sign = false;
+		else if (mode[i] == 'i' && sign)
+			this->_InvOnly = true;
+		else if (mode[i] == 'i' && !sign)
+			this->_InvOnly = false;
+		else
+		{
+			// ERR_NOTIMPLEMENTED
+		}
+		i++;
+	}
+}
+
 
 void	Channel::setTopic(std::string topic)
 {

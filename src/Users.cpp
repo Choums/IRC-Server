@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/26 17:04:55 by root              #+#    #+#             */
-/*   Updated: 2023/04/29 10:06:01 by marvin           ###   ########.fr       */
+/*   Updated: 2023/05/05 15:04:21 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,8 @@
 void	Server::cmd_User(User& user, std::string const& rest)
 {
 	std::string str;
+	
+	std::cout << YELLOW << "-User Command-" << END << std::endl;
 	if (rest.empty())
 	{
 		str = ERR_NEEDMOREPARAMS(user, "USER");
@@ -37,7 +39,10 @@ void	Server::cmd_User(User& user, std::string const& rest)
 	std::string		word;
 
 	if (iss >> word) // First word => Username
+	{
 		user.setUsername(word);
+		std::cout << "Username: <" << word << ">" << std::endl;
+	}
 	else
 	{
 		str = ERR_NEEDMOREPARAMS(user, "USER");
@@ -46,7 +51,10 @@ void	Server::cmd_User(User& user, std::string const& rest)
 	}
 	
 	if (iss >> word) // Second word => Hostname
+	{
 		user.setHostname(word);
+		std::cout << "Hostname: <" << word << ">" << std::endl;
+	}
 	else
 	{
 		str = ERR_NEEDMOREPARAMS(user, "USER");

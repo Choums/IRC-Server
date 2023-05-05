@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/14 17:32:55 by aptive            #+#    #+#             */
-/*   Updated: 2023/05/04 19:19:03 by marvin           ###   ########.fr       */
+/*   Updated: 2023/05/05 16:52:45 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ class Server
 		void	cmd_List(User& user, std::string const& rest);
 		void	cmd_Whois(User const& user, std::string const& target) const;
 		void	cmd_Part(User& user, std::string const& rest);
-		void	cmd_Nick(User& user, std::string const& nick);
+		void	cmd_Nick(User& user, std::string const& nickname);
 		bool	is_Used(std::string const& nick);
 		bool	is_valid(std::string const& nick);
 		void	cmd_Ping(User& user, std::string const& target);
@@ -64,6 +64,8 @@ class Server
 		void	cmd_Invite(User& user, std::string const& rest);
 		bool	is_Present(std::string const& user);
 		void	cmd_Mode(User& user, std::string const& rest);
+		void	Display_Modes(User& user);
+		void	Display_Chan_Modes(User& user, Channel const& channel);
 		
 		// ** --------------------------------- ACCESSOR ---------------------------------
 

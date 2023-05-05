@@ -12,6 +12,19 @@
 
 #include "../includes/Server.hpp"
 
+void	Server::Display_Modes(User& user)
+{
+	std::string	server = "localhost";
+	std::string	str = RPL_UMODEIS(server, user, user.getModes());
+	send(user.getFd(), str.c_str(), str.size(), MSG_NOSIGNAL);
+}
+
+void	Server::Display_Chan_Modes(User& user, Channel const& channel)
+{
+	std::string	str = RPL_CHANNELMODEIS(user, channel.getName(), channel.getModes());
+	send(user.getFd(), str.c_str(), str.size(), MSG_NOSIGNAL);
+}
+
 //	MODE <channel> +o <nickname>
 //	MODE <nickname> +o
 //	*( ( "+" / "-" ) *( "i" / "w" / "o" / "O" / "r" ) )
@@ -34,6 +47,9 @@
 //	----
 // A user MODE command MUST only be accepted if both the sender of the
 //    message and the nickname given as a parameter are both the same.
+//	----
+//	If no other parameter is given, then the server will return the current
+//    settings for the nick.
 void	Server::cmd_Mode(User& user, std::string const& rest)
 {
 	std::stringstream	ss(rest);
@@ -45,27 +61,68 @@ void	Server::cmd_Mode(User& user, std::string const& rest)
 	std::cout << YELLOW << "-Mode Modification-" << END << std::endl;
 	std::cout << RED << "<" << target << ">\n<" << mode << ">" << END << std::endl;
 	
-	if (target.empty() || mode.empty())
+	// std::cout << RED << mode.size() << END << std::endl;
+	if (target.size() == 1)
 	{
 		str = ERR_NEEDMOREPARAMS(user, "MODE");
 		send(user.getFd(), str.c_str(), str.size(), MSG_NOSIGNAL);
 		return ;
 	}
 
-	if (target[0] == '#') // Channel mode
+	if (mode.size() == 1 && target[0] != '#') // Display User modes
+	{
+		Display_Modes(user);
+		return ;
+	}
+
+	if (target[0] == '#') // Channel modes
 	{
 		Chan_iter	it = this->get_Channel(target);
 		if (it != this->_channel.end())
 		{
 			Channel *tmp = *it;
-			if (tmp->Is_Ope(user) || this->is_Ope(user))
+			
+			if (tmp->Is_Present(user.getNickname()) || this->is_Ope(user))
 			{
-				std::string	nick;
+				std::string	nick; // Si l'user n'est pas donné, display channel modes
 				ss >> nick;
+				
+				if (nick.size() == 1 && mode.size() == 1) {// Display Channel modes, /mode <channel>
+						Display_Chan_Modes(user, *tmp); return ;}
+				
+				if (tmp->Is_Ope(user) || this->is_Ope(user)) // Chan oper ou Serv oper, Update Channel modes ou Channel User modes
+				{
+					if (nick.size() == 1) // Update Channel modes, /mode <channel> <mode>
+					{
+						tmp->setModes(mode);
+						// Display_Chan_Modes(user, *tmp);
+						return ;
+					}
+					
+					User_iter itu = this->get_User(nick);
+					
+					if (itu != this->_client_socket_v.end()) // Update Channel User modes, /mode <channel> <mode> <nickname>
+					{
+						User *tmp_user = *itu;
+						tmp->setUserModes(tmp, mode);
+					}
+					else
+					{
+						str = ERR_NOUSERONCHANNEL(user, target, nick);
+						send(user.getFd(), str.c_str(), str.size(), MSG_NOSIGNAL);
+						return ;	
+					}
+				}
+				else
+				{
+					str = ERR_CHANOPRIVSNEEDED(user, target);
+					send(user.getFd(), str.c_str(), str.size(), MSG_NOSIGNAL);
+					return ;
+				}
 			}
 			else
 			{
-				str = ERR_CHANOPRIVSNEEDED(user, target);
+				str = ERR_NOTONCHANNEL(user, target);
 				send(user.getFd(), str.c_str(), str.size(), MSG_NOSIGNAL);
 				return ;
 			}
@@ -79,13 +136,17 @@ void	Server::cmd_Mode(User& user, std::string const& rest)
 	}
 	else // User mode
 	{
+		std::cout << "==>" << user.getNickname() << "<==" << std::endl;
 		if (target == user.getNickname())
 			user.setUserMode(mode);
 		else
 		{
+			std::cout << RED << "=! Nick Mismatch !=" << END << std::endl;
 			str = ERR_USERSDONTMATCH(user);
 			send(user.getFd(), str.c_str(), str.size(), MSG_NOSIGNAL);
 			return ;
 		}
+		str = USERMODE(user, user.getModes());
+		send(user.getFd(), str.c_str(), str.size(), MSG_NOSIGNAL);
 	}
 }

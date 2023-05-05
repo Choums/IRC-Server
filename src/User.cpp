@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/12 18:50:55 by aptive            #+#    #+#             */
-/*   Updated: 2023/05/04 21:21:38 by marvin           ###   ########.fr       */
+/*   Updated: 2023/05/05 17:00:29 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ User::User()
 
 }
 
-User::User(User const & src) : _set(src.getSet()), _fd(src.getFd()), _id(src.getId()), _username(src.getUsername()), _nickname(src.getNickname()), _hostname(src.getHostname()), _auth_password(src.getAuth_password())
+User::User(User const & src) : _set(src.getSet()), _fd(src.getFd()), _id(src.getId()), _username(src.getUsername()), _nickname(src.getNickname()), _hostname(src.getHostname()), _buf(src.getBuf()), _oper(src.getOper()), _inv(src.getInv()), _auth_password(src.getAuth_password())
 {
 }
 
@@ -41,6 +41,7 @@ User::User(int fd) : _set(false), _fd(fd), _username("X"), _nickname("X"), _host
 	// init _oper
 
 	this->_oper = false;
+	this->_inv = false;
 	this->_auth_password = false;
 }
 
@@ -71,7 +72,7 @@ std::ostream &			operator<<( std::ostream & o, User const & i )
 	o << "fd		:	" << i.getFd() << std::endl;
 	o << "Username	:	" << i.getUsername() << std::endl;
 	o << "Nickname	:	" << i.getNickname() << std::endl;
-	if (i.getAdmin() == true)
+	if (i.getOper() == true)
 		o << "Operator	:	" << "admin" << std::endl;
 	else
 		o << "Operator	:	" << "user" << std::endl;
@@ -199,9 +200,26 @@ std::string	User::getBuf(void) const
 	return this->_buf;
 }
 
-bool		User::getOper(void) const
+std::string	User::getModes() const
 {
-	return this->_oper;
+	std::string	modes;
+
+	if (this->getOper())
+		modes.push_back('o'); // Operator
+	if (this->getInv()) // Invited
+		modes.push_back('i');
+	std::cout << GREEN << this->_username << " modes: [" << modes << "]" << END << std::endl;
+	return (modes);
+}
+
+bool	User::getOper() const
+{
+	return (this->_oper);
+}
+
+bool	User::getInv() const
+{
+	return (this->_inv);
 }
 
 bool		User::getAuth_password(void) const
@@ -228,9 +246,9 @@ void	User::setSetUser()
 //	mode suit le schema ci-dessous
 //	*( ( "+" / "-" ) *( "i" / "w" / "o" / "r" ) )
 //	o => operator
+//	« nick@user!hostname MODE target [mode] »
 void	User::setUserMode(std::string const& mode)
 {
-	std::string	str;
 	bool		sign;
 	
 	size_t		i(0);
@@ -241,12 +259,26 @@ void	User::setUserMode(std::string const& mode)
 		else if (mode[i] == '-')
 			sign = false;
 		else if (mode[i] == 'o' && sign)
+		{
 			this->_oper = true;
+			// str	= ":" + this->_nickname + "@" + this->_username + "!" + this->_hostname + " MODE " + this->_nickname + "[" + mode + "]";
+		}
 		else if (mode[i] == 'o' && !sign)
+		{
 			this->_oper = false;
+			
+		}
+		else if (mode [i] == 'i' && sign)
+		{
+			this->_inv = true;
+		}
+		else if (mode [i] == 'i' && !sign)
+		{
+			this->_inv = false;
+		}
 		else
 		{
-			// str = ERR_NOTIMPLEMENTED()
+			// ERR_NOTIMPLEMENTED()
 		}
 		
 		i++;
