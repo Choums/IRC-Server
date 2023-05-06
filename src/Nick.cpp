@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/23 12:43:38 by root              #+#    #+#             */
-/*   Updated: 2023/05/05 15:11:32 by marvin           ###   ########.fr       */
+/*   Updated: 2023/05/06 13:57:54 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,8 +17,8 @@
 //	Verifie si le nickname est deja utilise par un autre user dans le server
 bool	Server::is_Used(std::string const& nick)
 {
-	for (std::vector<User>::iterator it = this->_client_socket_v.begin(); it != this->_client_socket_v.end(); it++)
-		if (it->getNickname() == nick)
+	for (User_iter it = this->_client_socket_v.begin(); it != this->_client_socket_v.end(); it++)
+		if ((*it)->getNickname() == nick)
 			return (true);
 	return (false);
 }

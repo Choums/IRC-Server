@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/19 08:47:29 by root              #+#    #+#             */
-/*   Updated: 2023/05/05 17:05:17 by marvin           ###   ########.fr       */
+/*   Updated: 2023/05/06 13:50:52 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,7 +87,7 @@ void	Channel::AddUser(User& new_user, bool priv) // check user existant
 	}
 	this->_users.insert(std::pair<int, User *>(new_user.getFd(), &new_user));
 	this->_privilege.insert(std::pair<int, bool>(new_user.getFd(), priv));
-	std::string msg = ":" + new_user.getNickname() + "!user@host JOIN " + this->_name + "\r\n";
+	std::string msg = ":" + new_user.getNickname() + "!"+ new_user.getNickname() +"@" + new_user.getHostname() + " JOIN " + this->_name + "\r\n";
 
 	std::cout << GREEN << "< " << this->_name << " >: " << msg << END << std::endl;
 	this->Broadcast(msg);
@@ -113,10 +113,19 @@ void	Channel::InvUser(User& user, User& new_user)
 	send(new_user.getFd(), str.c_str(), str.size(), MSG_NOSIGNAL);
 }
 
-// void	Channel::AddOpe(User& user, User& new_oper)
-// {
-	
-// }
+// Ajoute un nouvel operateur de Canal
+void	Channel::AddOpe(User& new_oper)
+{
+	this->setUserPrivilege(new_oper.getFd(), true);
+	std::cout << RED << "<" << this->_name << ">: " << new_oper.getNickname() << " est devenu opetareur !" << END << std::endl;
+}
+
+// Retire les droits operateurs du Canal a l'user 
+void	Channel::RmOpe(User& user)
+{
+	this->setUserPrivilege(user.getFd(), false);
+	std::cout << RED << "<" << this->_name << ">: " << user.getNickname() << " n'est plus opetareur !" << END << std::endl;
+}
 
 //Commande part
 // :<user> PART <channel> :<reason>
@@ -276,7 +285,43 @@ bool	Channel::getUserPrivilege(int user_fd) const
 void	Channel::setName(std::string name)
 {	this->_name = name; }
 
-void	Channel::setModes(std::string const& mode)
+void	Channel::setChanModes(std::string const& mode)
+{
+	bool		sign;
+	std::string	cast;
+	
+	size_t		i(0);
+	while (i < mode.size())
+	{
+		if (mode[i] == '+')
+			sign = true;
+		else if (mode[i] == '-')
+			sign = false;
+		else if (mode[i] == 'i' && sign)
+		{
+			this->_InvOnly = true;
+			this->getModes();
+			cast = CHANMODE(this->_name, "+i");
+			std::cout << RED << cast << END << std::endl;
+			this->Broadcast(cast);
+		}
+		else if (mode[i] == 'i' && !sign)
+		{
+			this->_InvOnly = false;
+			this->getModes();
+			cast = CHANMODE(this->_name, "-i");
+			this->Broadcast(cast);
+		}
+		else
+		{
+			// ERR_NOTIMPLEMENTED
+		}
+		i++;
+	}
+}
+
+// /mode <channel> <mode> <nickname>
+void	Channel::setUserModes(User& user, std::string const& mode)
 {
 	bool	sign;
 
@@ -287,18 +332,41 @@ void	Channel::setModes(std::string const& mode)
 			sign = true;
 		else if (mode[i] == '-')
 			sign = false;
-		else if (mode[i] == 'i' && sign)
-			this->_InvOnly = true;
-		else if (mode[i] == 'i' && !sign)
-			this->_InvOnly = false;
-		else
+		else if (mode[i] == 'o' && sign)
 		{
-			// ERR_NOTIMPLEMENTED
+			if (!this->Is_Ope(user))
+			{
+				this->AddOpe(user);
+				this->Broadcast(RPL_CHANNELMODEIS(user, this->_name, "+o"));
+			}
+		}
+		else if (mode[i] == 'o' && !sign)
+		{
+			if (this->Is_Ope(user))
+			{
+				this->RmOpe(user);
+				this->Broadcast(RPL_CHANNELMODEIS(user, this->_name, "-o"));
+			}
+		}
+		else if (mode[i] == 'i' && sign)
+		{
+			
+		}
+		else if (mode[i] == 'i' && !sign)
+		{
+			
+		}
+		else if (mode[i] == 'b' && sign)
+		{
+
+		}
+		else if (mode[i] == 'b' && !sign)
+		{
+			
 		}
 		i++;
 	}
 }
-
 
 void	Channel::setTopic(std::string topic)
 {

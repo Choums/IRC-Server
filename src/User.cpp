@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/12 18:50:55 by aptive            #+#    #+#             */
-/*   Updated: 2023/05/05 17:00:29 by marvin           ###   ########.fr       */
+/*   Updated: 2023/05/06 14:02:54 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ User::User(int fd) : _set(false), _fd(fd), _username("X"), _nickname("X"), _host
 
 User::~User()
 {
-
+	this->_list_cnl.clear();
 }
 
 /*

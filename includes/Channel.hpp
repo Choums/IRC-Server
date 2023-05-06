@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/19 08:28:18 by root              #+#    #+#             */
-/*   Updated: 2023/05/05 17:25:42 by marvin           ###   ########.fr       */
+/*   Updated: 2023/05/06 13:01:36 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ class	Channel {
 
 		void	AddUser(User& new_user, bool priv);
 		void	InvUser(User& user, User& new_user);
-		void	AddOpe(User& user);
+		void	AddOpe(User& new_oper);
 		void	RmOpe(User& user);
 		void	PartUser(User& user, std::string const& reason);
 		void	BanUser();
@@ -68,7 +68,7 @@ class	Channel {
 		std::map<int, bool>		_privilege;	//	Definis les privileges des differents users: Operateur ou standard +o
 		std::map<int, bool>		_ban;		//	Liste des Users bannis du Canal +b
 		std::map<int, bool>		_invited;	//	Liste des Users invites du Canal +i
-		bool					_InvOnly;
+		bool					_InvOnly;	//	Mode du Canal, Invite Only
 		// Channel(Channel const& cpy);
 		// Channel&	operator=(Channel const& obj);
 

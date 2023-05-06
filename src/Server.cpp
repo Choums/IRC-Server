@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/14 17:37:42 by aptive            #+#    #+#             */
-/*   Updated: 2023/05/04 19:25:54 by marvin           ###   ########.fr       */
+/*   Updated: 2023/05/06 14:04:29 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,15 @@ Server::~Server()
 	{
 		delete *it;
 		it++;
+	}
+
+	User_iter	itu = this->_client_socket_v.begin();
+	User_iter	iteu = this->_client_socket_v.end();
+
+	while (itu != iteu)
+	{
+		delete *itu;
+		itu++;
 	}
 }
 
@@ -210,8 +219,7 @@ void	Server::gestion_new_connexion(fd_set * temp, fd_set * read_sockets, struct 
 					<< new_socket << "/ ip : " << inet_ntoa(addr.sin_addr)
 					<< " / port : " << ntohs(addr.sin_port)
 					<< std::endl;
-
-		_client_socket_v.push_back(User(new_socket));
+		_client_socket_v.push_back(new User(new_socket));
 
 		sendMessage(new_socket, "[SERVER] : password ?\n");
 
@@ -229,7 +237,7 @@ void Server::gestion_activite_client(fd_set * read_sockets, fd_set * temp)
 
 	for (size_t i = 0; i < _client_socket_v.size(); i++)
 	{
-		int client_socket_fd = _client_socket_v[i].getFd();
+		int client_socket_fd = _client_socket_v[i]->getFd();
 		if (FD_ISSET(client_socket_fd, temp))
 		{
 			valread = read(client_socket_fd, buffer, 1024);
@@ -238,9 +246,9 @@ void Server::gestion_activite_client(fd_set * read_sockets, fd_set * temp)
 			if (valread == 0)
 			{
 
-				std::cout << RED << "[SERVER] : Delete " << _client_socket_v[i].getNickname() << END << std::endl;
+				std::cout << RED << "[SERVER] : Delete " << _client_socket_v[i]->getNickname() << END << std::endl;
 				// Client disconnected, remove from active socket set
-				sendMessageWarning(_client_socket_v[i].getFd(), "[SERVER] : You have been disconnected\n");
+				sendMessageWarning(_client_socket_v[i]->getFd(), "[SERVER] : You have been disconnected\n");
 				close(client_socket_fd);
 				FD_CLR(client_socket_fd, read_sockets);
 				_client_socket_v.erase(_client_socket_v.begin()+i);
@@ -249,8 +257,8 @@ void Server::gestion_activite_client(fd_set * read_sockets, fd_set * temp)
 			else
 			{
 				// std::cout << "HEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE" << std::endl;
-				_client_socket_v[i].setBuf(buf);
-				this->parsing_cmd( &_client_socket_v[i]);
+				_client_socket_v[i]->setBuf(buf);
+				this->parsing_cmd(_client_socket_v[i]);
 			}
 		}
 	}
@@ -413,7 +421,7 @@ void	Server::commandeServer_name( const User & user )
 	for (size_t i = 0; i < _client_socket_v.size(); i++)
 	{
 
-		const std::string message = _client_socket_v[i].getNickname() + "\n";
+		const std::string message = _client_socket_v[i]->getNickname() + "\n";
 		user.sendMessage(message);
 	}
 }
@@ -479,9 +487,9 @@ void	Server::cmd_Whois(User const& user, std::string const& target) const
 	(void)user;
 	for (size_t i(0); i < this->_client_socket_v.size(); i++)
 	{
-		if (!target.compare(this->_client_socket_v[i].getNickname()))
+		if (!target.compare(this->_client_socket_v[i]->getNickname()))
 		{			
-			// std::string	list = this->_client_socket_v[i].getListCnl();
+			// std::string	list = this->_client_socket_v[i]->getListCnl();
 			// user.sendMessage(list);
 			return ;
 		}
@@ -525,7 +533,7 @@ User_iter	Server::get_User(std::string const& user)
 
 	while (it != ite)
 	{
-		if (!user.compare(it->getNickname()))
+		if (!user.compare((*it)->getNickname()))
 			return (it);
 		it++;
 	}

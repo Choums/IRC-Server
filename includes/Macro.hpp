@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/21 17:04:51 by root              #+#    #+#             */
-/*   Updated: 2023/05/05 17:42:16 by marvin           ###   ########.fr       */
+/*   Updated: 2023/05/06 14:11:24 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,12 +40,13 @@
 #define ERR_CHANOPRIVSNEEDED(user, channel) (":" + user.getUsername() + " 482 " + user.getNickname() + " " + (channel) + " :You're not channel operator\r\n")
 #define ERR_USERSDONTMATCH(user) (":" + user.getUsername() + " 502 " + user.getNickname() + " :Cannot change mode for other users\r\n")
 // :server_name 221 nick_name +iowBx (modes utilisateur)
-#define RPL_UMODEIS(server, user, mode) (":" + (server) + " 221 " + user.getNickname() + (mode) + "\r\n")
+#define RPL_UMODEIS(server, user, mode) (":" + (server) + " 221 " + user.getNickname() + " " + (mode) + "\r\n")
+
 // « nick@user!hostname MODE target [mode] »
 #define USERMODE(user, mode) (":" + user.getNickname() + " MODE " + user.getNickname() + " :" + (mode) + "\r\n")
 // Broadcast to chan member
-#define CHANMODE(channel, mode) (":localhost MODE " + '#' + (channel) + " " + mode + "\r\n")
-#define RPL_CHANNELMODEIS(user, channel, mode) (":localhost 324 " + user.getNickname() + " #" + (channel) + " " + (mode) + "\r\n")
+#define CHANMODE(channel, mode) (":localhost MODE " + (channel) + " " + (mode) + "\r\n")
+#define RPL_CHANNELMODEIS(user, channel, mode) (":localhost 324 " + user.getNickname() + " " + (channel) + " " + (mode) + "\r\n")
 
 
 // UNKNOWN
@@ -57,8 +58,8 @@
 #define ERR_NOUSERONCHANNEL(user, channel, target) (":" + user.getUsername() + " 441 " + user.getNickname() + " " + (target) + " " + (channel) + " :No such user in channel\n")
 #define ERR_USERONCHANNEL(user, nick, channel) ( ":" + user.getHostname() + " 443 " + user.getNickname() + " " + nick + " " + channel + " :is already on channel\n" )
 #define ERR_NOTONCHANNEL(user, channel) ( ":" + user.getHostname() + " 442 " + user.getNickname() + " " + channel + " :You're not on that channel" + "\n" )
-#define RPL_ADDEDCHANOPER(user, channel, operator) (":" + user.getUsername() + " 482 " + user.getNickname() + " " + (channel) + " :You have been added as a channel operator by operator : "+ operator.getNickname() + " \n")
-#define RPL_REMOVEDCHANOPER(user, channel, operator) (":" + user.getUsername() + " 482 " + user.getNickname() + " " + (channel) + " :You have been removed as a channel operator by operator : "+ operator.getNickname() + " \n")
+// #define RPL_ADDEDCHANOPER(user, channel, operator) (":" + user.getUsername() + " 482 " + user.getNickname() + " " + (channel) + " :You have been added as a channel operator by operator : "+ operator.getNickname() + " \n")
+// #define RPL_REMOVEDCHANOPER(user, channel, operator) (":" + user.getUsername() + " 482 " + user.getNickname() + " " + (channel) + " :You have been removed as a channel operator by operator : "+ operator.getNickname() + " \n")
 #define ERR_BANNEDFROMCHAN(user, channel) ( ":" + user.getHostname() + " 474 " + user.getNickname() + " " + channel->getName() + " :Cannot join " + channel->getName() + " (+b) - you are banned\n" )
 #define RPL_UNBANUSER(user, channel, operator) (":" + user.getUsername() + " MODE " + channel->getUsername() + " -b " + user.getNickname() + " : You have been unbanned from " + channel->getName() + " by operator : "+ operator.getNickname() + " \r\n")
 // #define ERR_NEEDINVITE(user, channel) ( ":" + user.getHostname() + " 473 " + user.getNickname() + " " + channel->getUsername() + " :Cannot join " + channel->getUsername() + " (+i) - you must be invited\n" )

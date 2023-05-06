@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/14 17:32:55 by aptive            #+#    #+#             */
-/*   Updated: 2023/05/05 16:52:45 by marvin           ###   ########.fr       */
+/*   Updated: 2023/05/06 13:56:30 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 
 # include "web_serv.hpp"
 
-typedef typename std::vector<User>::iterator User_iter;
+typedef typename std::vector<User*>::iterator User_iter;
 typedef typename std::vector<Channel*>::iterator Chan_iter;
 
 class Server
@@ -95,7 +95,7 @@ class Server
 		std::string				_password;
 		int						_max_socket_fd;
 
-		std::vector<User>		_client_socket_v;
+		std::vector<User*>		_client_socket_v;
 		std::vector<Channel*>	_channel;
 
 };

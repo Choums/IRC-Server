@@ -14,13 +14,16 @@
 
 void	Server::Display_Modes(User& user)
 {
+	std::cout << GREEN << "-Display User Modes-" << END << std::endl;
 	std::string	server = "localhost";
 	std::string	str = RPL_UMODEIS(server, user, user.getModes());
+	std::cout << str << std::endl;
 	send(user.getFd(), str.c_str(), str.size(), MSG_NOSIGNAL);
 }
 
 void	Server::Display_Chan_Modes(User& user, Channel const& channel)
 {
+	std::cout << GREEN << "-Display Channel Modes-" << END << std::endl;
 	std::string	str = RPL_CHANNELMODEIS(user, channel.getName(), channel.getModes());
 	send(user.getFd(), str.c_str(), str.size(), MSG_NOSIGNAL);
 }
@@ -87,14 +90,16 @@ void	Server::cmd_Mode(User& user, std::string const& rest)
 				std::string	nick; // Si l'user n'est pas donné, display channel modes
 				ss >> nick;
 				
-				if (nick.size() == 1 && mode.size() == 1) {// Display Channel modes, /mode <channel>
+				std::cout << RED << "<" << nick << ">" << END << std::endl;
+				if (mode.size() == 1) {// Display Channel modes, /mode <channel>
 						Display_Chan_Modes(user, *tmp); return ;}
 				
 				if (tmp->Is_Ope(user) || this->is_Ope(user)) // Chan oper ou Serv oper, Update Channel modes ou Channel User modes
 				{
 					if (nick.size() == 1) // Update Channel modes, /mode <channel> <mode>
 					{
-						tmp->setModes(mode);
+						std::cout << GREEN << "-Update Channel Modes-" << END << std::endl;
+						tmp->setChanModes(mode);
 						// Display_Chan_Modes(user, *tmp);
 						return ;
 					}
@@ -104,11 +109,22 @@ void	Server::cmd_Mode(User& user, std::string const& rest)
 					if (itu != this->_client_socket_v.end()) // Update Channel User modes, /mode <channel> <mode> <nickname>
 					{
 						User *tmp_user = *itu;
-						tmp->setUserModes(tmp, mode);
+
+						if (tmp->Is_Present(tmp_user->getNickname())) // Verifie que l'user est dans le channel
+						{
+							std::cout << GREEN << "-Update Channel User Modes-" << END << std::endl;
+							tmp->setUserModes(*tmp_user, mode);
+						}
+						else
+						{
+							str = ERR_NOUSERONCHANNEL(user, tmp->getName(), nick);
+							send(user.getFd(), str.c_str(), str.size(), MSG_NOSIGNAL);
+							return ;	
+						}
 					}
 					else
 					{
-						str = ERR_NOUSERONCHANNEL(user, target, nick);
+						str = ERR_NOSUCHNICK(user, nick);
 						send(user.getFd(), str.c_str(), str.size(), MSG_NOSIGNAL);
 						return ;	
 					}
