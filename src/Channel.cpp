@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/19 08:47:29 by root              #+#    #+#             */
-/*   Updated: 2023/05/06 13:50:52 by marvin           ###   ########.fr       */
+/*   Updated: 2023/05/07 13:49:24 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,6 +87,9 @@ void	Channel::AddUser(User& new_user, bool priv) // check user existant
 	}
 	this->_users.insert(std::pair<int, User *>(new_user.getFd(), &new_user));
 	this->_privilege.insert(std::pair<int, bool>(new_user.getFd(), priv));
+	
+	if (this->Is_Inv(new_user)) // New_user a accepté l'invitation, il est supp de la liste des invités
+		this->_invited.erase(this->_invited.find(new_user.getFd()));
 	std::string msg = ":" + new_user.getNickname() + "!"+ new_user.getNickname() +"@" + new_user.getHostname() + " JOIN " + this->_name + "\r\n";
 
 	std::cout << GREEN << "< " << this->_name << " >: " << msg << END << std::endl;
@@ -102,15 +105,14 @@ void	Channel::AddUser(User& new_user, bool priv) // check user existant
 // Only the user inviting and the user being invited will receive
 //	notification of the invitation.  Other channel members are not notified.
 void	Channel::InvUser(User& user, User& new_user)
-{	
-	this->_users.insert(std::pair<int, User *>(new_user.getFd(), &new_user));
-	this->_privilege.insert(std::pair<int, bool>(new_user.getFd(), false));
+{
 	this->_invited.insert(std::pair<int, bool>(new_user.getFd(), true));
 
-	std::string	str = RPL_INVITING(user, this->_name, new_user);
-	
-	send(user.getFd(), str.c_str(), str.size(), MSG_NOSIGNAL);
+	std::string str = RPL_INVITE(user, new_user, this->_name); // Invitation au new_user
 	send(new_user.getFd(), str.c_str(), str.size(), MSG_NOSIGNAL);
+	
+	str = RPL_INVITING(user, new_user, this->_name); // Message de confirmation a l'inviteur
+	send(user.getFd(), str.c_str(), str.size(), MSG_NOSIGNAL);
 }
 
 // Ajoute un nouvel operateur de Canal
@@ -145,64 +147,33 @@ void	Channel::PartUser(User& user, std::string const& reason)
 	send(user.getFd(), str.c_str(), str.size(), MSG_NOSIGNAL); // Confirmation a l'user que la commande est reussi
 }
 
-// /*	Find l'user via son fd comme key et l'erase de la map
-//  *	ERR_NOTONCHANNEL
-// */
-// void	Channel::RmUser(int user_fd)
-// {
-// 	std::string	str;
-// 	std::map<int, User *>::iterator	it;
-	
-// 	it = this->_users.find(user_fd);
-	
-// 	if (it != this->_users.end())
-// 		this->_users.erase(it);
-// 	else
-// 		return ;
-// 		// throw UserNotFound();
-	
-// 	std::map<int, bool>::iterator	pit;
-// 	pit = this->_privilege.find(user_fd);
-// 	if (pit != this->_privilege.end())
-// 		this->_privilege.erase(pit);
-// }
-
-// void	Channel::RmUser(std::string name)
-// {
-// 	std::map<int, User *>::iterator	it = this->_users.begin();
-// 	while (it != this->_users.end())
-// 	{
-// 		std::cout << it->second->getNickname() << std::endl;
-// 		if (!name.compare(it->second->getNickname()))
-// 			this->_users.erase(it);
-// 		it++;
-// 	}
-// 	// if (it == this->_users.end())
-// 	// 	return ;
-// 		// throw UserNotFound();
-
-// 	std::map<int, bool>::iterator	pit = this->_privilege.find(it->first);
-// 	this->_privilege.erase(pit);
-
-// 	std::cout << "[" << this->_name << "] : [" << it->second->getNickname() << "] has been removed" << std::endl;
-// }
-
-
 bool	Channel::Is_Ban(User& user)
 {
 	std::map<int, bool>::iterator it = this->_ban.find(user.getFd());
+	if (it == this->_ban.end())
+		std::cout << GREEN << "-User is not banned-" << END << std::endl;
+	else
+		std::cout << RED << "-User is banned-" << END << std::endl;
 	return (it->second);
 }
 
 bool	Channel::Is_Ope(User& user)
 {
 	std::map<int, bool>::iterator it = this->_privilege.find(user.getFd());
+	if (it == this->_privilege.end())
+		std::cout << RED << "-User is not operator-" << END << std::endl;
+	else
+		std::cout << GREEN << "-User is operator-" << END << std::endl;
 	return (it->second);
 }
 
 bool	Channel::Is_Inv(User& user)
 {
 	std::map<int, bool>::iterator it = this->_invited.find(user.getFd());
+	if (it == this->_invited.end())
+		std::cout << RED << "-User is not invited-" << END << std::endl;
+	else
+		std::cout << GREEN << "-User is invited-" << END << std::endl;
 	return (it->second);
 }
 

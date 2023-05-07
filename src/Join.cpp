@@ -78,17 +78,26 @@ void	Server::cmd_JoinChannel(std::string const& rest, User& user)
 	{
 		if (channel_exist(cnl[i])) // Verif que le channel existe dans le serveur
 		{
-			Chan_iter	it = this->get_Channel(cnl[i]);
-			if ((*it)->Is_Ban(user))
+			Channel *tmp = *(this->get_Channel(cnl[i]));
+			if (tmp->Is_Ban(user))
 			{
-				str = ERR_BANNEDFROMCHAN(user, (*it));
+				str = ERR_BANNEDFROMCHAN(user, tmp);
 				send(user.getFd(), str.c_str(), str.size(), MSG_NOSIGNAL);
 				return ;
 			}
 			
-			for (size_t i(0); i < this->_channel.size(); i++)
-				if (!cnl[i].compare(this->_channel[i]->getName()))
-					this->_channel[i]->AddUser(user, false);
+			if (tmp->Is_InvOnly() && !(tmp->Is_Inv(user))) // le Canal est +i et l'user n'y est pas invité
+			{
+				
+				str = ERR_NEEDINVITE(user, tmp->getName());
+				send(user.getFd(), str.c_str(), str.size(), MSG_NOSIGNAL);
+				return ;
+			}
+
+			// for (size_t i(0); i < this->_channel.size(); i++)
+			// 	if (!cnl[i].compare(this->_channel[i]->getName()))
+			// 		this->_channel[i]->AddUser(user, false);
+			tmp->AddUser(user, false);
 			user.setAddListCnlMember(this->_channel[i]);
 			// this->_channel[i].getUsers();
 		}

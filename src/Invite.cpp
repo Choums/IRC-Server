@@ -42,6 +42,7 @@ void	Server::cmd_Invite(User& user, std::string const& rest)
 
 	iss >> target;
 	iss >> chan;
+	std::cout << YELLOW << "-Invite Command-" << END << std::endl;
 	std::cout << RED << "Tyring to invite " << target << " to " << chan << END << std::endl;
 	if (!rest.empty() || !target.empty() || !chan.empty()) // Check Params
 	{
@@ -54,7 +55,7 @@ void	Server::cmd_Invite(User& user, std::string const& rest)
 				{
 					if (this->is_Present(target)) // Check target exists, NOSUCHNICK
 					{
-						if ((*it)->Is_Ban(*(*(this->get_User(target))))) // Check target isn't banned from Channel
+						if (!(*it)->Is_Ban(*(*(this->get_User(target))))) // Check target isn't banned from Channel
 						{
 							if (!(*it)->Is_Present(target)) // Check target not already in Channel, USERONCHANNEL
 							{
@@ -78,6 +79,7 @@ void	Server::cmd_Invite(User& user, std::string const& rest)
 					else
 					{
 						str = ERR_NOSUCHNICK(user, target);
+						std::cout << RED << "No such nick <" << target << ">" << END << std::endl;
 						send(user.getFd(), str.c_str(), str.size(), MSG_NOSIGNAL);
 						return ;	
 					}
