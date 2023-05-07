@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/19 08:47:29 by root              #+#    #+#             */
-/*   Updated: 2023/05/07 13:49:24 by marvin           ###   ########.fr       */
+/*   Updated: 2023/05/07 17:08:22 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@ Channel::Channel(User& user, std::string const& name)
 	this->setName(name);
 	this->AddUser(user, true);
 	this->_InvOnly = false;
+	this->_bans = true;
 }
 
 Channel::~Channel()
@@ -89,7 +90,7 @@ void	Channel::AddUser(User& new_user, bool priv) // check user existant
 	this->_privilege.insert(std::pair<int, bool>(new_user.getFd(), priv));
 	
 	if (this->Is_Inv(new_user)) // New_user a accepté l'invitation, il est supp de la liste des invités
-		this->_invited.erase(this->_invited.find(new_user.getFd()));
+		this->_invited.erase(std::find(this->_invited.begin(), this->_invited.end(), new_user.getFd()));
 	std::string msg = ":" + new_user.getNickname() + "!"+ new_user.getNickname() +"@" + new_user.getHostname() + " JOIN " + this->_name + "\r\n";
 
 	std::cout << GREEN << "< " << this->_name << " >: " << msg << END << std::endl;
@@ -106,8 +107,9 @@ void	Channel::AddUser(User& new_user, bool priv) // check user existant
 //	notification of the invitation.  Other channel members are not notified.
 void	Channel::InvUser(User& user, User& new_user)
 {
-	this->_invited.insert(std::pair<int, bool>(new_user.getFd(), true));
-
+	// this->_invited.insert(std::pair<int, bool>(new_user.getFd(), true));
+	this->_invited.push_back(new_user.getFd());
+	
 	std::string str = RPL_INVITE(user, new_user, this->_name); // Invitation au new_user
 	send(new_user.getFd(), str.c_str(), str.size(), MSG_NOSIGNAL);
 	
@@ -147,50 +149,120 @@ void	Channel::PartUser(User& user, std::string const& reason)
 	send(user.getFd(), str.c_str(), str.size(), MSG_NOSIGNAL); // Confirmation a l'user que la commande est reussi
 }
 
+void	Channel::BanUser(User& user, User& target)
+{
+	std::cout << YELLOW << "-Ban User-" << END << std::endl;
+	// this->_ban.insert(target.getFd(), true);
+	this->_ban.push_back(target.getFd());
+
+	std::cout << GREEN << "<" << this->_name << ">: " << target.getNickname() << " has been banned by " << user.getNickname() << END << std::endl;
+	
+	std::string	reason = "You have been Banned !";
+
+	this->KickUser(user, target, reason);
+	this->setChanModes(std::string("+b"));
+}
+
+void	Channel::UnBanUser(User& user, User& target)
+{
+	std::cout << YELLOW << "-Unban User-" << END << std::endl;
+	if (this->Is_Ban(target))
+	{
+		this->_ban.erase(std::find(this->_ban.begin(), this->_ban.end(), target.getFd()));
+		std::cout << GREEN << "<" << this->_name << ">: " << target.getNickname() << " has been unbanned by " << user.getNickname() << END << std::endl;
+		std::string	str = RPL_UNBANUSER(target, this, user);
+		send(target.getFd(), str.c_str(), str.size(), MSG_NOSIGNAL); //	La target est prevenue qu'elle est unban
+	}
+}
+
+void	Channel::KickUser(User& user, User& target, std::string const& reason)
+{
+	// La target est retiré des maps
+	this->_users.erase(target.getFd());
+	this->_privilege.erase(target.getFd());
+
+	std::string	str = RPL_KICK(user, this->_name, target, reason);
+	
+	send(target.getFd(), str.c_str(), str.size(), MSG_NOSIGNAL); //	La target est prevenue qu'elle est kick
+	
+	Broadcast(str); // Les users du channel sont prevenue que la target a ete kick
+}
+
 bool	Channel::Is_Ban(User& user)
 {
-	std::map<int, bool>::iterator it = this->_ban.find(user.getFd());
+	std::list<int>::iterator it = std::find(this->_ban.begin(), this->_ban.end(), user.getFd());
+	// std::list<int>::iterator it = this->_ban.find(user.getFd());
 	if (it == this->_ban.end())
-		std::cout << GREEN << "-User is not banned-" << END << std::endl;
+	{
+		std::cout << GREEN << "-" << user.getNickname() << " is not banned-" << END << std::endl;
+		return (false);
+	}
 	else
-		std::cout << RED << "-User is banned-" << END << std::endl;
-	return (it->second);
+	{
+		std::cout << RED << "-" << user.getNickname() << " is banned-" << END << std::endl;
+		return (true);
+	}
 }
 
 bool	Channel::Is_Ope(User& user)
 {
 	std::map<int, bool>::iterator it = this->_privilege.find(user.getFd());
 	if (it == this->_privilege.end())
-		std::cout << RED << "-User is not operator-" << END << std::endl;
+		std::cout << RED << "-" << user.getNickname() << " is not operator-" << END << std::endl;
 	else
-		std::cout << GREEN << "-User is operator-" << END << std::endl;
+		std::cout << GREEN << "-" << user.getNickname() << " is operator-" << END << std::endl;
 	return (it->second);
 }
 
 bool	Channel::Is_Inv(User& user)
 {
-	std::map<int, bool>::iterator it = this->_invited.find(user.getFd());
+	std::list<int>::iterator it = std::find(this->_invited.begin(), this->_invited.end(), user.getFd());
+	// std::map<int, bool>::iterator it = this->_invited.find(user.getFd());
 	if (it == this->_invited.end())
-		std::cout << RED << "-User is not invited-" << END << std::endl;
+	{
+		std::cout << RED << "-" << user.getNickname() << " is not invited-" << END << std::endl;
+		return (false);
+	}
 	else
-		std::cout << GREEN << "-User is invited-" << END << std::endl;
-	return (it->second);
+	{
+		std::cout << GREEN << "-" << user.getNickname() << " is invited-" << END << std::endl;
+		return (true);
+	}
 }
 
 bool	Channel::Is_Present(std::string const& user)
 {
 	if (this->getUser(user) == NULL)
-		std::cout << RED << "-User is not  present-" << END << std::endl;
+		std::cout << RED << "-" << user << " is not  present-" << END << std::endl;
 	else
-		std::cout << GREEN << "-User is present-" << END << std::endl;
+		std::cout << GREEN << "-" << user << " is present-" << END << std::endl;
 	return (this->getUser(user) ? true : false);
+}
+
+bool	Channel::Is_OpePresent()
+{
+	std::map<int, bool>::iterator	it = this->_privilege.begin();
+	std::map<int, bool>::iterator	ite = this->_privilege.end();
+
+	while (it != ite)
+	{
+		if (it->second)
+			return (true);
+		it++;
+	}
+	std::cout << RED << "<" << this->_name << ">: No Operator Present !" << END << std::endl;
+	return (false);
 }
 
 bool	Channel::Is_InvOnly() const
 {
-	return (this->_InvOnly ? true : false);
+	return (this->_InvOnly);
 }
 
+bool	Channel::Is_BanOnly() const
+{
+	return (this->_bans);
+}
 		/*	Getters */
 
 std::string	Channel::getName() const
@@ -205,8 +277,8 @@ std::string	Channel::getModes() const
 
 	if (this->Is_InvOnly())
 		modes.push_back('i');
-
-	modes.push_back('b');
+	if (this->Is_BanOnly())
+		modes.push_back('b');
 
 	std::cout << GREEN << "<" << this->_name << "> modes: [" << modes << "]" << END << std::endl;
 	return (modes);
@@ -283,6 +355,21 @@ void	Channel::setChanModes(std::string const& mode)
 			cast = CHANMODE(this->_name, "-i");
 			this->Broadcast(cast);
 		}
+		else if (mode[i] == 'b' && sign)
+		{
+			this->_bans = true;
+			this->getModes();
+			cast = CHANMODE(this->_name, "+b");
+			this->Broadcast(cast);
+		}
+		else if (mode[i] == 'b' && !sign)
+		{
+			this->_bans = false;
+			this->_ban.clear();
+			this->getModes();
+			cast = CHANMODE(this->_name, "-b");
+			this->Broadcast(cast);
+		}
 		else
 		{
 			// ERR_NOTIMPLEMENTED
@@ -291,8 +378,8 @@ void	Channel::setChanModes(std::string const& mode)
 	}
 }
 
-// /mode <channel> <mode> <nickname>
-void	Channel::setUserModes(User& user, std::string const& mode)
+// /mode <channel> <mode> <nickname>(target)
+void	Channel::setUserModes(User& user, User& target, std::string const& mode)
 {
 	bool	sign;
 
@@ -305,18 +392,18 @@ void	Channel::setUserModes(User& user, std::string const& mode)
 			sign = false;
 		else if (mode[i] == 'o' && sign)
 		{
-			if (!this->Is_Ope(user))
+			if (!this->Is_Ope(target))
 			{
-				this->AddOpe(user);
-				this->Broadcast(RPL_CHANNELMODEIS(user, this->_name, "+o"));
+				this->AddOpe(target);
+				this->Broadcast(RPL_CHANNELMODEIS(target, this->_name, "+o"));
 			}
 		}
 		else if (mode[i] == 'o' && !sign)
 		{
-			if (this->Is_Ope(user))
+			if (this->Is_Ope(target))
 			{
-				this->RmOpe(user);
-				this->Broadcast(RPL_CHANNELMODEIS(user, this->_name, "-o"));
+				this->RmOpe(target);
+				this->Broadcast(RPL_CHANNELMODEIS(target, this->_name, "-o"));
 			}
 		}
 		else if (mode[i] == 'i' && sign)
@@ -329,11 +416,19 @@ void	Channel::setUserModes(User& user, std::string const& mode)
 		}
 		else if (mode[i] == 'b' && sign)
 		{
-
+			if (!this->Is_Ban(target))
+			{
+				this->BanUser(user, target);
+				this->Broadcast(RPL_CHANNELMODEIS(target, this->_name, "+b"));
+			}
 		}
 		else if (mode[i] == 'b' && !sign)
 		{
-			
+			if (this->Is_Ban(target))
+			{
+				this->UnBanUser(user, target);
+				this->Broadcast(RPL_CHANNELMODEIS(target, this->_name, "-b"));
+			}
 		}
 		i++;
 	}

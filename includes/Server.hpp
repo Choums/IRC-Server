@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/14 17:32:55 by aptive            #+#    #+#             */
-/*   Updated: 2023/05/06 13:56:30 by marvin           ###   ########.fr       */
+/*   Updated: 2023/05/07 15:16:28 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,7 @@ class Server
 		void	cmd_Mode(User& user, std::string const& rest);
 		void	Display_Modes(User& user);
 		void	Display_Chan_Modes(User& user, Channel const& channel);
-		
+		void	cmd_Kick(User& user, std::string const& rest);
 		// ** --------------------------------- ACCESSOR ---------------------------------
 
 		std::string			getHostname() const;

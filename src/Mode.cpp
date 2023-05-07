@@ -113,7 +113,7 @@ void	Server::cmd_Mode(User& user, std::string const& rest)
 						if (tmp->Is_Present(tmp_user->getNickname())) // Verifie que l'user est dans le channel
 						{
 							std::cout << GREEN << "-Update Channel User Modes-" << END << std::endl;
-							tmp->setUserModes(*tmp_user, mode);
+							tmp->setUserModes(user, *tmp_user, mode);
 						}
 						else
 						{

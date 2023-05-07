@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/19 08:28:18 by root              #+#    #+#             */
-/*   Updated: 2023/05/06 13:01:36 by marvin           ###   ########.fr       */
+/*   Updated: 2023/05/07 16:59:07 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,9 +30,9 @@ class	Channel {
 		void	AddOpe(User& new_oper);
 		void	RmOpe(User& user);
 		void	PartUser(User& user, std::string const& reason);
-		void	BanUser();
-		void	UnBanUser();
-		void	KickUser();
+		void	BanUser(User& user, User& target);
+		void	UnBanUser(User& user, User& target);
+		void	KickUser(User& user, User& target, std::string const& reason);
 
 		// void	Change_mode();
 
@@ -42,8 +42,10 @@ class	Channel {
 		bool	Is_Ope(User& user);
 		bool	Is_Inv(User& user);
 		bool	Is_Present(std::string const& user);
+		bool	Is_OpePresent();
 		bool	Is_InvOnly() const;
-
+		bool	Is_BanOnly() const;
+		
 				/*	Accesseurs */
 		std::vector<User*>	getUsers();
 		std::string			getName() const;
@@ -56,7 +58,7 @@ class	Channel {
 
 		void				setName(std::string name);
 		void				setChanModes(std::string const& mode);
-		void				setUserModes(User& user, std::string const& mode);
+		void				setUserModes(User& user, User& target, std::string const& mode);
 		void				setTopic(std::string topic);
 		void				setUserPrivilege(int user_fd, bool priv);
 		
@@ -66,9 +68,10 @@ class	Channel {
 		std::string				_topic;		//	Definis le topic du Canal
 		std::map<int, User *>	_users;		//	liste tout les users presents sur le canal ainsi que leur fd
 		std::map<int, bool>		_privilege;	//	Definis les privileges des differents users: Operateur ou standard +o
-		std::map<int, bool>		_ban;		//	Liste des Users bannis du Canal +b
-		std::map<int, bool>		_invited;	//	Liste des Users invites du Canal +i
+		std::list<int>			_ban;		//	Liste des Users bannis du Canal +b
+		std::list<int>			_invited;	//	Liste des Users invites du Canal +i
 		bool					_InvOnly;	//	Mode du Canal, Invite Only
+		bool					_bans;		//	Mode du Canal, Bans are active
 		// Channel(Channel const& cpy);
 		// Channel&	operator=(Channel const& obj);
 

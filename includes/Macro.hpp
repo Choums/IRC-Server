@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/21 17:04:51 by root              #+#    #+#             */
-/*   Updated: 2023/05/07 12:24:25 by marvin           ###   ########.fr       */
+/*   Updated: 2023/05/07 16:56:03 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@
 // #define RPL_ADDEDCHANOPER(user, channel, operator) (":" + user.getUsername() + " 482 " + user.getNickname() + " " + (channel) + " :You have been added as a channel operator by operator : "+ operator.getNickname() + " \n")
 // #define RPL_REMOVEDCHANOPER(user, channel, operator) (":" + user.getUsername() + " 482 " + user.getNickname() + " " + (channel) + " :You have been removed as a channel operator by operator : "+ operator.getNickname() + " \n")
 #define ERR_BANNEDFROMCHAN(user, channel) ( ":" + user.getHostname() + " 474 " + user.getNickname() + " " + (channel)->getName() + " :Cannot join " + (channel)->getName() + " (+b)\r\n" )
-#define RPL_UNBANUSER(user, channel, operator) (":" + user.getUsername() + " MODE " + channel->getUsername() + " -b " + user.getNickname() + " : You have been unbanned from " + channel->getName() + " by operator : "+ operator.getNickname() + " \r\n")
+#define RPL_UNBANUSER(user, channel, operator) (":" + user.getUsername() + " MODE " + channel->getName() + " -b " + user.getNickname() + " : You have been unbanned from " + channel->getName() + " by operator : "+ operator.getNickname() + " \r\n")
 
 // INVITE
 // #define	RPL_INVITING(user, channel, new_user) ( ":" + user.getUsername() + " 341 " + user.getNickname() + " has invited on " + channel + " " + new_user.getNickname() + "\n")
@@ -69,6 +69,8 @@
 #define RPL_INVITE(user, invited, channel) (":" + user.getUsername() + " INVITE " + invited.getNickname() + " " + (channel) + "\r\n")
 #define ERR_NEEDINVITE(user, channel) ( ":" + user.getHostname() + " 473 " + user.getNickname() + " " + (channel) + " :Cannot join " + (channel) + " (+i)\r\n" )
 
+// KICK
+# define RPL_KICK(user, channel, target, reason) (":" + user.getUsername() + " KICK " + (channel) + " " + target.getNickname() + " :" + (reason) + "\r\n")
 
 //LIST
 #define RPL_LIST(user, channel, topic) (": " + user.getUsername() + " 322 " + user.getNickname() + " " + channel->getName() + " " + channel->getSNumUsers() + " " + (topic) + "\n")

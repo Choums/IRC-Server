@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/07 18:14:43 by aptive            #+#    #+#             */
-/*   Updated: 2023/05/04 18:56:48 by marvin           ###   ########.fr       */
+/*   Updated: 2023/05/07 16:37:03 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@
 # include <vector>
 # include <map>
 # include <utility> // pour utiliser la paire (std::pair)
+# include <algorithm>
 
 # include <sys/socket.h>
 # include <sys/types.h>
@@ -59,6 +60,7 @@ enum Command {
 	User_cmd = 8,
 	Invite = 9,
 	Mode = 10,
+	Kick = 11,
 	Unknown = 0
 };
 
