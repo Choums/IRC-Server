@@ -12,6 +12,13 @@
 
 #include "../includes/Server.hpp"
 
+void RmNewLine(std::string& str, char val)
+{
+    size_t pos = 0;
+    while ((pos = str.find(val, pos)) != std::string::npos)
+        str.erase(pos, 1);
+}
+
 //   Command: PRIVMSG
 // Parameters: <msgtarget> <text to be sent>
 // -----
@@ -25,9 +32,10 @@ void	Server::cmd_Privmsg(User& user, std::string const& rest)
 {
 	std::string			str;		// Reply
 	std::stringstream	ss(rest);
-	std::string			msgtarget;		// Channel or User target
+	std::string			msgtarget;	// Channel or User target
 	std::string			msg;		// Msg to be sent
-	ss >> msgtarget >> msg;
+	ss >> msgtarget;				// Extrait uniquement le recipient
+	std::getline(ss, msg, ':'); 	// Extrait le msg a partir du ':'
 
 	std::cout << YELLOW << "-PRIVMSG-" << END << std::endl;
 	std::cout << RED << "<" << msgtarget << ">\n<" << msg << ">" << END << std::endl;
@@ -57,7 +65,8 @@ void	Server::cmd_Privmsg(User& user, std::string const& rest)
 						send(user.getFd(), str.c_str(), str.size(), MSG_NOSIGNAL);
 						return ;
 					}
-
+					RmNewLine(msg, '\n');
+					RmNewLine(msg, '\r');
 					channel->Privmsg(user, msg);
 				}
 				else
@@ -87,8 +96,16 @@ void	Server::cmd_Privmsg(User& user, std::string const& rest)
 		User_iter itu = this->get_User(msgtarget);
 		if (itu != this->_client_socket_v.end())
 		{
-			// User *target = (*itu);
-
+			User *target = (*itu);
+			if (msg.size() == 1)
+			{
+				str = ERR_NOTEXTTOSEND(user);
+				send(user.getFd(), str.c_str(), str.size(), MSG_NOSIGNAL);
+				return ;
+			}
+			RmNewLine(msg, '\n');
+			RmNewLine(msg, '\r');
+			this->send_privmsg(user, *target, msg);
 		}
 		else
 		{

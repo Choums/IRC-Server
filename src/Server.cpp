@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/14 17:37:42 by aptive            #+#    #+#             */
-/*   Updated: 2023/05/08 12:24:14 by marvin           ###   ########.fr       */
+/*   Updated: 2023/05/08 17:17:02 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -333,6 +333,16 @@ void Server::parsing_cmd( User * user )
 	user->clearBuf();
 }
 
+void	Server::send_privmsg(User& user, User& target, std::string const& msg)
+{
+	std::cout << YELLOW << "-Sending Message To "<< target.getNickname() << "-" << END << std::endl;
+
+	std::string	privmsg = ":" + user.getUsername() + " PRIVMSG " + target.getNickname() + " " + msg + "\r\n";
+	// std::cout << "|" << privmsg << "|" << std::endl;
+	
+	send(target.getFd(), privmsg.c_str(), privmsg.size(), MSG_NOSIGNAL);
+}
+
 static Command option(const std::string& cmd)
 {
 	if (!cmd.compare("CAP")) return (Cap);
@@ -349,6 +359,7 @@ static Command option(const std::string& cmd)
 	if (!cmd.compare("MODE")) return (Mode);
 	if (!cmd.compare("KICK")) return (Kick);
 	if (!cmd.compare("PRIVMSG")) return (Privmsg);
+	if (!cmd.compare("TOPIC")) return (Topic);
 	return (Unknown);
 }
 
@@ -401,6 +412,9 @@ void	Server::handleCommandServer(std::string const& cmd, std::string const& rest
 			break;
 		case Privmsg:
 			this->cmd_Privmsg(user, rest);
+			break;
+		case Topic:
+			this->cmd_Topic(user, rest);
 			break;
 	}
 }

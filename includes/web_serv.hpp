@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/07 18:14:43 by aptive            #+#    #+#             */
-/*   Updated: 2023/05/08 10:50:34 by marvin           ###   ########.fr       */
+/*   Updated: 2023/05/08 17:16:08 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,6 +62,7 @@ enum Command {
 	Mode = 10,
 	Kick = 11,
 	Privmsg = 12,
+	Topic = 13,
 	Unknown = 0
 };
 
@@ -108,6 +109,7 @@ std::vector<std::string> split_string(std::string str);
 void parsing(int argc, char ** argv, int * port, std::string * password);
 void check_arg(int argc, char ** argv);
 
+void RmNewLine(std::string& str, char val);
 
 // +----------------------------------------------------------------------------+
 //                               SOCKET_SERVER_CPP                              |

@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/21 17:04:51 by root              #+#    #+#             */
-/*   Updated: 2023/05/08 11:56:23 by marvin           ###   ########.fr       */
+/*   Updated: 2023/05/08 17:46:05 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,7 +82,7 @@
 
 //TOPIC
 #define RPL_TOPIC(user, channel, topic) (":" + user.getUsername() + " 332 " + user.getNickname() + " " + (channel) + " :" + (topic) + "\n")
-
+#define RPL_NOTOPIC(user, channel) (":" + user.getUsername() + " 331 " + user.getNickname() + " " + (channel) + " :No topic is set" + "\n")
 //OPER
 #define RPL_YOUREOPER(user) (":" + user.getUsername() + " 381 " + user.getNickname() + " :You are now an IRC operator\r\n")
 #define ERR_NOPRIVILEGES(user) ( ":" + user.getHostname() + " 481 " + user.getNickname() + " :Permission Denied- You're not an IRC operator\r\n" )

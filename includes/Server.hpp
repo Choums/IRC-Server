@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/14 17:32:55 by aptive            #+#    #+#             */
-/*   Updated: 2023/05/08 12:24:09 by marvin           ###   ########.fr       */
+/*   Updated: 2023/05/08 17:55:56 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,13 +34,13 @@ class Server
 		void	mode_listing_socket(int *server_fd);
 
 		void	boucle_server( void );
+		bool	verif_password(User& user, std::string const& pass);
 		void	gestion_new_connexion( fd_set * temp, fd_set * read_sockets, struct sockaddr_in addr);
 		void	gestion_activite_client(fd_set * read_sockets,fd_set * temp);
 		void	parsing_cmd( User * user );
 
-		bool	verif_password(User& user, std::string const& pass);
 
-
+		void	send_privmsg(User& user, User& target, std::string const& msg);
 
 		bool	channel_exist(std::string const& cnl_name);
 
@@ -67,6 +67,8 @@ class Server
 		void	Display_Modes(User& user);
 		void	Display_Chan_Modes(User& user, Channel const& channel);
 		void	cmd_Kick(User& user, std::string const& rest);
+		void	cmd_Topic(User& user, std::string const& rest);
+	
 		// ** --------------------------------- ACCESSOR ---------------------------------
 
 		std::string			getHostname() const;

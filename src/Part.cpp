@@ -23,8 +23,9 @@ void	Server::cmd_Part(User& user, std::string const& rest)
 	std::stringstream	ss(rest);
 	std::string	chans;
 	std::string	reason;
-	
-	ss >> chans >> reason;
+	ss >> chans;
+	std::getline(ss, reason, ':');
+
 	std::vector<std::string> cnl = parse_cnl_name(chans);
 	
 	std::string	str;
@@ -39,8 +40,10 @@ void	Server::cmd_Part(User& user, std::string const& rest)
 	if (reason.size() == 1)
 	{
 		std::cout << "reason empty, default used\n";
-		reason = "Bye Bye\n"; // Reason par defaut si l'user n'en fournit pas
+		reason = "Bye Bye"; // Reason par defaut si l'user n'en fournit pas
 	}
+	RmNewLine(reason, '\r');
+	RmNewLine(reason, '\n');
 
 	for (size_t	i(0); i < cnl.size(); i++)
 	{
@@ -54,7 +57,6 @@ void	Server::cmd_Part(User& user, std::string const& rest)
 			std::cout << GREEN << "Found Channel: <" << tmp->getName() << ">" << END << std::endl; 
 			if (tmp->Is_Present(user.getNickname()))
 			{
-				
 				tmp->PartUser(user, reason);
 				user.setRmCnlMembership(tmp);
 				std::cout << RED << "nbr users: " << tmp->getNumUsers() << END << std::endl;

@@ -6,7 +6,7 @@
 #    By: marvin <marvin@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/12/05 17:28:02 by aptive            #+#    #+#              #
-#    Updated: 2023/05/08 12:23:03 by marvin           ###   ########.fr        #
+#    Updated: 2023/05/08 17:56:28 by marvin           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -38,7 +38,8 @@ SRC		=	main.cpp\
 			Part.cpp\
 			Mode.cpp\
 			Kick.cpp\
-			Privmsg.cpp
+			Privmsg.cpp\
+			Topic.cpp
 
 
 # nommage automatique des fichiers objets d'apres les noms des sources C

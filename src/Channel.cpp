@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/19 08:47:29 by root              #+#    #+#             */
-/*   Updated: 2023/05/08 12:31:09 by marvin           ###   ########.fr       */
+/*   Updated: 2023/05/08 18:23:45 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ Channel::Channel(User& user, std::string const& name)
 	this->_bans = true;
 }
 
-Channel::~Channel()
+Channel::~Channel() // Kick les users toujours present avant de fermer le serveur
 {
 	this->_users.clear();
 	this->_privilege.clear();
@@ -40,7 +40,8 @@ void	Channel::Privmsg(User& user, std::string const& msg)
 
 
 	std::string	privmsg = ":" + user.getUsername() + " PRIVMSG " + this->_name + " " + msg + "\r\n";
-	std::cout << "|" << privmsg << "|" << std::endl;
+	
+	// std::cout << "|" << privmsg << "|" << std::endl;
 	while (it != ite)
 	{
 		if (it->first != user.getFd())
@@ -69,12 +70,15 @@ void	Channel::Broadcast_topic()
 	std::map<int, User*>::iterator	it = this->_users.begin();
 	std::map<int, User*>::iterator	ite = this->_users.end();
 
-	std::string	topic;
+	std::string	topic = this->getTopic();
 
 	while (it != ite)
 	{
-		User	tmp = *(it->second);
-		topic = RPL_TOPIC(tmp, this->_name, this->_topic);
+		User user = *(it->second);
+		if (topic.empty())
+			topic = RPL_NOTOPIC(user, this->_name);
+		else
+			topic = RPL_TOPIC(user, this->_name, topic);
 		send(it->first, topic.c_str(), topic.size(), MSG_NOSIGNAL);
 		it++;
 	}
@@ -410,7 +414,11 @@ void	Channel::setUserModes(User& user, User& target, std::string const& mode)
 		}
 		else if (mode[i] == 'i' && sign)
 		{
-			
+			if (!this->Is_Inv(target))
+			{
+				this->InvUser(user, target);
+
+			}
 		}
 		else if (mode[i] == 'i' && !sign)
 		{
@@ -438,8 +446,14 @@ void	Channel::setUserModes(User& user, User& target, std::string const& mode)
 
 void	Channel::setTopic(std::string topic)
 {
+	std::cout << YELLOW << "-Set New Topic-" << END << std::endl;
 	this->_topic = topic;
-	this->Broadcast_topic();	
+}
+
+void	Channel::setTopicClear()
+{
+	std::cout << YELLOW << "-Clear Topic-" << END << std::endl;
+	this->_topic.clear();
 }
 
 void	Channel::setUserPrivilege(int user_fd, bool priv)

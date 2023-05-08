@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/19 08:28:18 by root              #+#    #+#             */
-/*   Updated: 2023/05/07 17:12:28 by marvin           ###   ########.fr       */
+/*   Updated: 2023/05/08 17:51:29 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,7 @@ class	Channel {
 		void				setChanModes(std::string const& mode);
 		void				setUserModes(User& user, User& target, std::string const& mode);
 		void				setTopic(std::string topic);
+		void				setTopicClear();
 		void				setUserPrivilege(int user_fd, bool priv);
 		
 		
