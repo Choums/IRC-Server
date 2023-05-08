@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/14 17:32:55 by aptive            #+#    #+#             */
-/*   Updated: 2023/05/07 15:16:28 by marvin           ###   ########.fr       */
+/*   Updated: 2023/05/08 12:24:09 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ class Server
 		bool	is_Ope(User& user);
 
 		// ** --------------------------------- COMMANDE ---------------------------------
-
+		void	cmd_Privmsg(User& user, std::string const& rest);
 		void	commandeServer_name( const User & user );
 		void	cmd_JoinChannel(std::string const& rest, User& user);
 		void	cmd_List(User& user, std::string const& rest);

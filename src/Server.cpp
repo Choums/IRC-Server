@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/14 17:37:42 by aptive            #+#    #+#             */
-/*   Updated: 2023/05/07 16:37:53 by marvin           ###   ########.fr       */
+/*   Updated: 2023/05/08 12:24:14 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -348,6 +348,7 @@ static Command option(const std::string& cmd)
 	if (!cmd.compare("INVITE")) return (Invite);
 	if (!cmd.compare("MODE")) return (Mode);
 	if (!cmd.compare("KICK")) return (Kick);
+	if (!cmd.compare("PRIVMSG")) return (Privmsg);
 	return (Unknown);
 }
 
@@ -397,6 +398,9 @@ void	Server::handleCommandServer(std::string const& cmd, std::string const& rest
 			break;
 		case Kick:
 			this->cmd_Kick(user, rest);
+			break;
+		case Privmsg:
+			this->cmd_Privmsg(user, rest);
 			break;
 	}
 }

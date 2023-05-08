@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/21 17:04:51 by root              #+#    #+#             */
-/*   Updated: 2023/05/07 16:56:03 by marvin           ###   ########.fr       */
+/*   Updated: 2023/05/08 11:56:23 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,12 +48,16 @@
 #define CHANMODE(channel, mode) (":localhost MODE " + (channel) + " " + (mode) + "\r\n")
 #define RPL_CHANNELMODEIS(user, channel, mode) (":localhost 324 " + user.getNickname() + " " + (channel) + " " + (mode) + "\r\n")
 
+// PRIVMSG
+#define PRIVMSGCHAN(sender, recv, word) (": " + user.getUsername() + " PRIVMSG " + recv.getNickname() + " :" + word + "\r\n")
+#define ERR_NORECIPIENT(user, command) (":" + user.getUsername() + " 411 " + user.getNickname() + " :No recipient given " + (command) + "\r\n")
+#define ERR_CANNOTSENDTOCHAN(user, channel) (":" + user.getUsername() + " 404 " + user.getNickname() + " " + (channel) + ":Cannot send to channel" + "\r\n")
+#define ERR_NOTEXTTOSEND(user) (":localhost 412 " + user.getNickname() + ":No text to send" + "\r\n")
 
 // UNKNOWN
 #define ERR_NOTIMPLEMENTED(word) (":" + user.getHostname() + " 449 : " + word + " command not implemented\n")
                
 // CHAN
-#define PRIVMSGCHAN(sender, recv, word) (": " + user.getUsername() + " PRIVMSG " + recv.getNickname() + " :" + word + "\r\n")
 #define ERR_NOSUCHCHANNEL(user, channel) (":" + user.getUsername() + " 403 " + user.getNickname() + " " + channel + " :No such channel\r\n")
 #define ERR_NOUSERONCHANNEL(user, channel, target) (":" + user.getUsername() + " 441 " + user.getNickname() + " " + (target) + " " + (channel) + " :No such user in channel\n")
 #define ERR_USERONCHANNEL(user, nick, channel) ( ":" + user.getHostname() + " 443 " + user.getNickname() + " " + nick + " " + channel + " :is already on channel\n" )
@@ -70,7 +74,7 @@
 #define ERR_NEEDINVITE(user, channel) ( ":" + user.getHostname() + " 473 " + user.getNickname() + " " + (channel) + " :Cannot join " + (channel) + " (+i)\r\n" )
 
 // KICK
-# define RPL_KICK(user, channel, target, reason) (":" + user.getUsername() + " KICK " + (channel) + " " + target.getNickname() + " :" + (reason) + "\r\n")
+# define RPL_KICK(user, channel, target, reason) (":" + user.getNickname() + " KICK " + (channel) + " " + target.getNickname() + " " + (reason) + "\r\n")
 
 //LIST
 #define RPL_LIST(user, channel, topic) (": " + user.getUsername() + " 322 " + user.getNickname() + " " + channel->getName() + " " + channel->getSNumUsers() + " " + (topic) + "\n")

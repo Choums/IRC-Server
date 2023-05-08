@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/19 08:28:18 by root              #+#    #+#             */
-/*   Updated: 2023/05/07 16:59:07 by marvin           ###   ########.fr       */
+/*   Updated: 2023/05/07 17:12:28 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,10 +34,6 @@ class	Channel {
 		void	UnBanUser(User& user, User& target);
 		void	KickUser(User& user, User& target, std::string const& reason);
 
-		// void	Change_mode();
-
-		// void	RmUser(int user_fd);
-		// void	RmUser(std::string name);
 		bool	Is_Ban(User& user);
 		bool	Is_Ope(User& user);
 		bool	Is_Inv(User& user);

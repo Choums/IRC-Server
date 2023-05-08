@@ -6,7 +6,7 @@
 /*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/19 08:47:29 by root              #+#    #+#             */
-/*   Updated: 2023/05/07 17:08:22 by marvin           ###   ########.fr       */
+/*   Updated: 2023/05/08 12:31:09 by marvin           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,15 +34,17 @@ Channel::~Channel()
 
 void	Channel::Privmsg(User& user, std::string const& msg)
 {
+	std::cout << YELLOW << "-Sending Message To All Users On Channel-" << END << std::endl;
 	std::map<int, User*>::iterator	it = this->_users.begin();
 	std::map<int, User*>::iterator	ite = this->_users.end();
 
-	std::string	privmsg = ":" + user.getUsername() + " PRIVMSG " + this->_name + msg + "\r\n";
-	
+
+	std::string	privmsg = ":" + user.getUsername() + " PRIVMSG " + this->_name + " " + msg + "\r\n";
+	std::cout << "|" << privmsg << "|" << std::endl;
 	while (it != ite)
 	{
-		// str = PRIVMSGCHAN();
-		send(it->first, privmsg.c_str(), privmsg.size(), MSG_NOSIGNAL);
+		if (it->first != user.getFd())
+			send(it->first, privmsg.c_str(), privmsg.size(), MSG_NOSIGNAL);
 		it++;
 	}
 }
@@ -157,7 +159,7 @@ void	Channel::BanUser(User& user, User& target)
 
 	std::cout << GREEN << "<" << this->_name << ">: " << target.getNickname() << " has been banned by " << user.getNickname() << END << std::endl;
 	
-	std::string	reason = "You have been Banned !";
+	std::string	reason = ":You have been Banned !";
 
 	this->KickUser(user, target, reason);
 	this->setChanModes(std::string("+b"));

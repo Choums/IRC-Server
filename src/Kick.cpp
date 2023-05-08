@@ -43,7 +43,7 @@ void	Server::cmd_Kick(User& user, std::string const& rest)
 	if (reason.size() == 1)
 	{
 		std::cout << "reason empty, default used\n";
-		reason = "So long"; // Reason par defaut si l'user n'en fournit pas
+		reason = ":So long"; // Reason par defaut si l'user n'en fournit pas
 	}
 
 	Chan_iter	it = this->get_Channel(chan);
