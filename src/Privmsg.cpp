@@ -99,6 +99,7 @@ void	Server::cmd_Privmsg(User& user, std::string const& rest)
 			User *target = (*itu);
 			if (msg.size() == 1)
 			{
+				std::cout << RED << "NO TEXT TO SEND" << END << std::endl;
 				str = ERR_NOTEXTTOSEND(user);
 				send(user.getFd(), str.c_str(), str.size(), MSG_NOSIGNAL);
 				return ;

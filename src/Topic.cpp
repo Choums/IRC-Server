@@ -52,18 +52,16 @@ void	Server::cmd_Topic(User& user, std::string const& rest)
 		Channel *channel = (*it);
 		if (std::getline(ss, new_topic, ':'))	// Si getline trouve le ':' => new topic
 		{
-			std::cout << GREEN << "<" << new_topic << ">" << END << std::endl;
 			if (channel->Is_Ope(user))
 			{
-				// std::getline(ss, new_topic);	// Extrait le reste du new topic
-				// new_topic.();
-
+				std::getline(ss, new_topic);	// Extrait le reste du new topic
 
 				RmNewLine(new_topic, '\n');
 				RmNewLine(new_topic, '\r');
+				std::cout << GREEN << "<" << new_topic << ">, size: " << new_topic.size() << END << std::endl;
 				
-				
-				if (new_topic.size() == 1)	// Rien apres le ':' => Clear le topic
+				// std::cout << "|" << new_topic[1] << "|" << std::endl;
+				if (new_topic[0] == ':' && !new_topic[1])	// Rien apres le ':' => Clear le topic
 					channel->setTopicClear();
 				else	// Sinon on modifie le topic par le nouveau
 					channel->setTopic(new_topic);
