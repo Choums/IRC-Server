@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Macro.hpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
+/*   By: chaidel <chaidel@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/21 17:04:51 by root              #+#    #+#             */
-/*   Updated: 2023/05/08 17:46:05 by marvin           ###   ########.fr       */
+/*   Updated: 2023/05/10 17:38:57 by chaidel          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@
 
 
 // NICK
-#define NICK(user, nick) (":" + user.getUsername() + " NICK " + nick + "\r\n")
+#define NICK(user) (":" + user.getUsername() + " NICK " + user.getNickname() + "\r\n")
 #define ERR_NICKNAMEINUSE(user, nick) (":" + user.getHostname() + " 433 " + user.getNickname() + " " + nick + " :Nickname is already in use.\r\n")
 #define ERR_ERRONEUSNICKNAME(user) (":" + user.getHostname() + " 432 " + user.getNickname() + " :Erroneous nickname\r\n")
 #define RPL_WHOISUSER(requester, target) (":" + (requester).getUsername() + " 311 " + (requester).getNickname() + " " + (target).getNickname() + " " + (target).getUsername() + " " + (target).getHostname() + " * :" + (target)->getRealName() + "\r\n")
@@ -74,7 +74,7 @@
 #define ERR_NEEDINVITE(user, channel) ( ":" + user.getHostname() + " 473 " + user.getNickname() + " " + (channel) + " :Cannot join " + (channel) + " (+i)\r\n" )
 
 // KICK
-# define RPL_KICK(user, channel, target, reason) (":" + user.getNickname() + " KICK " + (channel) + " " + target.getNickname() + " " + (reason) + "\r\n")
+#define RPL_KICK(user, channel, target, reason) (":" + user.getNickname() + " KICK " + (channel) + " " + target.getNickname() + " " + (reason) + "\r\n")
 
 //LIST
 #define RPL_LIST(user, channel, topic) (": " + user.getUsername() + " 322 " + user.getNickname() + " " + channel->getName() + " " + channel->getSNumUsers() + " " + (topic) + "\n")

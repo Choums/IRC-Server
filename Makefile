@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: root <root@student.42.fr>                  +#+  +:+       +#+         #
+#    By: chaidel <chaidel@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/12/05 17:28:02 by aptive            #+#    #+#              #
-#    Updated: 2023/05/09 16:04:44 by root             ###   ########.fr        #
+#    Updated: 2023/05/10 17:50:43 by chaidel          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -53,7 +53,7 @@ DEP= $(SDEP)
 
 # compiler
 CC		= c++ $(CFLAGS)
-CFLAGS	= -Wall -Wextra -g3 -std=c++98 -Wshadow -Wno-shadow -MMD -fsanitize=address
+CFLAGS	= -Wall -Wextra -Werror -g3 -std=c++98 -Wshadow -Wno-shadow -MMD -fsanitize=address
 
 all: obj $(NAME)
 # @echo "COMPILATION [OK]"

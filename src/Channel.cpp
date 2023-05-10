@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
+/*   By: chaidel <chaidel@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/19 08:47:29 by root              #+#    #+#             */
-/*   Updated: 2023/05/08 18:23:45 by marvin           ###   ########.fr       */
+/*   Updated: 2023/05/10 17:43:08 by chaidel          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,18 @@ Channel::Channel(User& user, std::string const& name)
 
 Channel::~Channel() // Kick les users toujours present avant de fermer le serveur
 {
+
+	std::map<int, User*>::iterator	it = this->_users.begin();
+	std::map<int, User*>::iterator	ite = this->_users.end();
+
+	std::string	reason = "Channel closing !";
+
+	while (it != ite)
+	{
+		this->PartUser(*(it->second), reason);
+		it++;
+	}
+
 	this->_users.clear();
 	this->_privilege.clear();
 	this->_ban.clear();

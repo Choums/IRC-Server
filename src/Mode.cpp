@@ -114,6 +114,8 @@ void	Server::cmd_Mode(User& user, std::string const& rest)
 						{
 							std::cout << GREEN << "-Update Channel User Modes-" << END << std::endl;
 							tmp->setUserModes(user, *tmp_user, mode);
+							if (!tmp->Is_OpePresent())
+								this->setRmChannel(tmp);
 						}
 						else
 						{

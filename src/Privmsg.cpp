@@ -35,7 +35,7 @@ void	Server::cmd_Privmsg(User& user, std::string const& rest)
 	std::string			msgtarget;	// Channel or User target
 	std::string			msg;		// Msg to be sent
 	ss >> msgtarget;				// Extrait uniquement le recipient
-	std::getline(ss, msg, ':'); 	// Extrait le msg a partir du ':'
+	std::getline(ss, msg); 	// Extrait le msg a partir du ':'
 
 	std::cout << YELLOW << "-PRIVMSG-" << END << std::endl;
 	std::cout << RED << "<" << msgtarget << ">\n<" << msg << ">" << END << std::endl;
@@ -61,6 +61,7 @@ void	Server::cmd_Privmsg(User& user, std::string const& rest)
 				{
 					if (msg.size() == 1) // Pas de msg a envoyé
 					{
+						std::cout << RED << "NO TEXT TO SEND" << END << std::endl;
 						str = ERR_NOTEXTTOSEND(user);
 						send(user.getFd(), str.c_str(), str.size(), MSG_NOSIGNAL);
 						return ;

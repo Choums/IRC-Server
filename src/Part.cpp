@@ -24,7 +24,7 @@ void	Server::cmd_Part(User& user, std::string const& rest)
 	std::string	chans;
 	std::string	reason;
 	ss >> chans;
-	std::getline(ss, reason, ':');
+	std::getline(ss, reason);
 
 	std::vector<std::string> cnl = parse_cnl_name(chans);
 	

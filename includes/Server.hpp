@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
+/*   By: chaidel <chaidel@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/14 17:32:55 by aptive            #+#    #+#             */
-/*   Updated: 2023/05/08 17:55:56 by marvin           ###   ########.fr       */
+/*   Updated: 2023/05/10 17:51:00 by chaidel          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,8 +15,8 @@
 
 # include "web_serv.hpp"
 
-typedef typename std::vector<User*>::iterator User_iter;
-typedef typename std::vector<Channel*>::iterator Chan_iter;
+typedef  std::vector<User*>::iterator 		User_iter;
+typedef  std::vector<Channel*>::iterator	Chan_iter;
 
 class Server
 {
