@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: chaidel <chaidel@student.42.fr>            +#+  +:+       +#+        */
+/*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/19 08:47:29 by root              #+#    #+#             */
-/*   Updated: 2023/05/10 17:43:08 by chaidel          ###   ########.fr       */
+/*   Updated: 2023/05/13 15:15:16 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ void	Channel::Privmsg(User& user, std::string const& msg)
 	std::map<int, User*>::iterator	it = this->_users.begin();
 	std::map<int, User*>::iterator	ite = this->_users.end();
 
-
+	std::cout << GREEN << "|" << msg << "|" << END << std::endl;
 	std::string	privmsg = ":" + user.getUsername() + " PRIVMSG " + this->_name + " " + msg + "\r\n";
 	
 	// std::cout << "|" << privmsg << "|" << std::endl;

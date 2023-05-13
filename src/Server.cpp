@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
+/*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/14 17:37:42 by aptive            #+#    #+#             */
-/*   Updated: 2023/05/08 17:17:02 by marvin           ###   ########.fr       */
+/*   Updated: 2023/05/13 19:33:41 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -337,8 +337,8 @@ void	Server::send_privmsg(User& user, User& target, std::string const& msg)
 {
 	std::cout << YELLOW << "-Sending Message To "<< target.getNickname() << "-" << END << std::endl;
 
-	std::string	privmsg = ":" + user.getUsername() + " PRIVMSG " + target.getNickname() + " " + msg + "\r\n";
-	// std::cout << "|" << privmsg << "|" << std::endl;
+	std::cout << GREEN << "|" << msg << "|" << END << std::endl;
+	std::string	privmsg = ":" + user.getUsername() + " PRIVMSG " + target.getNickname() + " :" + msg + "\r\n";
 	
 	send(target.getFd(), privmsg.c_str(), privmsg.size(), MSG_NOSIGNAL);
 }

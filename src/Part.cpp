@@ -24,7 +24,11 @@ void	Server::cmd_Part(User& user, std::string const& rest)
 	std::string	chans;
 	std::string	reason;
 	ss >> chans;
-	std::getline(ss, reason);
+	std::getline(ss, reason, ':');	// Positionne sur le ':'
+	std::getline(ss, reason);		// Extrait le msg a partir du ':'
+
+	RmNewLine(reason, '\r');
+	RmNewLine(reason, '\n');
 
 	std::vector<std::string> cnl = parse_cnl_name(chans);
 	
@@ -42,8 +46,6 @@ void	Server::cmd_Part(User& user, std::string const& rest)
 		std::cout << "reason empty, default used\n";
 		reason = "Bye Bye"; // Reason par defaut si l'user n'en fournit pas
 	}
-	RmNewLine(reason, '\r');
-	RmNewLine(reason, '\n');
 
 	for (size_t	i(0); i < cnl.size(); i++)
 	{

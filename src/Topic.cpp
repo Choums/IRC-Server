@@ -34,7 +34,7 @@ void	Server::cmd_Topic(User& user, std::string const& rest)
 	std::string	str;				//	Reply
 	std::stringstream	ss(rest);	
 	std::string			chan;
-	std::string			new_topic;		// Topic a changer
+	std::string			new_topic;	// Topic a changer
 	ss >> chan;
 
 	std::cout << YELLOW << "-Topic Command-" << END << std::endl;

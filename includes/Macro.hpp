@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Macro.hpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: chaidel <chaidel@student.42.fr>            +#+  +:+       +#+        */
+/*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/21 17:04:51 by root              #+#    #+#             */
-/*   Updated: 2023/05/10 17:38:57 by chaidel          ###   ########.fr       */
+/*   Updated: 2023/05/13 19:39:38 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,7 @@
 #define ERR_NEEDINVITE(user, channel) ( ":" + user.getHostname() + " 473 " + user.getNickname() + " " + (channel) + " :Cannot join " + (channel) + " (+i)\r\n" )
 
 // KICK
-#define RPL_KICK(user, channel, target, reason) (":" + user.getNickname() + " KICK " + (channel) + " " + target.getNickname() + " " + (reason) + "\r\n")
+#define RPL_KICK(user, channel, target, reason) (":" + user.getNickname() + " KICK " + (channel) + " " + target.getNickname() + " :" + (reason) + "\r\n")
 
 //LIST
 #define RPL_LIST(user, channel, topic) (": " + user.getUsername() + " 322 " + user.getNickname() + " " + channel->getName() + " " + channel->getSNumUsers() + " " + (topic) + "\n")

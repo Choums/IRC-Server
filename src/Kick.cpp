@@ -29,9 +29,13 @@ void	Server::cmd_Kick(User& user, std::string const& rest)
 	std::string			reason;
 	ss >> chan >> target;
 	std::getline(ss, reason, ':');
+	std::getline(ss, reason);
+
+	RmNewLine(reason, '\r');
+	RmNewLine(reason, '\n');
 
 	std::cout << YELLOW << "-Kick Command-" << END << std::endl;
-	std::cout << RED << "<" << chan << ">\n<" << target << ">" << ">\n<" << reason << ">" << END << std::endl;
+	std::cout << RED << "<" << chan << ">\n<" << target << ">\n<" << reason << ">" << END << std::endl;
 
 	if (chan.size() == 1 || target.size() == 1)
 	{
@@ -44,10 +48,8 @@ void	Server::cmd_Kick(User& user, std::string const& rest)
 	if (reason.size() == 1)
 	{
 		std::cout << "reason empty, default used\n";
-		reason = ":So long"; // Reason par defaut si l'user n'en fournit pas
+		reason = "So long"; // Reason par defaut si l'user n'en fournit pas
 	}
-	RmNewLine(reason, '\r');
-	RmNewLine(reason, '\n');
 
 	Chan_iter	it = this->get_Channel(chan);
 	if (it != this->_channel.end())

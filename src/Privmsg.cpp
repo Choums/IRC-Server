@@ -35,7 +35,8 @@ void	Server::cmd_Privmsg(User& user, std::string const& rest)
 	std::string			msgtarget;	// Channel or User target
 	std::string			msg;		// Msg to be sent
 	ss >> msgtarget;				// Extrait uniquement le recipient
-	std::getline(ss, msg); 	// Extrait le msg a partir du ':'
+	std::getline(ss, msg, ':'); 	// Positionne sur le ':'
+	std::getline(ss, msg);			// Extrait le msg a partir du ':'
 
 	std::cout << YELLOW << "-PRIVMSG-" << END << std::endl;
 	std::cout << RED << "<" << msgtarget << ">\n<" << msg << ">" << END << std::endl;
@@ -97,6 +98,7 @@ void	Server::cmd_Privmsg(User& user, std::string const& rest)
 		User_iter itu = this->get_User(msgtarget);
 		if (itu != this->_client_socket_v.end())
 		{
+			std::cout << GREEN << "USER FOUND" << END << std::endl;
 			User *target = (*itu);
 			if (msg.size() == 1)
 			{
@@ -111,6 +113,7 @@ void	Server::cmd_Privmsg(User& user, std::string const& rest)
 		}
 		else
 		{
+			std::cout << RED << "USER NOT FOUND" << END << std::endl;
 			str = ERR_NOSUCHNICK(user, msgtarget);
 			send(user.getFd(), str.c_str(), str.size(), MSG_NOSIGNAL);
 			return ;
