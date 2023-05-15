@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
+/*   By: chaidel <chaidel@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/07 18:15:00 by aptive            #+#    #+#             */
-/*   Updated: 2023/04/27 18:15:21 by marvin           ###   ########.fr       */
+/*   Updated: 2023/05/15 19:18:58 by chaidel          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,12 +52,25 @@ void sendMessage(int fd, std::string message)
 // 003 "This server was created <date>"
 // RPL_MYINFO (004) : Ce code fournit au client des informations sur le serveur IRC, y compris son nom, sa version, les modes pris en charge et les extensions disponibles.
 // 004 "<servername> <version> <available user modes> <available channel modes>"
-void	welcome(User& user)
+void    welcome(User& user)
 {
-	std::string	str = RPL_WELCOME(user) + RPL_YOURHOST(user) + RPL_CREATED(user) + RPL_MYINFO(user);
-
-	send(user.getFd(), str.c_str(), str.size(), MSG_NOSIGNAL);
+    if (user.getAuth_password() == true)
+    {
+        std::string    str = RPL_WELCOME(user) + RPL_YOURHOST(user) + RPL_CREATED(user) + RPL_MYINFO(user);
+        send(user.getFd(), str.c_str(), str.size(), MSG_NOSIGNAL);
+    }
+    else
+    {
+		Server::running_serv->setRmUser(user);
+    }
 }
+
+// Ctrl+a, n : Cette combinaison de touches vous permet de passer à la fenêtre de discussion suivante.
+
+// Ctrl+a, p : Cette combinaison de touches vous permet de passer à la fenêtre de discussion précédente.
+
+// Ctrl+a, 1-9 : Ces combinaisons de touches vous permettent de basculer directement vers une fenêtre de discussion spécifique.
+// Par exemple, "Ctrl+a, 3" vous amènera à la fenêtre de discussion numéro 3.
 
 Server* Server::running_serv = NULL;
 

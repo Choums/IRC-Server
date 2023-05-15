@@ -32,6 +32,8 @@ void	Server::cmd_Part(User& user, std::string const& rest)
 
 	std::vector<std::string> cnl = parse_cnl_name(chans);
 	
+	std::cout << YELLOW << "-Part Commande-" << END << std::endl;
+
 	std::string	str;
 	if (cnl.size() == 0)
 	{
@@ -40,12 +42,12 @@ void	Server::cmd_Part(User& user, std::string const& rest)
 		send(user.getFd(), str.c_str(), str.size(), MSG_NOSIGNAL);
 		return ;
 	}
-	std::cout << RED << reason.size() << "|" << reason << "|" << END << std::endl;
 	if (reason.size() == 1)
 	{
 		std::cout << "reason empty, default used\n";
 		reason = "Bye Bye"; // Reason par defaut si l'user n'en fournit pas
 	}
+	std::cout << RED << "|" << reason << "|" << END << std::endl;
 
 	for (size_t	i(0); i < cnl.size(); i++)
 	{

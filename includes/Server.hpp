@@ -6,7 +6,7 @@
 /*   By: chaidel <chaidel@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/14 17:32:55 by aptive            #+#    #+#             */
-/*   Updated: 2023/05/10 17:51:00 by chaidel          ###   ########.fr       */
+/*   Updated: 2023/05/15 18:57:33 by chaidel          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,8 +35,8 @@ class Server
 
 		void	boucle_server( void );
 		bool	verif_password(User& user, std::string const& pass);
-		void	gestion_new_connexion( fd_set * temp, fd_set * read_sockets, struct sockaddr_in addr);
-		void	gestion_activite_client(fd_set * read_sockets,fd_set * temp);
+		void	gestion_new_connexion( fd_set * temp, fd_set * _read_sockets, struct sockaddr_in addr);
+		void	gestion_activite_client(fd_set * _read_sockets,fd_set * temp);
 		void	parsing_cmd( User * user );
 
 
@@ -87,6 +87,7 @@ class Server
 		// void				setClient_socket_v(User user);
 		void				setNewChannel(Channel* cnl);
 		void				setRmChannel(Channel* cnl);
+		void				setRmUser(User &user);
 
 		static	Server* running_serv;
 	private:
@@ -99,6 +100,7 @@ class Server
 
 		std::vector<User*>		_client_socket_v;
 		std::vector<Channel*>	_channel;
+		fd_set					_read_sockets;
 
 };
 

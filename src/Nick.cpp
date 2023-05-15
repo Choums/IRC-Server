@@ -6,7 +6,7 @@
 /*   By: chaidel <chaidel@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/23 12:43:38 by root              #+#    #+#             */
-/*   Updated: 2023/05/10 17:05:37 by chaidel          ###   ########.fr       */
+/*   Updated: 2023/05/15 18:22:23 by chaidel          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ bool	Server::is_valid(std::string const& nick)
 	if (nick.size() > 9)
 		return (false);
 	for (size_t i(0); i < nick.size() - 1; i++)
-		if (!std::isalnum(nick[i]))
+		if (!std::isalnum(nick[i]) && nick[i] != '_')
 			return (false);
 	return (true);
 }
@@ -64,7 +64,7 @@ void Server::cmd_Nick(User& user, std::string const& nickname)
 	{
 		user.setNickname(nick);
 		std::cout << GREEN << "Nickname has been changed to: [" << user.getNickname() << "]" << END << std::endl;
-		str = NICK(user);
+		str = NICK(user, nick);
 		send(user.getFd(), str.c_str(), str.size(), MSG_NOSIGNAL);
 		// std::cout << "||| " << str << " |||" << std::endl;
 

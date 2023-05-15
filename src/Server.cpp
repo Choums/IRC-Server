@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: chaidel <chaidel@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/14 17:37:42 by aptive            #+#    #+#             */
-/*   Updated: 2023/05/13 19:33:41 by root             ###   ########.fr       */
+/*   Updated: 2023/05/15 19:16:16 by chaidel          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -142,9 +142,9 @@ void	Server::boucle_server( void )
 	struct sockaddr_in addr = this->getAddr();
 
 	// Initialize the read sockets set
-	fd_set read_sockets;
-	FD_ZERO(&read_sockets);
-	FD_SET(_server_fd, &read_sockets);
+	// fd_set _read_sockets;
+	FD_ZERO(&_read_sockets);
+	FD_SET(_server_fd, &_read_sockets);
 
 	_max_socket_fd = _server_fd;
 
@@ -154,48 +154,52 @@ void	Server::boucle_server( void )
 	{
 		std::cout << "[SERVER] : waiting data : " << YELLOW << count << END << std::endl;
 		count++;
-		if (count > 20)
-			exit(EXIT_SUCCESS);
 
 		// Wait for any of the sockets to become readable
-		fd_set temp = read_sockets;
+		fd_set temp = _read_sockets;
 		if (select(_max_socket_fd + 1, &temp, NULL, NULL, NULL) < 0)
 			throw std::string("Error : waiting for sockets to become readable !\n");
 
 		// traitement de l'activité sur les sockets
-		this->gestion_new_connexion(&temp, &read_sockets, addr);
+		this->gestion_new_connexion(&temp, &_read_sockets, addr);
 
 		affichage_vector(_client_socket_v);
 
 			// Check for data on any of the client sockets
-			this->gestion_activite_client( &read_sockets, &temp );
+			this->gestion_activite_client( &_read_sockets, &temp );
 
 	}
 }
 
-bool	Server::verif_password(User& user, std::string const& pass)
+bool    Server::verif_password(User& user, std::string const& mdp)
 {
-	std::string	str;
-	if (pass.empty())
-	{
-		str = ERR_NEEDMOREPARAMS(user, "PASS");
-		send(user.getFd(), str.c_str(), str.size(), MSG_NOSIGNAL);
-		return (false);
-	}
-	if (!this->_password.compare(pass))
-	{
-		std::cout << "|" << this->_password << "| == |" << pass << "|" << std::endl;
-		str = ERR_PASSWDMISMATCH(user);
-		send(user.getFd(), str.c_str(), str.size(), MSG_NOSIGNAL);
-		return (false);
-	}
-	str = "[SERVER] : Password correct, Connection established !\n";
-	send(user.getFd(), str.c_str(), str.size(), MSG_NOSIGNAL);
-	return (true);
+    std::string	str;
+	std::string	pass = mdp;
+
+	RmNewLine(pass, '\n');
+	RmNewLine(pass, '\r');
+
+    if (mdp.size() == 1)
+    {
+        str = ERR_NEEDMOREPARAMS(user, "PASS");
+        send(user.getFd(), str.c_str(), str.size(), MSG_NOSIGNAL);
+        return (false);
+    }
+    if (this->_password.compare(pass))
+    {
+        std::cout << this->_password.size() << "|" << this->_password << "| == "<< pass.size() <<"|" << pass << "|" << std::endl;
+        str = "[SERVER] : Password incorrect !\n";
+        send(user.getFd(), str.c_str(), str.size(), MSG_NOSIGNAL);
+        return (false);
+    }
+    str = "[SERVER] : Password correct, Connection established !\n";
+    send(user.getFd(), str.c_str(), str.size(), MSG_NOSIGNAL);
+    user.setAuth_passwordOK();
+    return (true);
 }
 
 
-void	Server::gestion_new_connexion(fd_set * temp, fd_set * read_sockets, struct sockaddr_in addr)
+void	Server::gestion_new_connexion(fd_set * temp, fd_set * _read_sockets, struct sockaddr_in addr)
 {
 	if (FD_ISSET(_server_fd, temp))
 	{
@@ -210,7 +214,7 @@ void	Server::gestion_new_connexion(fd_set * temp, fd_set * read_sockets, struct 
 		if (new_socket < 0)
 			throw std::string("Error : Failed to accept connection !\n");
 
-		FD_SET(new_socket, read_sockets);
+		FD_SET(new_socket, _read_sockets);
 
 		if (new_socket > _max_socket_fd)
 			_max_socket_fd = new_socket;
@@ -229,11 +233,11 @@ void	Server::gestion_new_connexion(fd_set * temp, fd_set * read_sockets, struct 
 
 
 
-void Server::gestion_activite_client(fd_set * read_sockets, fd_set * temp)
+void Server::gestion_activite_client(fd_set * _read_sockets, fd_set * temp)
 {
 	int valread;
 	char buffer[1025];
-	(void)read_sockets;
+	(void)_read_sockets;
 
 	for (size_t i = 0; i < _client_socket_v.size(); i++)
 	{
@@ -250,15 +254,24 @@ void Server::gestion_activite_client(fd_set * read_sockets, fd_set * temp)
 				// Client disconnected, remove from active socket set
 				sendMessageWarning(_client_socket_v[i]->getFd(), "[SERVER] : You have been disconnected\n");
 				close(client_socket_fd);
-				FD_CLR(client_socket_fd, read_sockets);
+				FD_CLR(client_socket_fd, _read_sockets);
 				_client_socket_v.erase(_client_socket_v.begin()+i);
 
 			}
 			else
 			{
-				// std::cout << "HEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE" << std::endl;
-				_client_socket_v[i]->setBuf(buf);
-				this->parsing_cmd(_client_socket_v[i]);
+				int buf_len = buf.size();
+                if (buf[buf_len - 1] == '\n')
+                {
+                    std::cout << "Commande complete\n";
+                    _client_socket_v[i]->setBuf(buf);
+                    this->parsing_cmd(_client_socket_v[i]);
+                }
+                else
+                {
+                    std::cout << "add to buf\n";
+                    _client_socket_v[i]->setBuf(buf);
+                }
 			}
 		}
 	}
@@ -274,6 +287,8 @@ std::pair<std::string, std::string>  first_word(std::string line)
 	{
 		std::istringstream iss_word(word);
 		iss_word >> word;
+		if (!std::getline(iss_word, rest) || word.size() == 1 || word.empty())
+			return (std::make_pair(word, ""));
 		rest = iss.str().substr(word.size() + 1);
 	}
 	return (std::make_pair(word, rest));
@@ -323,6 +338,7 @@ void Server::parsing_cmd( User * user )
 		arg = first_word(line);
 		cmd = arg.first;
 		rest = arg.second;
+		// if (cmd.empty())
 		std::cout << RED << cmd << std::endl << rest << END << std::endl;
 		std::cout << "-------------------------------------->\n";
 
@@ -621,6 +637,26 @@ void	Server::setRmChannel(Channel* cnl)
 		}
 		it++;
 	}
+}
+
+void	Server::setRmUser(User &user)
+{
+	size_t i(0);
+	while (i < this->_client_socket_v.size())
+	{
+		if (user.getFd() == this->_client_socket_v[i]->getFd())
+			break;
+		i++;
+	}
+	int fd = this->_client_socket_v[i]->getFd();
+
+	std::cout << RED << "[SERVER] : Delete " << _client_socket_v[i]->getNickname() << END << std::endl;
+	// Client disconnected, remove from active socket set
+	sendMessageWarning(_client_socket_v[i]->getFd(), "[SERVER] : You have been disconnected\n");
+	close(fd);
+	FD_CLR(fd, &_read_sockets);
+	_client_socket_v.erase(_client_socket_v.begin()+i);
+	(void)user;
 }
 
 void	Server::setNewChannel(Channel* cnl)

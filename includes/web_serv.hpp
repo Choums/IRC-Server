@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   web_serv.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
+/*   By: chaidel <chaidel@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/07 18:14:43 by aptive            #+#    #+#             */
-/*   Updated: 2023/05/08 17:16:08 by marvin           ###   ########.fr       */
+/*   Updated: 2023/05/15 19:08:28 by chaidel          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -133,7 +133,7 @@ void affichage_vector(std::vector<T> v)
 	for (size_t i = 0; i < v.size(); i++)
 	{
 		std::cout << GREEN << "-------------------" << std::endl;
-		std::cout << "vector : " << i << std::endl << v[i];
+		std::cout << "vector : " << i << std::endl << *v[i];
 		std::cout << "-------------------" << std::endl;
 	}
 	std::cout << RED << "*******************" << END << std::endl;
