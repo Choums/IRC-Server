@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: chaidel <chaidel@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/19 08:47:29 by root              #+#    #+#             */
-/*   Updated: 2023/05/13 15:15:16 by root             ###   ########.fr       */
+/*   Updated: 2023/05/16 16:36:01 by chaidel          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ void	Channel::Privmsg(User& user, std::string const& msg)
 	std::map<int, User*>::iterator	ite = this->_users.end();
 
 	std::cout << GREEN << "|" << msg << "|" << END << std::endl;
-	std::string	privmsg = ":" + user.getUsername() + " PRIVMSG " + this->_name + " " + msg + "\r\n";
+	std::string	privmsg = ":" + user.getNames() + " PRIVMSG " + this->_name + " " + msg + "\r\n";
 	
 	// std::cout << "|" << privmsg << "|" << std::endl;
 	while (it != ite)
@@ -109,7 +109,7 @@ void	Channel::AddUser(User& new_user, bool priv) // check user existant
 	
 	if (this->Is_Inv(new_user)) // New_user a accepté l'invitation, il est supp de la liste des invités
 		this->_invited.erase(std::find(this->_invited.begin(), this->_invited.end(), new_user.getFd()));
-	std::string msg = ":" + new_user.getNickname() + "!"+ new_user.getNickname() +"@" + new_user.getHostname() + " JOIN " + this->_name + "\r\n";
+	std::string msg = ":" + new_user.getNames() + " JOIN " + this->_name + "\r\n";
 
 	std::cout << GREEN << "< " << this->_name << " >: " << msg << END << std::endl;
 	this->Broadcast(msg);
@@ -160,10 +160,10 @@ void	Channel::PartUser(User& user, std::string const& reason)
 		
 	std::cout << YELLOW << "PART " << user.getUsername() << " has been deleted from " << this->_name << END << std::endl;
 	this->getUsers();
-	std::string	cast = ":" + user.getUsername() + "!user@localhost PART " + this->_name + " :" + reason + "\r\n";
+	std::string	cast = ":" + user.getNames() + " PART " + this->_name + " :" + reason + "\r\n";
 	this->Broadcast(cast); // Display a tout les users que l'user est parti
 
-	std::string	str = ":" + user.getUsername() + "!user@localhost PART " + this->_name + "\r\n";
+	std::string	str = ":" + user.getNames() + " PART " + this->_name + " :" + reason + "\r\n";
 	send(user.getFd(), str.c_str(), str.size(), MSG_NOSIGNAL); // Confirmation a l'user que la commande est reussi
 }
 

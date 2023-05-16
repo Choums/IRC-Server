@@ -6,7 +6,7 @@
 /*   By: chaidel <chaidel@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/23 12:43:38 by root              #+#    #+#             */
-/*   Updated: 2023/05/15 18:22:23 by chaidel          ###   ########.fr       */
+/*   Updated: 2023/05/16 16:17:16 by chaidel          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,10 +62,11 @@ void Server::cmd_Nick(User& user, std::string const& nickname)
 	}
 	else
 	{
-		user.setNickname(nick);
 		std::cout << GREEN << "Nickname has been changed to: [" << user.getNickname() << "]" << END << std::endl;
 		str = NICK(user, nick);
+		std::cout << str << std::endl;
 		send(user.getFd(), str.c_str(), str.size(), MSG_NOSIGNAL);
+		user.setNickname(nick);
 		// std::cout << "||| " << str << " |||" << std::endl;
 
 		if (user.is_set() && !user.getSet())

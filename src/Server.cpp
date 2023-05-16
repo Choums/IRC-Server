@@ -6,7 +6,7 @@
 /*   By: chaidel <chaidel@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/14 17:37:42 by aptive            #+#    #+#             */
-/*   Updated: 2023/05/15 19:16:16 by chaidel          ###   ########.fr       */
+/*   Updated: 2023/05/16 16:37:39 by chaidel          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -188,7 +188,7 @@ bool    Server::verif_password(User& user, std::string const& mdp)
     if (this->_password.compare(pass))
     {
         std::cout << this->_password.size() << "|" << this->_password << "| == "<< pass.size() <<"|" << pass << "|" << std::endl;
-        str = "[SERVER] : Password incorrect !\n";
+        str = ERR_PASSWDMISMATCH(user);
         send(user.getFd(), str.c_str(), str.size(), MSG_NOSIGNAL);
         return (false);
     }
@@ -354,7 +354,7 @@ void	Server::send_privmsg(User& user, User& target, std::string const& msg)
 	std::cout << YELLOW << "-Sending Message To "<< target.getNickname() << "-" << END << std::endl;
 
 	std::cout << GREEN << "|" << msg << "|" << END << std::endl;
-	std::string	privmsg = ":" + user.getUsername() + " PRIVMSG " + target.getNickname() + " :" + msg + "\r\n";
+	std::string	privmsg = ":" + user.getNames() + " PRIVMSG " + target.getNickname() + " :" + msg + "\r\n";
 	
 	send(target.getFd(), privmsg.c_str(), privmsg.size(), MSG_NOSIGNAL);
 }

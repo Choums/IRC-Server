@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   User.hpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
+/*   By: chaidel <chaidel@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/12 18:44:15 by aptive            #+#    #+#             */
-/*   Updated: 2023/05/05 14:49:40 by marvin           ###   ########.fr       */
+/*   Updated: 2023/05/16 16:13:23 by chaidel          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ class User
 		bool	is_set();
 		
 		// ** --------------------------------- ACCESSOR ---------------------------------
-		
+		std::string				getNames() const;
 		bool					getSet() const;
 		int						getFd(void) const;
 		int						getId(void) const;

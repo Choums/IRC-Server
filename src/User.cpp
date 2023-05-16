@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   User.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
+/*   By: chaidel <chaidel@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/12 18:50:55 by aptive            #+#    #+#             */
-/*   Updated: 2023/05/06 14:02:54 by marvin           ###   ########.fr       */
+/*   Updated: 2023/05/16 16:14:25 by chaidel          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -164,6 +164,11 @@ bool	User::is_set()
 /*
 ** --------------------------------- ACCESSOR ---------------------------------
 */
+
+std::string	User::getNames() const
+{
+	return (this->_nickname + "!" + this->_username + "@" + this->_hostname);
+}
 
 bool	User::getSet() const
 {

@@ -47,7 +47,7 @@ void	Server::cmd_Part(User& user, std::string const& rest)
 		std::cout << "reason empty, default used\n";
 		reason = "Bye Bye"; // Reason par defaut si l'user n'en fournit pas
 	}
-	std::cout << RED << "|" << reason << "|" << END << std::endl;
+	std::cout << RED << "reason: |" << reason << "|" << END << std::endl;
 
 	for (size_t	i(0); i < cnl.size(); i++)
 	{
