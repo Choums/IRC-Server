@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: chaidel <chaidel@student.42.fr>            +#+  +:+       +#+        */
+/*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/14 17:37:42 by aptive            #+#    #+#             */
-/*   Updated: 2023/05/16 16:37:39 by chaidel          ###   ########.fr       */
+/*   Updated: 2023/05/17 19:21:50 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -365,9 +365,8 @@ static Command option(const std::string& cmd)
 	if (!cmd.compare("PASS")) return (Pass);
 	if (!cmd.compare("NICK")) return (Nick);
 	if (!cmd.compare("JOIN")) return (Join);
-	if (!cmd.compare("NAMES")) return (Names);
+	if (!cmd.compare("WHO")) return (Who);
 	if (!cmd.compare("LIST")) return (List);
-	if (!cmd.compare("WHOIS")) return (Whois);
 	if (!cmd.compare("PART")) return (Part);
 	if (!cmd.compare("PING")) return (Ping);
 	if (!cmd.compare("USER")) return (User_cmd);
@@ -376,6 +375,7 @@ static Command option(const std::string& cmd)
 	if (!cmd.compare("KICK")) return (Kick);
 	if (!cmd.compare("PRIVMSG")) return (Privmsg);
 	if (!cmd.compare("TOPIC")) return (Topic);
+	if (!cmd.compare("NOTICE")) return (Notice);
 	return (Unknown);
 }
 
@@ -399,14 +399,11 @@ void	Server::handleCommandServer(std::string const& cmd, std::string const& rest
 		case Join:
 			this->cmd_JoinChannel(rest, user);
 			break;
-		case Names:
-			this->commandeServer_name(user);
+		case Who:
+			this->cmd_Who(user, rest);
 			break;
 		case List:
 			this->cmd_List(user, rest);
-			break;
-		case Whois:
-			this->cmd_Whois(user, rest);
 			break;
 		case Part:
 			this->cmd_Part(user, rest);
@@ -432,6 +429,9 @@ void	Server::handleCommandServer(std::string const& cmd, std::string const& rest
 		case Topic:
 			this->cmd_Topic(user, rest);
 			break;
+		case Notice:
+			this->cmd_Notice(user, rest);
+			break;
 	}
 }
 
@@ -452,87 +452,40 @@ bool	Server::channel_exist(std::string const& cnl_name)
 /*
 ** --------------------------------- COMMANDE ---------------------------------
 */
-
-void	Server::commandeServer_name( const User & user )
+// 352    RPL_WHOREPLY
+//               "<channel> <user> <host> <server> <nick>
+//               ( "H" / "G" > ["*"] [ ( "@" / "+" ) ]
+//               :<hopcount> <real name>"
+void	Server::cmd_Who(User& user, std::string const& rest)
 {
-	// std::cout << "commandeServer_name\n";
-	for (size_t i = 0; i < _client_socket_v.size(); i++)
-	{
+	std::string			str;
+	std::stringstream	ss(rest);
+	std::string			target;
+	ss >> target;
 
-		const std::string message = _client_socket_v[i]->getNickname() + "\n";
-		user.sendMessage(message);
-	}
-}
-
-/*
- *	Command LIST
- *	Permet d'afficher tout les channels existant sur le serveur
- *	Concatene tout les noms de channel avec un nl en tant que separateur
- *	La list des channels est send a l'user
- *
- * The list command is used to list channels and their topics.  If the
- * <channel> parameter is used, only the status of that channel is
- * displayed.
- * 322 MonPseudo #channel 10 :Discussion générale
- * RPL_LIST
- * RPL_LISTEND
- * Si le Canal demandé n'existe pas, rien n'est renvoyé. Seul les Canaux existant seront renvoyer via RPL_LIST
-*/
-void	Server::cmd_List(User& user, std::string const& rest)
-{
-	std::cout << YELLOW << "--- LIST ---" << END << std::endl;
-	std::string	str;
-	// std::cout << RED << "|" << rest.size() << "|" << END << std::endl;
-	if (rest.size() == 2) // Display tout les Canaux du serveur
+	if (target[0] == '#') // Display tout les users du Canal
 	{
-		std::cout << GREEN << "[Display All Channels]" << END << std::endl;
-		for (size_t i(0); i < this->_channel.size(); i++)
+		Chan_iter	it = this->get_Channel(target);
+		if (it != this->_channel.end())
 		{
-			str = RPL_LIST(user, this->_channel[i], this->_channel[i]->getTopic());	
-			std::cerr << RED << str << END << std::endl;
-			send(user.getFd(), str.c_str(), str.size(), MSG_NOSIGNAL);
-		}	
-	}
-	else // Display uniquement les Canaux demandés et existant
-	{
-		std::cout << GREEN << "[Display Asked Channels]" << END << std::endl;
-		std::vector<std::string>	list_channels =	parse_cnl_name(rest);
-		
-		for (size_t i(0); i < list_channels.size(); i++)
-		{
-			Chan_iter	tmp = this->get_Channel(list_channels[i]);
-			if (tmp != this->_channel.end())
+			Channel	*channel = *it;
+			if (!channel->Is_Ban(user))
 			{
-				str = RPL_LIST(user, (*tmp), (*tmp)->getTopic());	
-				send(user.getFd(), str.c_str(), str.size(), MSG_NOSIGNAL);
+				channel->who();
 			}
 		}
-	}
-	str = RPL_LISTEND(user);	
-	send(user.getFd(), str.c_str(), str.size(), MSG_NOSIGNAL);
-}
-
-/*
- *	Command WHOIS <target>
- *	Permet d'afficher la liste des channels dont fait partie le <target>
- *	cherche le <target> dans la liste des users presents dans le serveur
- *	Concatene tout ses channel avec un nl en tant que separateur
- *	La list des channels est send a l'user
-*/
-void	Server::cmd_Whois(User const& user, std::string const& target) const
-{
-	std::cout << "target: " << target << std::endl;
-	(void)user;
-	for (size_t i(0); i < this->_client_socket_v.size(); i++)
-	{
-		if (!target.compare(this->_client_socket_v[i]->getNickname()))
-		{			
-			// std::string	list = this->_client_socket_v[i]->getListCnl();
-			// user.sendMessage(list);
+		else
+		{
+			str = ERR_NOSUCHCHANNEL(user, target);
+			send(user.getFd(), str.c_str(), str.size(), MSG_NOSIGNAL);
 			return ;
 		}
 	}
-	// throw std::string("Unknown User");
+	else // Display tout les users du serv
+	{
+		
+	}
+
 }
 
 /*

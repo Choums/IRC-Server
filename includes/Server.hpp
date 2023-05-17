@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: chaidel <chaidel@student.42.fr>            +#+  +:+       +#+        */
+/*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/14 17:32:55 by aptive            #+#    #+#             */
-/*   Updated: 2023/05/15 18:57:33 by chaidel          ###   ########.fr       */
+/*   Updated: 2023/05/17 19:04:32 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,10 +51,9 @@ class Server
 
 		// ** --------------------------------- COMMANDE ---------------------------------
 		void	cmd_Privmsg(User& user, std::string const& rest);
-		void	commandeServer_name( const User & user );
+		void	cmd_Who(User& user, std::string const& rest);
 		void	cmd_JoinChannel(std::string const& rest, User& user);
 		void	cmd_List(User& user, std::string const& rest);
-		void	cmd_Whois(User const& user, std::string const& target) const;
 		void	cmd_Part(User& user, std::string const& rest);
 		void	cmd_Nick(User& user, std::string const& nickname);
 		bool	is_Used(std::string const& nick);
@@ -68,7 +67,7 @@ class Server
 		void	Display_Chan_Modes(User& user, Channel const& channel);
 		void	cmd_Kick(User& user, std::string const& rest);
 		void	cmd_Topic(User& user, std::string const& rest);
-	
+		void	cmd_Notice(User& user, std::string const& rest);
 		// ** --------------------------------- ACCESSOR ---------------------------------
 
 		std::string			getHostname() const;

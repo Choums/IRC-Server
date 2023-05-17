@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   web_serv.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: chaidel <chaidel@student.42.fr>            +#+  +:+       +#+        */
+/*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/07 18:14:43 by aptive            #+#    #+#             */
-/*   Updated: 2023/05/15 19:08:28 by chaidel          ###   ########.fr       */
+/*   Updated: 2023/05/17 19:03:02 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,9 +52,8 @@ enum Command {
 	Pass = -1,
 	Nick = 1,
 	Join = 2,
-	Names = 3,
+	Who = 3,
 	List = 4,
-	Whois = 5,
 	Part = 6,
 	Ping = 7,
 	User_cmd = 8,
@@ -63,6 +62,7 @@ enum Command {
 	Kick = 11,
 	Privmsg = 12,
 	Topic = 13,
+	Notice = 14,
 	Unknown = 0
 };
 

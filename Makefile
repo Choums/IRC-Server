@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: chaidel <chaidel@student.42.fr>            +#+  +:+       +#+         #
+#    By: root <root@student.42.fr>                  +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/12/05 17:28:02 by aptive            #+#    #+#              #
-#    Updated: 2023/05/10 17:50:43 by chaidel          ###   ########.fr        #
+#    Updated: 2023/05/17 18:48:16 by root             ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -39,7 +39,9 @@ SRC		=	main.cpp\
 			Mode.cpp\
 			Kick.cpp\
 			Privmsg.cpp\
-			Topic.cpp
+			Topic.cpp\
+			Notice.cpp\
+			List.cpp\
 
 
 # nommage automatique des fichiers objets d'apres les noms des sources C

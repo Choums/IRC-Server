@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: chaidel <chaidel@student.42.fr>            +#+  +:+       +#+        */
+/*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/19 08:47:29 by root              #+#    #+#             */
-/*   Updated: 2023/05/16 16:36:01 by chaidel          ###   ########.fr       */
+/*   Updated: 2023/05/17 17:57:12 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,7 +108,7 @@ void	Channel::AddUser(User& new_user, bool priv) // check user existant
 	this->_privilege.insert(std::pair<int, bool>(new_user.getFd(), priv));
 	
 	if (this->Is_Inv(new_user)) // New_user a accepté l'invitation, il est supp de la liste des invités
-		this->_invited.erase(std::find(this->_invited.begin(), this->_invited.end(), new_user.getFd()));
+		this->UnInvUser(new_user);
 	std::string msg = ":" + new_user.getNames() + " JOIN " + this->_name + "\r\n";
 
 	std::cout << GREEN << "< " << this->_name << " >: " << msg << END << std::endl;
@@ -133,6 +133,12 @@ void	Channel::InvUser(User& user, User& new_user)
 	
 	str = RPL_INVITING(user, new_user, this->_name); // Message de confirmation a l'inviteur
 	send(user.getFd(), str.c_str(), str.size(), MSG_NOSIGNAL);
+}
+
+// Retire l'user de la liste des invites
+void	Channel::UnInvUser(User& target)
+{
+	this->_invited.erase(std::find(this->_invited.begin(), this->_invited.end(), target.getFd()));
 }
 
 // Ajoute un nouvel operateur de Canal
@@ -170,7 +176,6 @@ void	Channel::PartUser(User& user, std::string const& reason)
 void	Channel::BanUser(User& user, User& target)
 {
 	std::cout << YELLOW << "-Ban User-" << END << std::endl;
-	// this->_ban.insert(target.getFd(), true);
 	this->_ban.push_back(target.getFd());
 
 	std::cout << GREEN << "<" << this->_name << ">: " << target.getNickname() << " has been banned by " << user.getNickname() << END << std::endl;
@@ -423,18 +428,6 @@ void	Channel::setUserModes(User& user, User& target, std::string const& mode)
 				this->RmOpe(target);
 				this->Broadcast(RPL_CHANNELMODEIS(target, this->_name, "-o"));
 			}
-		}
-		else if (mode[i] == 'i' && sign)
-		{
-			if (!this->Is_Inv(target))
-			{
-				this->InvUser(user, target);
-
-			}
-		}
-		else if (mode[i] == 'i' && !sign)
-		{
-			
 		}
 		else if (mode[i] == 'b' && sign)
 		{

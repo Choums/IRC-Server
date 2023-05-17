@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
+/*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/19 08:28:18 by root              #+#    #+#             */
-/*   Updated: 2023/05/08 17:51:29 by marvin           ###   ########.fr       */
+/*   Updated: 2023/05/17 19:23:15 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@ class	Channel {
 
 		void	AddUser(User& new_user, bool priv);
 		void	InvUser(User& user, User& new_user);
+		void	UnInvUser(User& target);
 		void	AddOpe(User& new_oper);
 		void	RmOpe(User& user);
 		void	PartUser(User& user, std::string const& reason);
@@ -47,6 +48,7 @@ class	Channel {
 		std::string			getName() const;
 		std::string			getTopic() const;
 		std::string			getModes() const;
+		void				getWho(User& user);
 		size_t				getNumUsers() const;
 		std::string			getSNumUsers() const;
 		User*				getUser(std::string const& user);

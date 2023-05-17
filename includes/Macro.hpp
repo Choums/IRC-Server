@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Macro.hpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: chaidel <chaidel@student.42.fr>            +#+  +:+       +#+        */
+/*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/21 17:04:51 by root              #+#    #+#             */
-/*   Updated: 2023/05/16 16:28:43 by chaidel          ###   ########.fr       */
+/*   Updated: 2023/05/17 19:20:26 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,8 @@
 // PASS
 #define ERR_PASSWDMISMATCH(user) (":" + user.getNames() + " 464 " + user.getNickname() + " :" + user.getHostname() + " PASSWORD MISSMATCH\n")
 
+// :<serveur> <code-réponse> <pseudo-canal> <pseudo-utilisateur> <hôte> <serveur-origine> <pseudo> <mode> <vrai-nom>
+#define	RPL_WHOREPLY(user,) (":" + user.getNames() + "352" +  + "\r\n")
 
 // NICK
 #define NICK(user, nick) (":" + user.getNames() + " NICK " + nick + "\r\n")
@@ -62,8 +64,6 @@
 #define ERR_NOUSERONCHANNEL(user, channel, target) (":" + user.getNames() + " 441 " + user.getNickname() + " " + (target) + " " + (channel) + " :No such user in channel\n")
 #define ERR_USERONCHANNEL(user, nick, channel) ( ":" + user.getHostname() + " 443 " + user.getNickname() + " " + nick + " " + channel + " :is already on channel\n" )
 #define ERR_NOTONCHANNEL(user, channel) ( ":" + user.getHostname() + " 442 " + user.getNickname() + " " + channel + " :You're not on that channel" + "\n" )
-// #define RPL_ADDEDCHANOPER(user, channel, operator) (":" + user.getUsername() + " 482 " + user.getNickname() + " " + (channel) + " :You have been added as a channel operator by operator : "+ operator.getNickname() + " \n")
-// #define RPL_REMOVEDCHANOPER(user, channel, operator) (":" + user.getUsername() + " 482 " + user.getNickname() + " " + (channel) + " :You have been removed as a channel operator by operator : "+ operator.getNickname() + " \n")
 #define ERR_BANNEDFROMCHAN(user, channel) ( ":" + user.getHostname() + " 474 " + user.getNickname() + " " + (channel)->getName() + " :Cannot join " + (channel)->getName() + " (+b)\r\n" )
 #define RPL_UNBANUSER(user, channel, operator) (":" + user.getNames() + " MODE " + channel->getName() + " -b " + user.getNickname() + " : You have been unbanned from " + channel->getName() + " by operator : "+ operator.getNickname() + " \r\n")
 
@@ -74,19 +74,14 @@
 #define ERR_NEEDINVITE(user, channel) ( ":" + user.getHostname() + " 473 " + user.getNickname() + " " + (channel) + " :Cannot join " + (channel) + " (+i)\r\n" )
 
 // KICK
-#define RPL_KICK(user, channel, target, reason) (":" + user.getNickname() + " KICK " + (channel) + " " + target.getNickname() + " :" + (reason) + "\r\n")
+#define RPL_KICK(user, channel, target, reason) (":" + user.getNames() + " KICK " + (channel) + " " + target.getNickname() + " :" + (reason) + "\r\n")
 
 //LIST
-#define RPL_LIST(user, channel, topic) (": " + user.getUsername() + " 322 " + user.getNickname() + " " + channel->getName() + " " + channel->getSNumUsers() + " " + (topic) + "\n")
-#define RPL_LISTEND(user) (": " + user.getUsername() + " 323 " + user.getNickname() + " :End of LIST\n")
+#define RPL_LIST(user, channel) (": " + user.getNames() + " 322 " + user.getNickname() + " " + channel->getName() + " " + channel->getSNumUsers() + " " + channel->getTopic() + "\n")
+#define RPL_LISTEND(user) (": " + user.getNames() + " 323 " + user.getNickname() + " :End of LIST\n")
 
 //TOPIC
-#define RPL_TOPIC(user, channel, topic) (":" + user.getUsername() + " 332 " + user.getNickname() + " " + (channel) + " :" + (topic) + "\n")
+#define RPL_TOPIC(user, channel, topic) (":" + user.getNames() + " 332 " + user.getNickname() + " " + (channel) + " :" + (topic) + "\n")
 #define RPL_NOTOPIC(user, channel) (":" + user.getUsername() + " 331 " + user.getNickname() + " " + (channel) + " :No topic is set" + "\n")
-//OPER
-#define RPL_YOUREOPER(user) (":" + user.getUsername() + " 381 " + user.getNickname() + " :You are now an IRC operator\r\n")
-#define ERR_NOPRIVILEGES(user) ( ":" + user.getHostname() + " 481 " + user.getNickname() + " :Permission Denied- You're not an IRC operator\r\n" )
-#define ERR_YOUDEAD(victim, killer) ( ":" + victim.getHostname() + " 483 " + victim.getNickname() + " :You have been killed from server by the IRC operator : " + killer.getNickname() + "\r\n" )
-#define ERR_SRVDEAD(victim, killer) ( ":" + victim.getHostname() + " 483 " + victim.getNickname() + " :Server has been killed by the IRC server operator : " + killer.getNickname() + "\r\n" )
 
 #define ERR_NEEDMOREPARAMS(user, command) (":" + user.getNames() + " 461 " + user.getNickname() + " " + (command) + " :Not enough parameters\r\n")
