@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tdelauna <tdelauna@student.42.fr>          +#+  +:+       +#+        */
+/*   By: chaidel <chaidel@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/19 08:47:29 by root              #+#    #+#             */
-/*   Updated: 2023/05/23 18:03:57 by tdelauna         ###   ########.fr       */
+/*   Updated: 2023/05/23 18:38:24 by chaidel          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -196,7 +196,7 @@ void	Channel::BanUser(User& user, User& target)
 	std::string	reason = ":You have been Banned !";
 
 	this->KickUser(user, target, reason);
-	this->setChanModes(std::string("+b"), std::string(""));
+	this->setChanModes(user, std::string("+b"), std::string(""));
 }
 
 void	Channel::UnBanUser(User& user, User& target)
@@ -400,7 +400,7 @@ bool	Channel::getUserPrivilege(int user_fd) const
 void	Channel::setName(std::string name)
 {	this->_name = name; }
 
-void	Channel::setChanModes(std::string const& mode, std::string const& arg)
+void	Channel::setChanModes(User& user, std::string const& mode, std::string const& arg)
 {
 	bool		sign;
 	std::string	cast;
@@ -488,11 +488,11 @@ void	Channel::setChanModes(std::string const& mode, std::string const& arg)
 			std::stringstream	ss(arg);
 			std::string			key;
 			ss >> key;
-
+			std::cout << "mdp: " << key << std::endl;
 			if (this->Is_PassOnly())
 			{
-				// cast = ERR_KEYSET(user, this->_name);
-				// send(user.getFd(), cast.c_str(), cast.size(), MSG_NOSIGNAL);
+				cast = ERR_KEYSET(user, this->_name);
+				send(user.getFd(), cast.c_str(), cast.size(), MSG_NOSIGNAL);
 			}
 			else
 			{

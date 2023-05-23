@@ -97,17 +97,16 @@ void	Server::cmd_Mode(User& user, std::string const& rest)
 				
 				if (tmp->Is_Ope(user)) // Chan oper ou Serv oper, Update Channel modes ou Channel User modes
 				{
-					if (nick.size() == 1 || str_is_digit(nick)) // Update Channel modes, /mode <channel> <mode>
+					User_iter	itu = this->get_User(nick);
+					if (nick.size() == 1 || str_is_digit(nick) || itu == this->_client_socket_v.end()) // Update Channel modes, /mode <channel> <mode>
 					{
 						std::cout << GREEN << "-Update Channel Modes-" << END << std::endl;
-						if (str_is_digit(nick))
-							tmp->setChanModes(mode, nick);
+						if (str_is_digit(nick) || itu == this->_client_socket_v.end())
+							tmp->setChanModes(user, mode, nick);
 						else
-							tmp->setChanModes(mode, std::string(""));
+							tmp->setChanModes(user, mode, std::string(""));
 						return ;
 					}
-					
-					User_iter itu = this->get_User(nick);
 					
 					if (itu != this->_client_socket_v.end()) // Update Channel User modes, /mode <channel> <mode> <nickname>
 					{

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tdelauna <tdelauna@student.42.fr>          +#+  +:+       +#+        */
+/*   By: chaidel <chaidel@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/19 08:28:18 by root              #+#    #+#             */
-/*   Updated: 2023/05/23 17:59:41 by tdelauna         ###   ########.fr       */
+/*   Updated: 2023/05/23 18:37:57 by chaidel          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,7 @@ class	Channel {
 		bool				getUserPrivilege(int user_fd) const;
 
 		void				setName(std::string name);
-		void				setChanModes(std::string const& mode, std::string const& arg);
+		void				setChanModes(User& user, std::string const& mode, std::string const& arg);
 		void				setUserModes(User& user, User& target, std::string const& mode);
 		void				setTopic(std::string topic);
 		void				setTopicClear();
