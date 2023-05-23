@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: root <root@student.42.fr>                  +#+  +:+       +#+         #
+#    By: tdelauna <tdelauna@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/12/05 17:28:02 by aptive            #+#    #+#              #
-#    Updated: 2023/05/17 18:48:16 by root             ###   ########.fr        #
+#    Updated: 2023/05/23 16:15:48 by tdelauna         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -22,26 +22,26 @@ OBJDIR		=	./obj
 # src / obj files
 SRC		=	main.cpp\
 			affichage.cpp\
-			boucle_server.cpp\
-			parsing_cmd_irc.cpp\
 			parsing.cpp\
-			socket_server.cpp\
 			User.cpp\
 			Server.cpp\
 			Channel.cpp\
 			command_utils.cpp\
-			Nick.cpp\
-			Users.cpp\
-			Ping.cpp\
-			Join.cpp\
-			Invite.cpp\
-			Part.cpp\
-			Mode.cpp\
-			Kick.cpp\
-			Privmsg.cpp\
-			Topic.cpp\
-			Notice.cpp\
-			List.cpp\
+			commandes/Users.cpp\
+			commandes/Nick.cpp\
+			commandes/Ping.cpp\
+			commandes/Join.cpp\
+			commandes/Invite.cpp\
+			commandes/Part.cpp\
+			commandes/Mode.cpp\
+			commandes/Kick.cpp\
+			commandes/Privmsg.cpp\
+			commandes/Topic.cpp\
+			commandes/Notice.cpp\
+			commandes/List.cpp\
+			# boucle_server.cpp\
+			# parsing_cmd_irc.cpp\
+			# socket_server.cpp\
 
 
 # nommage automatique des fichiers objets d'apres les noms des sources C
@@ -63,6 +63,8 @@ all: obj $(NAME)
 
 obj:
 	mkdir -p $(OBJDIR)
+	mkdir -p $(OBJDIR)/commandes
+
 
 $(OBJDIR)/%.o:	$(SRCDIR)/%.cpp
 	$(CC) -I $(INCDIR) -o $@ -c $<
