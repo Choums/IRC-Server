@@ -6,7 +6,7 @@
 /*   By: chaidel <chaidel@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/21 17:04:51 by root              #+#    #+#             */
-/*   Updated: 2023/05/23 16:02:22 by chaidel          ###   ########.fr       */
+/*   Updated: 2023/05/23 16:36:25 by chaidel          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,9 +72,9 @@
 
 // JOIN
 // 475    ERR_BADCHANNELKEY		"<channel> :Cannot join channel (+k)"
-#define ERR_BADCHANNELKEY(user, channel) ("475 " + user.getNames() + (channel) + " :Cannot join channel (+k)" + "\r\n")
+#define ERR_BADCHANNELKEY(user, channel) ("475 " + user.getNickname() + " " + (channel) + " :Cannot join channel (+k)" + "\r\n")
 // 471    ERR_CHANNELISFULL		"<channel> :Cannot join channel (+l)"
-#define ERR_CHANNELISFULL(user, channel) ("471 " + user.getNames() + (channel) + " :Cannot join channel (+l)" + "\r\n")
+#define ERR_CHANNELISFULL(user, channel) ("471 " + user.getNickname() + " " + (channel) + " :Cannot join channel (+l)" + "\r\n")
 
 // INVITE
 // #define	RPL_INVITING(user, channel, new_user) ( ":" + user.getUsername() + " 341 " + user.getNickname() + " has invited on " + channel + " " + new_user.getNickname() + "\n")
