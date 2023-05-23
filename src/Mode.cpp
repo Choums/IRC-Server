@@ -28,6 +28,7 @@ void	Server::Display_Chan_Modes(User& user, Channel const& channel)
 	send(user.getFd(), str.c_str(), str.size(), MSG_NOSIGNAL);
 }
 
+
 //	MODE <channel> +o <nickname>
 //	MODE <nickname> +o
 //	*( ( "+" / "-" ) *( "i" / "w" / "o" / "O" / "r" ) )
@@ -85,7 +86,7 @@ void	Server::cmd_Mode(User& user, std::string const& rest)
 		{
 			Channel *tmp = *it;
 			
-			if (tmp->Is_Present(user.getNickname()) || this->is_Ope(user))
+			if (tmp->Is_Present(user.getNickname()))
 			{
 				std::string	nick; // Si l'user n'est pas donné, display channel modes
 				ss >> nick;
@@ -94,13 +95,15 @@ void	Server::cmd_Mode(User& user, std::string const& rest)
 				if (mode.size() == 1) {// Display Channel modes, /mode <channel>
 						Display_Chan_Modes(user, *tmp); return ;}
 				
-				if (tmp->Is_Ope(user) || this->is_Ope(user)) // Chan oper ou Serv oper, Update Channel modes ou Channel User modes
+				if (tmp->Is_Ope(user)) // Chan oper ou Serv oper, Update Channel modes ou Channel User modes
 				{
-					if (nick.size() == 1) // Update Channel modes, /mode <channel> <mode>
+					if (nick.size() == 1 || str_is_digit(nick)) // Update Channel modes, /mode <channel> <mode>
 					{
 						std::cout << GREEN << "-Update Channel Modes-" << END << std::endl;
-						tmp->setChanModes(mode);
-						// Display_Chan_Modes(user, *tmp);
+						if (str_is_digit(nick))
+							tmp->setChanModes(mode, nick);
+						else
+							tmp->setChanModes(mode, std::string(""));
 						return ;
 					}
 					

@@ -6,7 +6,7 @@
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/07 18:14:43 by aptive            #+#    #+#             */
-/*   Updated: 2023/05/17 19:03:02 by root             ###   ########.fr       */
+/*   Updated: 2023/05/23 12:31:13 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@
 # include <string>
 # include <cstring>
 # include <unistd.h>
-
+# include <cctype>
 # include <stdio.h>
 # include <stdlib.h>
 
@@ -106,10 +106,12 @@ void todo_connexion(int fd);
 // +----------------------------------------------------------------------------+
 std::vector<std::string> split_string(std::string str);
 
-void parsing(int argc, char ** argv, int * port, std::string * password);
-void check_arg(int argc, char ** argv);
-
-void RmNewLine(std::string& str, char val);
+void	parsing(int argc, char ** argv, int * port, std::string * password);
+std::map<std::string, std::string>	parse_cnl_name_with_key(std::string const& line);
+void	check_arg(int argc, char ** argv);
+bool	str_is_digit(std::string const& str);
+bool	str_is_alpha(std::string const& str);
+void	RmNewLine(std::string& str, char val);
 
 // +----------------------------------------------------------------------------+
 //                               SOCKET_SERVER_CPP                              |

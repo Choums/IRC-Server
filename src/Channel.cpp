@@ -6,22 +6,30 @@
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/19 08:47:29 by root              #+#    #+#             */
-/*   Updated: 2023/05/17 17:57:12 by root             ###   ########.fr       */
+/*   Updated: 2023/05/23 12:12:54 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/Channel.hpp"
 
-Channel::Channel(User& user, std::string const& name)
+Channel::Channel(User& user, std::string const& name, std::string const& pass)
 {
 	std::cout << "---------------------------------------" << std::endl;
 	std::cout << "Creation d'un nouveau Canal: "<< GREEN << "<" << name << ">" << END << std::endl;
 	std::cout << "---------------------------------------" << std::endl;
 
+	if (!pass.empty())
+	{
+		this->_key = true;
+		this->_pass = pass;
+	}
+	else
+		this->_key = false;
 	this->setName(name);
 	this->AddUser(user, true);
 	this->_InvOnly = false;
 	this->_bans = true;
+	this->_limit = false;
 }
 
 Channel::~Channel() // Kick les users toujours present avant de fermer le serveur
@@ -183,7 +191,7 @@ void	Channel::BanUser(User& user, User& target)
 	std::string	reason = ":You have been Banned !";
 
 	this->KickUser(user, target, reason);
-	this->setChanModes(std::string("+b"));
+	this->setChanModes(std::string("+b"), std::string(""));
 }
 
 void	Channel::UnBanUser(User& user, User& target)
@@ -209,6 +217,18 @@ void	Channel::KickUser(User& user, User& target, std::string const& reason)
 	send(target.getFd(), str.c_str(), str.size(), MSG_NOSIGNAL); //	La target est prevenue qu'elle est kick
 	
 	Broadcast(str); // Les users du channel sont prevenue que la target a ete kick
+}
+
+bool	Channel::CheckPass(std::string const& key)
+{
+	std::string	pass(key);
+	
+	RmNewLine(pass, '\n');
+	RmNewLine(pass, '\r');
+	
+	if (pass.empty() || !str_is_alpha(pass))
+		return (false);
+	return (true);
 }
 
 bool	Channel::Is_Ban(User& user)
@@ -286,6 +306,16 @@ bool	Channel::Is_BanOnly() const
 {
 	return (this->_bans);
 }
+
+bool	Channel::Is_PassOnly() const
+{	return (this->_key); }
+
+bool	Channel::Is_limitSet() const
+{	return (this->_limit); }
+
+bool	Channel::Is_TopicLock() const
+{	return (this->_top); }
+
 		/*	Getters */
 
 std::string	Channel::getName() const
@@ -302,10 +332,23 @@ std::string	Channel::getModes() const
 		modes.push_back('i');
 	if (this->Is_BanOnly())
 		modes.push_back('b');
-
+	if (this->Is_limitSet())
+		modes.push_back('l');
+	if (this->Is_PassOnly())
+		modes.push_back('k');
+	if (this->Is_TopicLock())
+		modes.push_back('t');
 	std::cout << GREEN << "<" << this->_name << "> modes: [" << modes << "]" << END << std::endl;
 	return (modes);
 }
+
+void	Channel::getWho(User& user)
+{
+	(void)user;
+}
+
+std::string	Channel::getPass() const
+{	return (this->_pass); }
 
 std::vector<User *>	Channel::getUsers()
 {
@@ -319,7 +362,7 @@ std::vector<User *>	Channel::getUsers()
 	return (list_user);	
 }
 
-size_t	Channel::getNumUsers() const
+int	Channel::getNumUsers() const
 {
 	return (this->_users.size());
 }
@@ -351,11 +394,12 @@ bool	Channel::getUserPrivilege(int user_fd) const
 void	Channel::setName(std::string name)
 {	this->_name = name; }
 
-void	Channel::setChanModes(std::string const& mode)
+void	Channel::setChanModes(std::string const& mode, std::string const& arg)
 {
 	bool		sign;
 	std::string	cast;
-	
+
+
 	size_t		i(0);
 	while (i < mode.size())
 	{
@@ -393,9 +437,79 @@ void	Channel::setChanModes(std::string const& mode)
 			cast = CHANMODE(this->_name, "-b");
 			this->Broadcast(cast);
 		}
+		else if (mode[i] == 'l' && sign)
+		{
+			int					size;
+			std::stringstream	ss(arg);
+			ss >> size;
+			if (arg.empty())
+				size = 50;
+			if (size > 0 && this->getNumUsers() < size && size <= 50)
+			{
+				this->_limit = true;
+				this->setChanLimit(size);
+				this->getModes();
+				cast = CHANMODE(this->_name, "+l");
+				this->Broadcast(cast);
+			}
+		}
+		else if (mode[i] == 'l' && !sign)
+		{
+			this->_limit = false;
+			this->setChanLimit(50);
+			this->getModes();
+			cast = CHANMODE(this->_name, "-l");
+			this->Broadcast(cast);
+			
+		}
+		else if (mode[i] == 't' && sign)
+		{
+			this->_top = true;
+			this->getModes();
+			cast = CHANMODE(this->_name, "+t");
+			this->Broadcast(cast);
+		}
+		else if (mode[i] == 't' && !sign)
+		{
+			this->_top = false;
+			this->getModes();
+			cast = CHANMODE(this->_name, "-t");
+			this->Broadcast(cast);
+		}
+		else if (mode[i] == 'k' && sign)
+		{
+			std::stringstream	ss(arg);
+			std::string			key;
+			ss >> key;
+			
+			if (this->Is_PassOnly())
+			{
+				// cast = ERR_KEYSET(user, this->_name);
+				// send(user.getFd(), cast.c_str(), cast.size(), MSG_NOSIGNAL);
+			}
+			else
+			{
+				if (this->CheckPass(key))
+				{
+					this->_key = true;
+					this->setChanPass(key);
+					this->getModes();
+					cast = CHANMODE(this->_name, "+k");
+					this->Broadcast(cast);
+				}
+			}
+		}
+		else if (mode[i] == 'k' && !sign)
+		{
+			this->_key = false;
+			this->_pass.clear();
+			this->getModes();
+			cast = CHANMODE(this->_name, "-k");
+			this->Broadcast(cast);
+		}
 		else
 		{
-			// ERR_NOTIMPLEMENTED
+			
 		}
 		i++;
 	}
@@ -463,6 +577,15 @@ void	Channel::setTopicClear()
 
 void	Channel::setUserPrivilege(int user_fd, bool priv)
 {	(this->_privilege.find(user_fd))->second = priv; }
+
+void	Channel::setChanLimit(int capacity)
+{	this->_capacity = capacity; }
+
+void	Channel::setChanPass(std::string const& pass)
+{	this->_pass = pass; }
+
+void	Channel::setTopLock(bool lock)
+{	this->_top = lock; }
 
 		/*	Displa Operator Overload */
 		

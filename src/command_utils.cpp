@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   command_utils.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: marvin <marvin@student.42.fr>              +#+  +:+       +#+        */
+/*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/19 13:16:54 by root              #+#    #+#             */
-/*   Updated: 2023/05/03 16:31:04 by marvin           ###   ########.fr       */
+/*   Updated: 2023/05/23 12:30:15 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,4 +55,57 @@ std::vector<std::string>	parse_cnl_name(std::string const& line)
 	}
 	std::cout << RED << "---end parse---" << END << std::endl;
 	return (cnl);
+}
+
+std::map<std::string, std::string>	parse_cnl_name_with_key(std::string const& line)
+{
+	std::cout << RED << "-parse channel names with key-" << END << std::endl;
+	std::map<std::string, std::string>	cnl;
+	std::vector<std::string>			cnl_names;
+	std::vector<std::string>			cnl_keys;
+	std::stringstream					ss(line);
+	std::string							rest;
+	std::string							keys;
+	
+	ss >> rest;
+	ss >> keys;
+	std::cout << RED << rest << "\n" << keys << std::endl;
+	if (rest.empty())
+	{
+		std::cout << "REST EMPTY" << std::endl;
+		std::cout << RED << "---end parse---" << END << std::endl;
+		return (cnl);
+	}
+	// RECUPERATION DES NOMS DE CANALS
+	
+	cnl_names = parse_cnl_name(rest);
+	cnl_keys = parse_cnl_name(keys);
+
+	for (size_t	i(0); i < cnl_names.size(); i++)
+	{
+		if (i < cnl_keys.size())
+			cnl.insert(make_pair(cnl_names[i], cnl_keys[i]));
+		else
+			cnl.insert(make_pair(cnl_names[i], std::string("")));
+	}
+	
+	
+	std::cout << RED << "---end parse---" << END << std::endl;
+	return (cnl);
+}
+
+bool	str_is_digit(std::string const& str)
+{
+	for (size_t i(0); i < str.size(); i++)
+		if (!std::isdigit(str[i]))
+			return (false);
+	return (true);
+}
+
+bool	str_is_alpha(std::string const& str)
+{
+	for (size_t i(0); i < str.size(); i++)
+		if (!std::isalpha(str[i]))
+			return (false);
+	return (true);
 }

@@ -6,7 +6,7 @@
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/14 17:37:42 by aptive            #+#    #+#             */
-/*   Updated: 2023/05/17 19:21:50 by root             ###   ########.fr       */
+/*   Updated: 2023/05/23 11:31:12 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -471,7 +471,7 @@ void	Server::cmd_Who(User& user, std::string const& rest)
 			Channel	*channel = *it;
 			if (!channel->Is_Ban(user))
 			{
-				channel->who();
+				// channel->getWho(user);
 			}
 		}
 		else

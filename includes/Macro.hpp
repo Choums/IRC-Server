@@ -6,7 +6,7 @@
 /*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/21 17:04:51 by root              #+#    #+#             */
-/*   Updated: 2023/05/17 19:20:26 by root             ###   ########.fr       */
+/*   Updated: 2023/05/23 12:11:42 by root             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@
 #define ERR_PASSWDMISMATCH(user) (":" + user.getNames() + " 464 " + user.getNickname() + " :" + user.getHostname() + " PASSWORD MISSMATCH\n")
 
 // :<serveur> <code-réponse> <pseudo-canal> <pseudo-utilisateur> <hôte> <serveur-origine> <pseudo> <mode> <vrai-nom>
-#define	RPL_WHOREPLY(user,) (":" + user.getNames() + "352" +  + "\r\n")
+#define	RPL_WHOREPLY(user) (":" + user.getNames() + "352" +  + "\r\n")
 
 // NICK
 #define NICK(user, nick) (":" + user.getNames() + " NICK " + nick + "\r\n")
@@ -43,6 +43,9 @@
 #define ERR_USERSDONTMATCH(user) (":" + user.getNames() + " 502 " + user.getNickname() + " :Cannot change mode for other users\r\n")
 // :server_name 221 nick_name +iowBx (modes utilisateur)
 #define RPL_UMODEIS(server, user, mode) (":" + (server) + " 221 " + user.getNickname() + " " + (mode) + "\r\n")
+// 467    ERR_KEYSET "<channel> :Channel key already set"
+#define	ERR_KEYSET(user, channel) (":" + user.getNames() + " 467 " + (channel) + " :Channel key already set" + "\r\n")
+
 
 // « nick@user!hostname MODE target [mode] »
 #define USERMODE(user, mode) (":" + user.getNickname() + " MODE " + user.getNickname() + " :" + (mode) + "\r\n")
@@ -66,6 +69,12 @@
 #define ERR_NOTONCHANNEL(user, channel) ( ":" + user.getHostname() + " 442 " + user.getNickname() + " " + channel + " :You're not on that channel" + "\n" )
 #define ERR_BANNEDFROMCHAN(user, channel) ( ":" + user.getHostname() + " 474 " + user.getNickname() + " " + (channel)->getName() + " :Cannot join " + (channel)->getName() + " (+b)\r\n" )
 #define RPL_UNBANUSER(user, channel, operator) (":" + user.getNames() + " MODE " + channel->getName() + " -b " + user.getNickname() + " : You have been unbanned from " + channel->getName() + " by operator : "+ operator.getNickname() + " \r\n")
+
+// JOIN
+// 475    ERR_BADCHANNELKEY
+//               "<channel> :Cannot join channel (+k)"
+#define ERR_BADCHANNELKEY(user, channel) (":" + user.getNames() + " 475 " + (channel) + " :Cannot join channel (+k)" + "\r\n")
+
 
 // INVITE
 // #define	RPL_INVITING(user, channel, new_user) ( ":" + user.getUsername() + " 341 " + user.getNickname() + " has invited on " + channel + " " + new_user.getNickname() + "\n")

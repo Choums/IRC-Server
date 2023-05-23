@@ -52,7 +52,7 @@ void	Server::cmd_Topic(User& user, std::string const& rest)
 		Channel *channel = (*it);
 		if (std::getline(ss, new_topic, ':'))	// Si getline trouve le ':' => new topic
 		{
-			if (channel->Is_Ope(user))
+			if ((channel->Is_TopicLock() && channel->Is_Ope(user)) || (!channel->Is_TopicLock()))
 			{
 				std::getline(ss, new_topic);	// Extrait le reste du new topic
 

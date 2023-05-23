@@ -33,7 +33,7 @@
  *
  * 	----------
  * @example
- * 	/join &foobar		|	Command to join channel &foobar.
+ * 	/join &foobar key	|	Command to join channel &foobar with a pass.
  *	/join &foo,&bar		|	Command to join channels &foo and &bar.
  *	/join 0				|	Leave all currently joined channels.
  *
@@ -65,7 +65,7 @@ void	Server::cmd_JoinChannel(std::string const& rest, User& user)
 		return ;
 	}
 
-	std::vector<std::string> cnl = parse_cnl_name(rest);
+	std::map<std::string, std::string> cnl = parse_cnl_name_with_key(rest);
 
 	if (cnl.empty())
 	{
@@ -74,40 +74,41 @@ void	Server::cmd_JoinChannel(std::string const& rest, User& user)
 		return ;
 	}
 
-	for (size_t	i(0); i < cnl.size(); i++)
-	{
-		if (channel_exist(cnl[i])) // Verif que le channel existe dans le serveur
-		{
-			Channel *tmp = *(this->get_Channel(cnl[i]));
-			if (tmp->Is_Ban(user))
-			{
-				str = ERR_BANNEDFROMCHAN(user, tmp);
-				send(user.getFd(), str.c_str(), str.size(), MSG_NOSIGNAL);
-				return ;
-			}
+	// for (size_t	i(0); i < cnl.size(); i++)
+	// {
+	// 	std::cout << RED << "chan: " << cnl[i].first <<
+	// 	if (channel_exist(cnl[i])) // Verif que le channel existe dans le serveur
+	// 	{
+	// 		Channel *tmp = *(this->get_Channel(cnl[i]));
+	// 		if (tmp->Is_Ban(user))
+	// 		{
+	// 			str = ERR_BANNEDFROMCHAN(user, tmp);
+	// 			send(user.getFd(), str.c_str(), str.size(), MSG_NOSIGNAL);
+	// 			return ;
+	// 		}
 			
-			if (tmp->Is_InvOnly() && !(tmp->Is_Inv(user))) // le Canal est +i et l'user n'y est pas invité
-			{
+	// 		if (tmp->Is_InvOnly() && !(tmp->Is_Inv(user))) // le Canal est +i et l'user n'y est pas invité
+	// 		{
 				
-				str = ERR_NEEDINVITE(user, tmp->getName());
-				send(user.getFd(), str.c_str(), str.size(), MSG_NOSIGNAL);
-				return ;
-			}
+	// 			str = ERR_NEEDINVITE(user, tmp->getName());
+	// 			send(user.getFd(), str.c_str(), str.size(), MSG_NOSIGNAL);
+	// 			return ;
+	// 		}
 
-			// for (size_t i(0); i < this->_channel.size(); i++)
-			// 	if (!cnl[i].compare(this->_channel[i]->getName()))
-			// 		this->_channel[i]->AddUser(user, false);
-			tmp->AddUser(user, false);
-			user.setAddListCnlMember(this->_channel[i]);
-			// this->_channel[i].getUsers();
-		}
-		else // Le channel est cree
-		{
-			std::cout << RED << "==>>>> |" << cnl[i] << "| <<<<==" << END << std::endl;
-			Channel *chan = new Channel(user, cnl[i]);
-			this->setNewChannel(chan);
-			user.setAddListCnlMember(chan);
-		}
+	// 		// for (size_t i(0); i < this->_channel.size(); i++)
+	// 		// 	if (!cnl[i].compare(this->_channel[i]->getName()))
+	// 		// 		this->_channel[i]->AddUser(user, false);
+	// 		tmp->AddUser(user, false);
+	// 		user.setAddListCnlMember(this->_channel[i]);
+	// 		// this->_channel[i].getUsers();
+	// 	}
+	// 	else // Le channel est cree
+	// 	{
+	// 		std::cout << RED << "==>>>> |" << cnl[i] << "| <<<<==" << END << std::endl;
+	// 		Channel *chan = new Channel(user, cnl[i], std::string(""));
+	// 		this->setNewChannel(chan);
+	// 		user.setAddListCnlMember(chan);
+	// 	}
 
 	}
 }
