@@ -6,7 +6,7 @@
 /*   By: chaidel <chaidel@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/19 08:47:29 by root              #+#    #+#             */
-/*   Updated: 2023/05/23 15:26:05 by chaidel          ###   ########.fr       */
+/*   Updated: 2023/05/23 16:31:32 by chaidel          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -446,15 +446,15 @@ void	Channel::setChanModes(std::string const& mode, std::string const& arg)
 			std::stringstream	ss(arg);
 			ss >> size;
 			std::cout << "arg: " << arg.size() << "|" << arg.empty() << std::endl;
-			if (arg.empty())
-				size = 50;
+			// if (arg.empty())
+			// 	size = 50;
 			std::cout << "size: " << size << " | numUsers: " << this->getNumUsers() << std::endl;
 			if (size > 0 && this->getNumUsers() < size && size <= 50)
 			{
 				this->_limit = true;
 				this->setChanLimit(size);
 				this->getModes();
-				cast = CHANMODE(this->_name, "+l");
+				cast = CHANMODE(this->_name, std::string("+l ") + arg);
 				this->Broadcast(cast);
 			}
 		}
@@ -499,7 +499,7 @@ void	Channel::setChanModes(std::string const& mode, std::string const& arg)
 					this->_key = true;
 					this->setChanPass(key);
 					this->getModes();
-					cast = CHANMODE(this->_name, "+k");
+					cast = CHANMODE(this->_name, std::string("+k ") + arg);
 					this->Broadcast(cast);
 				}
 			}
