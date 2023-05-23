@@ -61,10 +61,10 @@ void	Server::cmd_Topic(User& user, std::string const& rest)
 				std::cout << GREEN << "<" << new_topic << ">, size: " << new_topic.size() << END << std::endl;
 				
 				// std::cout << "|" << new_topic[1] << "|" << std::endl;
-				if (new_topic[0] == ':' && !new_topic[1])	// Rien apres le ':' => Clear le topic
-					channel->setTopicClear();
-				else	// Sinon on modifie le topic par le nouveau
-					channel->setTopic(new_topic);
+				// if (new_topic[0] == ':' && !new_topic[1])	// Rien apres le ':' => Clear le topic
+				// 	channel->setTopicClear();
+				// else	// Sinon on modifie le topic par le nouveau
+				channel->setTopic(new_topic);
 				channel->Broadcast_topic();
 			}
 			else

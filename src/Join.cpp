@@ -74,10 +74,62 @@ void	Server::cmd_JoinChannel(std::string const& rest, User& user)
 		return ;
 	}
 
+	std::map<std::string, std::string>::iterator	it = cnl.begin();
+	std::map<std::string, std::string>::iterator	ite = cnl.end();
+
+	while (it != ite)
+	{
+		std::cout << RED << "chan: " << it->first << " | key: " << it->second << END << std::endl;
+
+		if (channel_exist(it->first)) // Verif que le channel existe dans le serveur
+		{
+			Channel *channel = *this->get_Channel(it->first);
+			if (!channel->Is_Ban(user))
+			{
+				if (channel->Is_InvOnly() && channel->Is_Inv(user))
+				{
+					str = ERR_NEEDINVITE(user, channel->getName());
+					send(user.getFd(), str.c_str(), str.size(), MSG_NOSIGNAL);
+					return ;
+				}
+				std::cout << RED << "Limit[" << channel->Is_limitSet() << "]: " << channel->getCapacity() << " | " << channel->getNumUsers() << END << std::endl;
+				if (channel->Is_limitSet() && channel->getNumUsers() >= channel->getCapacity())
+				{
+					str = ERR_CHANNELISFULL(user, channel->getName());
+					send(user.getFd(), str.c_str(), str.size(), MSG_NOSIGNAL);
+					return ;
+				}
+
+				if (channel->getPass() == it->second)
+				{
+					channel->AddUser(user, false);
+					user.setAddListCnlMember(channel);
+				}
+				else
+				{
+					str = ERR_BADCHANNELKEY(user, channel->getName());
+					send(user.getFd(), str.c_str(), str.size(), MSG_NOSIGNAL);
+					return ;
+				}
+			}
+			else
+			{
+				str = ERR_BANNEDFROMCHAN(user, channel);
+				send(user.getFd(), str.c_str(), str.size(), MSG_NOSIGNAL);
+				return ;
+			}
+		}
+		else	// Le channel est cree
+		{
+			Channel *chan = new Channel(user, it->first, it->second);
+			this->setNewChannel(chan);
+			user.setAddListCnlMember(chan);
+		}
+		it++;
+	}
 	// for (size_t	i(0); i < cnl.size(); i++)
 	// {
-	// 	std::cout << RED << "chan: " << cnl[i].first <<
-	// 	if (channel_exist(cnl[i])) // Verif que le channel existe dans le serveur
+	// 	if (channel_exist(cnl[i])) 
 	// 	{
 	// 		Channel *tmp = *(this->get_Channel(cnl[i]));
 	// 		if (tmp->Is_Ban(user))
@@ -102,7 +154,7 @@ void	Server::cmd_JoinChannel(std::string const& rest, User& user)
 	// 		user.setAddListCnlMember(this->_channel[i]);
 	// 		// this->_channel[i].getUsers();
 	// 	}
-	// 	else // Le channel est cree
+	// 	else 
 	// 	{
 	// 		std::cout << RED << "==>>>> |" << cnl[i] << "| <<<<==" << END << std::endl;
 	// 		Channel *chan = new Channel(user, cnl[i], std::string(""));
@@ -110,5 +162,5 @@ void	Server::cmd_JoinChannel(std::string const& rest, User& user)
 	// 		user.setAddListCnlMember(chan);
 	// 	}
 
-	}
+	// }
 }

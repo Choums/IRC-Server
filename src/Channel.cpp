@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: chaidel <chaidel@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/19 08:47:29 by root              #+#    #+#             */
-/*   Updated: 2023/05/23 12:12:54 by root             ###   ########.fr       */
+/*   Updated: 2023/05/23 15:26:05 by chaidel          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,18 +18,20 @@ Channel::Channel(User& user, std::string const& name, std::string const& pass)
 	std::cout << "Creation d'un nouveau Canal: "<< GREEN << "<" << name << ">" << END << std::endl;
 	std::cout << "---------------------------------------" << std::endl;
 
-	if (!pass.empty())
-	{
-		this->_key = true;
-		this->_pass = pass;
-	}
-	else
+	std::cout << pass.size() << " | " << pass << std::endl;
+	
+	if (pass.size() == 1)
 		this->_key = false;
+	else
+		this->_key = true;
+	this->_pass = pass;
 	this->setName(name);
 	this->AddUser(user, true);
 	this->_InvOnly = false;
 	this->_bans = true;
 	this->_limit = false;
+	this->_capacity = 50;
+	this->_top = false;
 }
 
 Channel::~Channel() // Kick les users toujours present avant de fermer le serveur
@@ -95,11 +97,11 @@ void	Channel::Broadcast_topic()
 	while (it != ite)
 	{
 		User user = *(it->second);
-		if (topic.empty())
-			topic = RPL_NOTOPIC(user, this->_name);
-		else
-			topic = RPL_TOPIC(user, this->_name, topic);
-		send(it->first, topic.c_str(), topic.size(), MSG_NOSIGNAL);
+		// if (topic.empty())
+		// 	topic = RPL_NOTOPIC(user, this->_name);
+		// else
+		topic = RPL_TOPIC(user, this->_name, topic);
+		send(user.getFd(), topic.c_str(), topic.size(), MSG_NOSIGNAL);
 		it++;
 	}
 }
@@ -107,11 +109,6 @@ void	Channel::Broadcast_topic()
 // Add un user au channel avec ses privileges (ope ou standard)
 void	Channel::AddUser(User& new_user, bool priv) // check user existant
 {
-	if (!this->_topic.empty())
-	{
-		std::string	str = RPL_TOPIC(new_user, this->getName(), this->_topic);
-		send(new_user.getFd(), str.c_str(), str.size(), MSG_NOSIGNAL);
-	}
 	this->_users.insert(std::pair<int, User *>(new_user.getFd(), &new_user));
 	this->_privilege.insert(std::pair<int, bool>(new_user.getFd(), priv));
 	
@@ -121,6 +118,12 @@ void	Channel::AddUser(User& new_user, bool priv) // check user existant
 
 	std::cout << GREEN << "< " << this->_name << " >: " << msg << END << std::endl;
 	this->Broadcast(msg);
+	
+	if (!this->_topic.empty())
+	{
+		std::string	str = RPL_TOPIC(new_user, this->getName(), this->_topic);
+		send(new_user.getFd(), str.c_str(), str.size(), MSG_NOSIGNAL);
+	}
 }
 
 // Ajoute un nouvel User en tant qu'inviter dans le channel
@@ -219,14 +222,14 @@ void	Channel::KickUser(User& user, User& target, std::string const& reason)
 	Broadcast(str); // Les users du channel sont prevenue que la target a ete kick
 }
 
-bool	Channel::CheckPass(std::string const& key)
+bool	Channel::Is_PassValid(std::string const& key)
 {
 	std::string	pass(key);
 	
 	RmNewLine(pass, '\n');
 	RmNewLine(pass, '\r');
 	
-	if (pass.empty() || !str_is_alpha(pass))
+	if (pass.size() == 1 || !str_is_alpha(pass))
 		return (false);
 	return (true);
 }
@@ -362,10 +365,11 @@ std::vector<User *>	Channel::getUsers()
 	return (list_user);	
 }
 
+int	Channel::getCapacity() const
+{	return (this->_capacity); }
+
 int	Channel::getNumUsers() const
-{
-	return (this->_users.size());
-}
+{	return (this->_users.size()); }
 
 std::string	Channel::getSNumUsers() const
 {
@@ -398,7 +402,6 @@ void	Channel::setChanModes(std::string const& mode, std::string const& arg)
 {
 	bool		sign;
 	std::string	cast;
-
 
 	size_t		i(0);
 	while (i < mode.size())
@@ -442,8 +445,10 @@ void	Channel::setChanModes(std::string const& mode, std::string const& arg)
 			int					size;
 			std::stringstream	ss(arg);
 			ss >> size;
+			std::cout << "arg: " << arg.size() << "|" << arg.empty() << std::endl;
 			if (arg.empty())
 				size = 50;
+			std::cout << "size: " << size << " | numUsers: " << this->getNumUsers() << std::endl;
 			if (size > 0 && this->getNumUsers() < size && size <= 50)
 			{
 				this->_limit = true;
@@ -489,7 +494,7 @@ void	Channel::setChanModes(std::string const& mode, std::string const& arg)
 			}
 			else
 			{
-				if (this->CheckPass(key))
+				if (this->Is_PassValid(key))
 				{
 					this->_key = true;
 					this->setChanPass(key);
@@ -579,7 +584,10 @@ void	Channel::setUserPrivilege(int user_fd, bool priv)
 {	(this->_privilege.find(user_fd))->second = priv; }
 
 void	Channel::setChanLimit(int capacity)
-{	this->_capacity = capacity; }
+{
+	this->_capacity = capacity;
+	std::cout << GREEN << "-Chan Capacity set at ["<< capacity << "]-" << std::endl;
+}
 
 void	Channel::setChanPass(std::string const& pass)
 {	this->_pass = pass; }

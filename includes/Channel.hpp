@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: chaidel <chaidel@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/19 08:28:18 by root              #+#    #+#             */
-/*   Updated: 2023/05/23 11:54:53 by root             ###   ########.fr       */
+/*   Updated: 2023/05/23 14:54:39 by chaidel          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ class	Channel {
 		void	BanUser(User& user, User& target);
 		void	UnBanUser(User& user, User& target);
 		void	KickUser(User& user, User& target, std::string const& reason);
-		bool	CheckPass(std::string const& pass);
+		bool	Is_PassValid(std::string const& pass);
 
 		bool	Is_Ban(User& user);
 		bool	Is_Ope(User& user);
@@ -56,6 +56,7 @@ class	Channel {
 		std::string			getModes() const;
 		void				getWho(User& user);
 		std::string			getPass() const;
+		int					getCapacity() const;
 		int					getNumUsers() const;
 		std::string			getSNumUsers() const;
 		User*				getUser(std::string const& user);

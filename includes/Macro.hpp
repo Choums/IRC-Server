@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Macro.hpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: chaidel <chaidel@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/21 17:04:51 by root              #+#    #+#             */
-/*   Updated: 2023/05/23 12:11:42 by root             ###   ########.fr       */
+/*   Updated: 2023/05/23 16:02:22 by chaidel          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 #define RPL_WELCOME(user) (":" + user.getHostname() + " 001 " + user.getNickname() + " Welcome to the Internet Relay Network " + user.getNames() + "\n")
 #define RPL_YOURHOST(user) (":" + user.getHostname() + " 002 " + user.getNickname() + " Your host is " + Server::running_serv->getHostname() + ", running version 4.2\n")
 #define RPL_CREATED(user) (":" + user.getHostname() + " 003 " + user.getNickname() + " This server was created " + "2023" + "\n")
-#define RPL_MYINFO(user) (":" + user.getHostname() + " 004 " + user.getNickname() + Server::running_serv->getHostname() + " v4.2 oi iob\n")
+#define RPL_MYINFO(user) (":" + user.getHostname() + " 004 " + user.getNickname() + Server::running_serv->getHostname() + " v4.2 i ioblkt\n")
 
 // PING
 #define PONG(user) (":" + user.getHostname() + " PONG :" + user.getNickname() + "\r\n")
@@ -71,10 +71,10 @@
 #define RPL_UNBANUSER(user, channel, operator) (":" + user.getNames() + " MODE " + channel->getName() + " -b " + user.getNickname() + " : You have been unbanned from " + channel->getName() + " by operator : "+ operator.getNickname() + " \r\n")
 
 // JOIN
-// 475    ERR_BADCHANNELKEY
-//               "<channel> :Cannot join channel (+k)"
-#define ERR_BADCHANNELKEY(user, channel) (":" + user.getNames() + " 475 " + (channel) + " :Cannot join channel (+k)" + "\r\n")
-
+// 475    ERR_BADCHANNELKEY		"<channel> :Cannot join channel (+k)"
+#define ERR_BADCHANNELKEY(user, channel) ("475 " + user.getNames() + (channel) + " :Cannot join channel (+k)" + "\r\n")
+// 471    ERR_CHANNELISFULL		"<channel> :Cannot join channel (+l)"
+#define ERR_CHANNELISFULL(user, channel) ("471 " + user.getNames() + (channel) + " :Cannot join channel (+l)" + "\r\n")
 
 // INVITE
 // #define	RPL_INVITING(user, channel, new_user) ( ":" + user.getUsername() + " 341 " + user.getNickname() + " has invited on " + channel + " " + new_user.getNickname() + "\n")
@@ -90,7 +90,7 @@
 #define RPL_LISTEND(user) (": " + user.getNames() + " 323 " + user.getNickname() + " :End of LIST\n")
 
 //TOPIC
-#define RPL_TOPIC(user, channel, topic) (":" + user.getNames() + " 332 " + user.getNickname() + " " + (channel) + " :" + (topic) + "\n")
-#define RPL_NOTOPIC(user, channel) (":" + user.getUsername() + " 331 " + user.getNickname() + " " + (channel) + " :No topic is set" + "\n")
+#define RPL_TOPIC(user, channel, topic) (":localhost 332 " + user.getNickname() + " " + (channel) + " :" + (topic) + "\n")
+#define RPL_NOTOPIC(user, channel) (":localhost 331 " + user.getNickname() + " " + (channel) + " :No topic is set" + "\r\n")
 
 #define ERR_NEEDMOREPARAMS(user, command) (":" + user.getNames() + " 461 " + user.getNickname() + " " + (command) + " :Not enough parameters\r\n")
