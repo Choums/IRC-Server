@@ -3,46 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: chaidel <chaidel@student.42.fr>            +#+  +:+       +#+        */
+/*   By: tdelauna <tdelauna@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/07 18:15:00 by aptive            #+#    #+#             */
-/*   Updated: 2023/05/15 19:18:58 by chaidel          ###   ########.fr       */
+/*   Updated: 2023/05/23 17:59:41 by tdelauna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/web_serv.hpp"
+#include "../includes/ft_irc.hpp"
 #include "../includes/User.hpp"
 #include "../includes/Server.hpp"
-
-void sendMessageSuccess(int fd, std::string message)
-{
-	std::string send_msg = GREEN + message + END;
-	send(fd, send_msg.c_str(), send_msg.size(), MSG_NOSIGNAL);
-}
-
-void sendMessageUnSuccess(int fd, std::string message)
-{
-	std::string send_msg = RED + message + END;
-	send(fd, send_msg.c_str(), send_msg.size(), MSG_NOSIGNAL);
-}
-
-void sendMessageWarning(int fd, std::string message)
-{
-	std::string send_msg = YELLOW + message + END;
-	send(fd, send_msg.c_str(), send_msg.size(), MSG_NOSIGNAL);
-}
-
-
-void sendMessageSucces(int fd, std::string message)
-{
-	std::string send_msg = GREEN + message + END;
-	send(fd, send_msg.c_str(), send_msg.size(), MSG_NOSIGNAL);
-}
-
-void sendMessage(int fd, std::string message)
-{
-	send(fd, message.c_str(), message.size(), MSG_NOSIGNAL);
-}
 
 // RPL_WELCOME (001) : Ce code est envoyé en premier pour accueillir le client sur le serveur et pour lui indiquer que la connexion a réussi.
 // 001 "Welcome to the Internet Relay Network <nick>!<user>@<host>"
@@ -52,17 +22,17 @@ void sendMessage(int fd, std::string message)
 // 003 "This server was created <date>"
 // RPL_MYINFO (004) : Ce code fournit au client des informations sur le serveur IRC, y compris son nom, sa version, les modes pris en charge et les extensions disponibles.
 // 004 "<servername> <version> <available user modes> <available channel modes>"
-void    welcome(User& user)
-{
-    if (user.getAuth_password() == true)
-    {
-        std::string    str = RPL_WELCOME(user) + RPL_YOURHOST(user) + RPL_CREATED(user) + RPL_MYINFO(user);
-        send(user.getFd(), str.c_str(), str.size(), MSG_NOSIGNAL);
-    }
-    else
-    {
+void	welcome(User& user)
+	{
+if (user.getAuth_password() == true)
+	{
+		std::string    str = RPL_WELCOME(user) + RPL_YOURHOST(user) + RPL_CREATED(user) + RPL_MYINFO(user);
+		send(user.getFd(), str.c_str(), str.size(), MSG_NOSIGNAL);
+	}
+	else
+	{
 		Server::running_serv->setRmUser(user);
-    }
+	}
 }
 
 // Ctrl+a, n : Cette combinaison de touches vous permet de passer à la fenêtre de discussion suivante.
@@ -72,6 +42,14 @@ void    welcome(User& user)
 // Ctrl+a, 1-9 : Ces combinaisons de touches vous permettent de basculer directement vers une fenêtre de discussion spécifique.
 // Par exemple, "Ctrl+a, 3" vous amènera à la fenêtre de discussion numéro 3.
 
+
+
+void	sig_int(int code)
+{
+	(void)code;
+	g_signal = false;
+}
+
 Server* Server::running_serv = NULL;
 
 int main(int argc, char ** argv)
@@ -79,9 +57,8 @@ int main(int argc, char ** argv)
 	int port;
 	std::string password;
 
-	// int server_fd(-1);
-	// struct sockaddr_in addr;
-
+	signal(SIGINT, &sig_int);
+	g_signal = true;
 
 	std::cout << GREEN <<"---------------- SERVER IRC -------------------------------" << END << std::endl;
 
@@ -94,16 +71,7 @@ int main(int argc, char ** argv)
 		std::cout << server;
 		Server::running_serv = &server;
 		// Configuration socket et adresse server ------------------------------------------
-		// ft_socket_addr_server(&server_fd, &addr, port);
-
-		// std::cout << "socket : " << server_fd << std::endl;
-		// std::cout << "Serveur en attente de connexions sur le port " << port << std::endl;
-
-
-		// boucle_server(server.getServer_fd(), server.getAddr());
 		server.boucle_server();
-
-
 		std::cout << "No problems" << std::endl;
 	}
 	catch(const std::string except)

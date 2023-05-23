@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   Server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: tdelauna <tdelauna@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/14 17:37:42 by aptive            #+#    #+#             */
-/*   Updated: 2023/05/23 11:31:12 by root             ###   ########.fr       */
+/*   Updated: 2023/05/23 17:59:41 by tdelauna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-# include "../includes/web_serv.hpp"
+# include "../includes/ft_irc.hpp"
 # include "../includes/Server.hpp"
 
 /*
@@ -52,7 +52,7 @@ Server::~Server()
 {
 	Chan_iter	it = this->_channel.begin();
 	Chan_iter	ite = this->_channel.end();
-	
+
 	while (it != ite)
 	{
 		delete *it;
@@ -150,7 +150,8 @@ void	Server::boucle_server( void )
 
 	// Boucle principale du serveur
 	int count(0);
-	while (true)
+	g_signal = true;
+	while (g_signal == true)
 	{
 		std::cout << "[SERVER] : waiting data : " << YELLOW << count << END << std::endl;
 		count++;
@@ -224,10 +225,6 @@ void	Server::gestion_new_connexion(fd_set * temp, fd_set * _read_sockets, struct
 					<< " / port : " << ntohs(addr.sin_port)
 					<< std::endl;
 		_client_socket_v.push_back(new User(new_socket));
-
-		sendMessage(new_socket, "[SERVER] : password ?\n");
-
-
 	}
 }
 
@@ -252,7 +249,6 @@ void Server::gestion_activite_client(fd_set * _read_sockets, fd_set * temp)
 
 				std::cout << RED << "[SERVER] : Delete " << _client_socket_v[i]->getNickname() << END << std::endl;
 				// Client disconnected, remove from active socket set
-				sendMessageWarning(_client_socket_v[i]->getFd(), "[SERVER] : You have been disconnected\n");
 				close(client_socket_fd);
 				FD_CLR(client_socket_fd, _read_sockets);
 				_client_socket_v.erase(_client_socket_v.begin()+i);
@@ -261,17 +257,17 @@ void Server::gestion_activite_client(fd_set * _read_sockets, fd_set * temp)
 			else
 			{
 				int buf_len = buf.size();
-                if (buf[buf_len - 1] == '\n')
-                {
-                    std::cout << "Commande complete\n";
-                    _client_socket_v[i]->setBuf(buf);
-                    this->parsing_cmd(_client_socket_v[i]);
-                }
-                else
-                {
-                    std::cout << "add to buf\n";
-                    _client_socket_v[i]->setBuf(buf);
-                }
+				if (buf[buf_len - 1] == '\n')
+				{
+					std::cout << "Commande complete\n";
+					_client_socket_v[i]->setBuf(buf);
+					this->parsing_cmd(_client_socket_v[i]);
+				}
+				else
+				{
+					std::cout << "add to buf\n";
+					_client_socket_v[i]->setBuf(buf);
+				}
 			}
 		}
 	}
@@ -355,7 +351,7 @@ void	Server::send_privmsg(User& user, User& target, std::string const& msg)
 
 	std::cout << GREEN << "|" << msg << "|" << END << std::endl;
 	std::string	privmsg = ":" + user.getNames() + " PRIVMSG " + target.getNickname() + " :" + msg + "\r\n";
-	
+
 	send(target.getFd(), privmsg.c_str(), privmsg.size(), MSG_NOSIGNAL);
 }
 
@@ -483,7 +479,7 @@ void	Server::cmd_Who(User& user, std::string const& rest)
 	}
 	else // Display tout les users du serv
 	{
-		
+
 	}
 
 }
@@ -584,7 +580,7 @@ void	Server::setRmChannel(Channel* cnl)
 		if (*it == cnl)
 		{
 			this->_channel.erase(it);
-			delete cnl;	
+			delete cnl;
 			std::cout << GREEN << "-Fermeture successful-" << END << std::endl;
 			return ;
 		}
@@ -605,7 +601,6 @@ void	Server::setRmUser(User &user)
 
 	std::cout << RED << "[SERVER] : Delete " << _client_socket_v[i]->getNickname() << END << std::endl;
 	// Client disconnected, remove from active socket set
-	sendMessageWarning(_client_socket_v[i]->getFd(), "[SERVER] : You have been disconnected\n");
 	close(fd);
 	FD_CLR(fd, &_read_sockets);
 	_client_socket_v.erase(_client_socket_v.begin()+i);

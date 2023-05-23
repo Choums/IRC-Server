@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   Nick.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: chaidel <chaidel@student.42.fr>            +#+  +:+       +#+        */
+/*   By: tdelauna <tdelauna@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/23 12:43:38 by root              #+#    #+#             */
-/*   Updated: 2023/05/16 16:17:16 by chaidel          ###   ########.fr       */
+/*   Updated: 2023/05/23 17:59:41 by tdelauna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/web_serv.hpp"
+#include "../includes/ft_irc.hpp"
 #include "../includes/Server.hpp"
 
 
@@ -40,7 +40,7 @@ void Server::cmd_Nick(User& user, std::string const& nickname)
 	std::stringstream	ss(nickname);
 	std::string	nick;
 	ss >> nick;
-	
+
 	std::cout << YELLOW << "-Nick Command-" << END << std::endl;
 	std::cout << RED << "<" << nick << ">" << END << std::endl;
 	if (nick.size() == 1) // ERR_NEEDPARAMS
@@ -75,5 +75,5 @@ void Server::cmd_Nick(User& user, std::string const& nickname)
 			welcome(user);
 		}
 	}
-	
+
 }

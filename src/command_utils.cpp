@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   command_utils.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: tdelauna <tdelauna@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/19 13:16:54 by root              #+#    #+#             */
-/*   Updated: 2023/05/23 12:30:15 by root             ###   ########.fr       */
+/*   Updated: 2023/05/23 17:59:41 by tdelauna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/web_serv.hpp"
+#include "../includes/ft_irc.hpp"
 
 /*
  *	Permet de gerer les arguments de noms de channels: #sad ou #sad,#asd
@@ -19,7 +19,7 @@
  *	-> length up to fifty (50) characters.
  *	-> SHALL NOT contain any spaces (' '), a control G (^G or ASCII 7), a comma (',')
  *	-> channel names SHOULD NOT be allowed to be reused
- *	
+ *
 */
 std::vector<std::string>	parse_cnl_name(std::string const& line)
 {
@@ -27,7 +27,7 @@ std::vector<std::string>	parse_cnl_name(std::string const& line)
 	std::vector<std::string>	cnl;
 	std::stringstream			ss(line);
 	std::string					rest;
-	
+
 	ss >> rest;
 	std::cout << rest << std::endl;
 	if (rest.empty())
@@ -37,14 +37,14 @@ std::vector<std::string>	parse_cnl_name(std::string const& line)
 		return (cnl);
 	}
 	// RECUPERATION DES NOMS DE CANALS
-	
+
 	if (rest.find(",") == std::string::npos)
 		cnl.push_back(rest);
 	else
 	{
 		size_t	pos(0);
 		size_t	new_pos(0);
-		
+
 		while (new_pos != std::string::npos)
 		{
 			new_pos = rest.find(",", pos);
@@ -66,7 +66,7 @@ std::map<std::string, std::string>	parse_cnl_name_with_key(std::string const& li
 	std::stringstream					ss(line);
 	std::string							rest;
 	std::string							keys;
-	
+
 	ss >> rest;
 	ss >> keys;
 	std::cout << RED << rest << "\n" << keys << std::endl;
@@ -77,7 +77,7 @@ std::map<std::string, std::string>	parse_cnl_name_with_key(std::string const& li
 		return (cnl);
 	}
 	// RECUPERATION DES NOMS DE CANALS
-	
+
 	cnl_names = parse_cnl_name(rest);
 	cnl_keys = parse_cnl_name(keys);
 
@@ -88,8 +88,8 @@ std::map<std::string, std::string>	parse_cnl_name_with_key(std::string const& li
 		else
 			cnl.insert(make_pair(cnl_names[i], std::string("")));
 	}
-	
-	
+
+
 	std::cout << RED << "---end parse---" << END << std::endl;
 	return (cnl);
 }

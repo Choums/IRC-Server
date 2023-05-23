@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: chaidel <chaidel@student.42.fr>            +#+  +:+       +#+        */
+/*   By: tdelauna <tdelauna@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/19 08:28:18 by root              #+#    #+#             */
-/*   Updated: 2023/05/23 14:54:39 by chaidel          ###   ########.fr       */
+/*   Updated: 2023/05/23 17:59:41 by tdelauna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
-#include "web_serv.hpp"
+#include "ft_irc.hpp"
 
 class User;
 
@@ -71,7 +71,7 @@ class	Channel {
 		void				setChanLimit(int capacity);
 		void				setChanPass(std::string const& pass);
 		void				setTopLock(bool	lock);
-		
+
 	private:
 		std::string				_name;		//	nom du canal
 		std::string				_topic;		//	Definis le topic du Canal

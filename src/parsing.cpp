@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aptive <aptive@student.42.fr>              +#+  +:+       +#+        */
+/*   By: tdelauna <tdelauna@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/07 19:19:35 by aptive            #+#    #+#             */
-/*   Updated: 2023/04/14 18:16:07 by aptive           ###   ########.fr       */
+/*   Updated: 2023/05/23 17:59:41 by tdelauna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/web_serv.hpp"
+#include "../includes/ft_irc.hpp"
 
 void parsing(int argc, char ** argv, int * port, std::string * password)
 {

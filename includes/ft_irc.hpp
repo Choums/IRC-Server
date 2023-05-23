@@ -1,17 +1,17 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   web_serv.hpp                                       :+:      :+:    :+:   */
+/*   ft_irc.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: tdelauna <tdelauna@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/07 18:14:43 by aptive            #+#    #+#             */
-/*   Updated: 2023/05/23 12:31:13 by root             ###   ########.fr       */
+/*   Updated: 2023/05/23 17:59:05 by tdelauna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef WEB_SERV_HPP
-# define WEB_SERV_HPP
+#ifndef FT_IRC_HPP
+# define FT_IRC_HPP
 
 # include <iostream>
 # include <string>
@@ -41,11 +41,16 @@
 #include "Channel.hpp"
 #include "Macro.hpp"
 
+# include <signal.h>
+
+
 # define RED "\033[1;31m"
 # define GREEN "\033[1;32m"
 # define YELLOW "\033[1;33m"
 # define END "\033[0m"
 
+
+static bool g_signal;
 
 enum Command {
 	Cap = -2,

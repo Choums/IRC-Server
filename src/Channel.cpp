@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Channel.cpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: chaidel <chaidel@student.42.fr>            +#+  +:+       +#+        */
+/*   By: tdelauna <tdelauna@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/19 08:47:29 by root              #+#    #+#             */
-/*   Updated: 2023/05/23 15:26:05 by chaidel          ###   ########.fr       */
+/*   Updated: 2023/05/23 17:43:40 by tdelauna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ Channel::Channel(User& user, std::string const& name, std::string const& pass)
 	std::cout << "---------------------------------------" << std::endl;
 
 	std::cout << pass.size() << " | " << pass << std::endl;
-	
+
 	if (pass.size() == 1)
 		this->_key = false;
 	else
@@ -42,12 +42,14 @@ Channel::~Channel() // Kick les users toujours present avant de fermer le serveu
 
 	std::string	reason = "Channel closing !";
 
-	while (it != ite)
+	if (!this->Is_OpePresent())
 	{
-		this->PartUser(*(it->second), reason);
-		it++;
+		while (it != ite)
+		{
+			this->PartUser(*(it->second), reason);
+			it++;
+		}
 	}
-
 	this->_users.clear();
 	this->_privilege.clear();
 	this->_ban.clear();
@@ -62,7 +64,7 @@ void	Channel::Privmsg(User& user, std::string const& msg)
 
 	std::cout << GREEN << "|" << msg << "|" << END << std::endl;
 	std::string	privmsg = ":" + user.getNames() + " PRIVMSG " + this->_name + " " + msg + "\r\n";
-	
+
 	// std::cout << "|" << privmsg << "|" << std::endl;
 	while (it != ite)
 	{
@@ -111,14 +113,14 @@ void	Channel::AddUser(User& new_user, bool priv) // check user existant
 {
 	this->_users.insert(std::pair<int, User *>(new_user.getFd(), &new_user));
 	this->_privilege.insert(std::pair<int, bool>(new_user.getFd(), priv));
-	
+
 	if (this->Is_Inv(new_user)) // New_user a accepté l'invitation, il est supp de la liste des invités
 		this->UnInvUser(new_user);
 	std::string msg = ":" + new_user.getNames() + " JOIN " + this->_name + "\r\n";
 
 	std::cout << GREEN << "< " << this->_name << " >: " << msg << END << std::endl;
 	this->Broadcast(msg);
-	
+
 	if (!this->_topic.empty())
 	{
 		std::string	str = RPL_TOPIC(new_user, this->getName(), this->_topic);
@@ -138,10 +140,10 @@ void	Channel::InvUser(User& user, User& new_user)
 {
 	// this->_invited.insert(std::pair<int, bool>(new_user.getFd(), true));
 	this->_invited.push_back(new_user.getFd());
-	
+
 	std::string str = RPL_INVITE(user, new_user, this->_name); // Invitation au new_user
 	send(new_user.getFd(), str.c_str(), str.size(), MSG_NOSIGNAL);
-	
+
 	str = RPL_INVITING(user, new_user, this->_name); // Message de confirmation a l'inviteur
 	send(user.getFd(), str.c_str(), str.size(), MSG_NOSIGNAL);
 }
@@ -159,7 +161,7 @@ void	Channel::AddOpe(User& new_oper)
 	std::cout << RED << "<" << this->_name << ">: " << new_oper.getNickname() << " est devenu opetareur !" << END << std::endl;
 }
 
-// Retire les droits operateurs du Canal a l'user 
+// Retire les droits operateurs du Canal a l'user
 void	Channel::RmOpe(User& user)
 {
 	this->setUserPrivilege(user.getFd(), false);
@@ -174,7 +176,7 @@ void	Channel::PartUser(User& user, std::string const& reason)
 	this->_users.erase(this->_users.find(user.getFd())); // Supp de la list des users
 
 	this->_privilege.erase(this->_privilege.find(user.getFd())); // Supp de la list des priv
-		
+
 	std::cout << YELLOW << "PART " << user.getUsername() << " has been deleted from " << this->_name << END << std::endl;
 	this->getUsers();
 	std::string	cast = ":" + user.getNames() + " PART " + this->_name + " :" + reason + "\r\n";
@@ -190,7 +192,7 @@ void	Channel::BanUser(User& user, User& target)
 	this->_ban.push_back(target.getFd());
 
 	std::cout << GREEN << "<" << this->_name << ">: " << target.getNickname() << " has been banned by " << user.getNickname() << END << std::endl;
-	
+
 	std::string	reason = ":You have been Banned !";
 
 	this->KickUser(user, target, reason);
@@ -216,19 +218,19 @@ void	Channel::KickUser(User& user, User& target, std::string const& reason)
 	this->_privilege.erase(target.getFd());
 
 	std::string	str = RPL_KICK(user, this->_name, target, reason);
-	
+
 	send(target.getFd(), str.c_str(), str.size(), MSG_NOSIGNAL); //	La target est prevenue qu'elle est kick
-	
+
 	Broadcast(str); // Les users du channel sont prevenue que la target a ete kick
 }
 
 bool	Channel::Is_PassValid(std::string const& key)
 {
 	std::string	pass(key);
-	
+
 	RmNewLine(pass, '\n');
 	RmNewLine(pass, '\r');
-	
+
 	if (pass.size() == 1 || !str_is_alpha(pass))
 		return (false);
 	return (true);
@@ -362,7 +364,7 @@ std::vector<User *>	Channel::getUsers()
 		list_user.push_back(it->second);
 		std::cout << it->second->getUsername() << std::endl;
 	}
-	return (list_user);	
+	return (list_user);
 }
 
 int	Channel::getCapacity() const
@@ -383,7 +385,7 @@ User*	Channel::getUser(std::string const& user)
 {
 	for (std::map<int, User*>::iterator	it = this->_users.begin(); it != this->_users.end(); it++)
 	{
-		User *tmp = it->second;	
+		User *tmp = it->second;
 		if (!user.compare(tmp->getNickname()))
 			return(tmp);
 	}
@@ -465,7 +467,7 @@ void	Channel::setChanModes(std::string const& mode, std::string const& arg)
 			this->getModes();
 			cast = CHANMODE(this->_name, "-l");
 			this->Broadcast(cast);
-			
+
 		}
 		else if (mode[i] == 't' && sign)
 		{
@@ -486,7 +488,7 @@ void	Channel::setChanModes(std::string const& mode, std::string const& arg)
 			std::stringstream	ss(arg);
 			std::string			key;
 			ss >> key;
-			
+
 			if (this->Is_PassOnly())
 			{
 				// cast = ERR_KEYSET(user, this->_name);
@@ -514,7 +516,7 @@ void	Channel::setChanModes(std::string const& mode, std::string const& arg)
 		}
 		else
 		{
-			
+
 		}
 		i++;
 	}
@@ -596,7 +598,7 @@ void	Channel::setTopLock(bool lock)
 {	this->_top = lock; }
 
 		/*	Displa Operator Overload */
-		
+
 /*	Affiche toutes les informations du Canal */
 std::ostream&	operator<<(std::ostream& flux, Channel& cnl)
 {

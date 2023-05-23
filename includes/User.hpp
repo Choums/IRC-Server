@@ -3,17 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   User.hpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: chaidel <chaidel@student.42.fr>            +#+  +:+       +#+        */
+/*   By: tdelauna <tdelauna@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/12 18:44:15 by aptive            #+#    #+#             */
-/*   Updated: 2023/05/16 16:13:23 by chaidel          ###   ########.fr       */
+/*   Updated: 2023/05/23 17:59:41 by tdelauna         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef USER_HPP
 # define USER_HPP
 
-# include "web_serv.hpp"
+# include "ft_irc.hpp"
 
 class Channel;
 
@@ -31,7 +31,7 @@ class User
 		void	sendMessage(const std::string& message) const;
 		void	clearBuf( void );
 		bool	is_set();
-		
+
 		// ** --------------------------------- ACCESSOR ---------------------------------
 		std::string				getNames() const;
 		bool					getSet() const;
@@ -48,7 +48,7 @@ class User
 		std::vector<Channel*>	getListCnl();
 
 		// ** --------------------------------- SETTER ---------------------------------
-		
+
 		void	setSetUser();
 		void	setUserMode(std::string const& mode);
 		void	setUsername(std::string const& name);
