@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tdelauna <tdelauna@student.42.fr>          +#+  +:+       +#+        */
+/*   By: chaidel <chaidel@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/07 18:15:00 by aptive            #+#    #+#             */
-/*   Updated: 2023/05/23 17:59:41 by tdelauna         ###   ########.fr       */
+/*   Updated: 2023/05/24 15:59:45 by chaidel          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,6 +72,7 @@ int main(int argc, char ** argv)
 		Server::running_serv = &server;
 		// Configuration socket et adresse server ------------------------------------------
 		server.boucle_server();
+		close(port);
 		std::cout << "No problems" << std::endl;
 	}
 	catch(const std::string except)

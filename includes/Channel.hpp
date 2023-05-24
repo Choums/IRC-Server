@@ -6,7 +6,7 @@
 /*   By: chaidel <chaidel@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/19 08:28:18 by root              #+#    #+#             */
-/*   Updated: 2023/05/23 18:37:57 by chaidel          ###   ########.fr       */
+/*   Updated: 2023/05/24 16:25:12 by chaidel          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,10 +45,12 @@ class	Channel {
 		bool	Is_OpePresent();
 		bool	Is_InvOnly() const;
 		bool	Is_BanOnly() const;
+		bool	Is_Private() const;
 		bool	Is_limitSet() const;
 		bool	Is_PassOnly() const;
 		bool	Is_TopicLock() const;
 
+		
 				/*	Accesseurs */
 		std::vector<User*>	getUsers();
 		std::string			getName() const;

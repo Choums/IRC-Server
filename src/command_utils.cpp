@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   command_utils.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tdelauna <tdelauna@student.42.fr>          +#+  +:+       +#+        */
+/*   By: chaidel <chaidel@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/19 13:16:54 by root              #+#    #+#             */
-/*   Updated: 2023/05/23 17:59:41 by tdelauna         ###   ########.fr       */
+/*   Updated: 2023/05/24 16:02:30 by chaidel          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,8 @@ std::vector<std::string>	parse_cnl_name(std::string const& line)
 	std::string					rest;
 
 	ss >> rest;
+	RmNewLine(rest, '\n');
+	RmNewLine(rest, '\r');
 	std::cout << rest << std::endl;
 	if (rest.empty())
 	{

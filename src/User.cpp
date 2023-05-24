@@ -6,7 +6,7 @@
 /*   By: chaidel <chaidel@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/12 18:50:55 by aptive            #+#    #+#             */
-/*   Updated: 2023/05/16 16:14:25 by chaidel          ###   ########.fr       */
+/*   Updated: 2023/05/24 15:59:27 by chaidel          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,7 @@ User::User(int fd) : _set(false), _fd(fd), _username("X"), _nickname("X"), _host
 User::~User()
 {
 	this->_list_cnl.clear();
+	close(this->_fd);
 }
 
 /*

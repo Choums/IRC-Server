@@ -6,7 +6,7 @@
 /*   By: chaidel <chaidel@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/19 08:47:29 by root              #+#    #+#             */
-/*   Updated: 2023/05/23 18:38:24 by chaidel          ###   ########.fr       */
+/*   Updated: 2023/05/24 16:35:53 by chaidel          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,11 +20,18 @@ Channel::Channel(User& user, std::string const& name, std::string const& pass)
 
 	std::cout << pass.size() << " | " << pass << std::endl;
 
-	if (pass.size() == 1)
+	if (pass.size() == 1 || pass == "x")
+	{
+		std::cout << "key false\n";
 		this->_key = false;
+		this->_pass = "";
+	}
 	else
+	{
+		std::cout << "key true\n";
 		this->_key = true;
-	this->_pass = pass;
+		this->_pass = pass;
+	}
 	this->setName(name);
 	this->AddUser(user, true);
 	this->_InvOnly = false;
@@ -46,8 +53,9 @@ Channel::~Channel() // Kick les users toujours present avant de fermer le serveu
 	{
 		while (it != ite)
 		{
-			this->PartUser(*(it->second), reason);
-			it++;
+			User*	user = it->second;
+			this->PartUser(*user, reason);
+			it = this->_users.begin();
 		}
 	}
 	this->_users.clear();
@@ -311,6 +319,9 @@ bool	Channel::Is_BanOnly() const
 {
 	return (this->_bans);
 }
+
+bool	Channel::Is_Private() const
+{	return (this->_key); }
 
 bool	Channel::Is_PassOnly() const
 {	return (this->_key); }

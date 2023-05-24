@@ -47,23 +47,7 @@
 */
 void	Server::cmd_JoinChannel(std::string const& rest, User& user)
 {
-	// std::cout << RED << "rest: |" << rest << "|, " << rest.size() << END << std::endl;
 	std::string	str;
-	if (rest.size() == 2 && rest[0] == '0')
-	{
-		std::cout <<RED << "[SERVER] : [" << user.getNickname() << "] leaving all channels" << END << std::endl;
-		
-		std::vector<Channel *>	list_cnls = user.getListCnl();
-		std::string	format;
-		for (size_t i(0); i < list_cnls.size(); i++)
-		{
-			format.append(list_cnls[i]->getName());
-			if (i + 1 != list_cnls.size())
-				format.push_back(',');
-		}
-		this->cmd_Part(user, format);
-		return ;
-	}
 
 	std::map<std::string, std::string> cnl = parse_cnl_name_with_key(rest);
 
@@ -79,7 +63,7 @@ void	Server::cmd_JoinChannel(std::string const& rest, User& user)
 
 	while (it != ite)
 	{
-		std::cout << RED << "chan: " << it->first << " | key: " << it->second << END << std::endl;
+		std::cout << RED << "chan: <" << it->first << "> | key: <" << it->second << ">, " << it->second.size() << END << std::endl;
 
 		if (channel_exist(it->first)) // Verif que le channel existe dans le serveur
 		{
@@ -92,8 +76,8 @@ void	Server::cmd_JoinChannel(std::string const& rest, User& user)
 					send(user.getFd(), str.c_str(), str.size(), MSG_NOSIGNAL);
 					return ;
 				}
-
-				if (channel->getPass() == it->second)
+				std::cout << "<" << channel->getPass() << "> | " << it->second << std::endl;
+				if ((channel->Is_Private() && channel->getPass() == it->second) || !channel->Is_Private())
 				{
 					std::cout << RED << "Limit[" << channel->Is_limitSet() << "]: " << channel->getCapacity() << " | " << channel->getNumUsers() << END << std::endl;
 					if (channel->Is_limitSet() && channel->getNumUsers() >= channel->getCapacity())
