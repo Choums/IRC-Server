@@ -6,7 +6,7 @@
 /*   By: chaidel <chaidel@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/14 17:37:42 by aptive            #+#    #+#             */
-/*   Updated: 2023/05/24 15:59:06 by chaidel          ###   ########.fr       */
+/*   Updated: 2023/05/24 17:09:45 by chaidel          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,24 @@ Server::Server()
 
 Server::Server(Server const & src)
 {
-	(void)src;
+	*this = src;
+}
+
+Server&	Server::operator=(Server const& obj)
+{
+	if (this != &obj)
+	{
+		_hostname	= obj._hostname;
+		_server_fd	= obj._server_fd;
+		_addr		= obj._addr;
+		_port		= obj._port;
+		_password	= obj._password;
+		_max_socket_fd	= obj._max_socket_fd;
+		_client_socket_v	= obj._client_socket_v;
+		_channel	= obj._channel;
+		_read_sockets	= obj._read_sockets;
+	}
+	return (*this);
 }
 
 Server::Server(int port, std::string password)
@@ -247,12 +264,12 @@ void Server::gestion_activite_client(fd_set * _read_sockets, fd_set * temp)
 
 			if (valread == 0)
 			{
-
+				
 				std::cout << RED << "[SERVER] : Delete " << _client_socket_v[i]->getNickname() << END << std::endl;
+				this->setRmUser(*this->_client_socket_v[i]);
+
+				delete this->_client_socket_v[i];
 				// Client disconnected, remove from active socket set
-				close(client_socket_fd);
-				FD_CLR(client_socket_fd, _read_sockets);
-				_client_socket_v.erase(_client_socket_v.begin()+i);
 
 			}
 			else
@@ -605,7 +622,7 @@ void	Server::setRmUser(User &user)
 	close(fd);
 	FD_CLR(fd, &_read_sockets);
 	_client_socket_v.erase(_client_socket_v.begin()+i);
-	(void)user;
+	
 }
 
 void	Server::setNewChannel(Channel* cnl)

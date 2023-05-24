@@ -6,7 +6,7 @@
 /*   By: chaidel <chaidel@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/19 08:47:29 by root              #+#    #+#             */
-/*   Updated: 2023/05/24 16:35:53 by chaidel          ###   ########.fr       */
+/*   Updated: 2023/05/24 16:52:42 by chaidel          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,32 @@ Channel::Channel(User& user, std::string const& name, std::string const& pass)
 	this->_limit = false;
 	this->_capacity = 50;
 	this->_top = false;
+}
+
+Channel::Channel(Channel const& cpy)
+{
+	*this = cpy;
+}
+
+Channel&	Channel::operator=(Channel const& obj)
+{
+	if (this != &obj)
+	{
+		_name			= obj._name;
+		_topic			= obj._topic;
+		_pass			= obj._pass;
+		_users			= obj._users;
+		_privilege		= obj._privilege;
+		_ban			= obj._ban;
+		_invited		= obj._invited;
+		_capacity		= obj._capacity;
+		_InvOnly		= obj._InvOnly;
+		_bans			= obj._bans;
+		_limit			= obj._limit;
+		_key			= obj._key;
+		_top			= obj._top;
+	}
+	return (*this);
 }
 
 Channel::~Channel() // Kick les users toujours present avant de fermer le serveur

@@ -6,7 +6,7 @@
 /*   By: chaidel <chaidel@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/19 08:28:18 by root              #+#    #+#             */
-/*   Updated: 2023/05/24 16:25:12 by chaidel          ###   ########.fr       */
+/*   Updated: 2023/05/24 16:41:19 by chaidel          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,8 +19,8 @@ class User;
 class	Channel {
 	public:
 		Channel(User& user, std::string const& name, std::string const& pass);
-		// Channel(Channel const& cpy);
-		// Channel&	operator=(Channel const& obj);
+		Channel(Channel const& cpy);
+		Channel&	operator=(Channel const& obj);
 		virtual ~Channel();
 
 		void	Privmsg(User& user, std::string const& msg);

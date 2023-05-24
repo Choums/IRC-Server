@@ -6,7 +6,7 @@
 /*   By: chaidel <chaidel@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/14 17:32:55 by aptive            #+#    #+#             */
-/*   Updated: 2023/05/23 18:32:26 by chaidel          ###   ########.fr       */
+/*   Updated: 2023/05/24 16:43:28 by chaidel          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@ class Server
 			Server(void);
 			Server(int port, std::string password);
 			Server(Server const & src);
+			Server&	operator=(Server const& obj);
 			virtual	~Server(void);
 
 		// ** --------------------------------- METHODS ----------------------------------
