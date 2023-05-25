@@ -70,12 +70,13 @@ void	Server::cmd_JoinChannel(std::string const& rest, User& user)
 			Channel *channel = *this->get_Channel(it->first);
 			if (!channel->Is_Ban(user))
 			{
-				if (channel->Is_InvOnly() && channel->Is_Inv(user))
+				if (channel->Is_InvOnly() && !channel->Is_Inv(user))
 				{
 					str = ERR_NEEDINVITE(user, channel->getName());
 					send(user.getFd(), str.c_str(), str.size(), MSG_NOSIGNAL);
 					return ;
 				}
+
 				std::cout << "<" << channel->getPass() << "> | " << it->second << std::endl;
 				if ((channel->Is_Private() && channel->getPass() == it->second) || !channel->Is_Private())
 				{
