@@ -6,7 +6,7 @@
 /*   By: chaidel <chaidel@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/12 18:50:55 by aptive            #+#    #+#             */
-/*   Updated: 2023/05/24 15:59:27 by chaidel          ###   ########.fr       */
+/*   Updated: 2023/05/25 15:12:43 by chaidel          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -139,21 +139,6 @@ void	User::clearBuf( void )
 {
 	this->_buf = "";
 }
-
-/*
- *	Quitte tout les Canals dont l'user fait parti
- *	Parcours la liste des Canals, pour chaque Canal -> RmCnlMembership
-*/
-// void	User::LeaveCnls()
-// {
-// 	std::cout << "list part of cnl " << this->getListCnl() << std::endl;
-// 	for (std::vector<Channel*>::iterator it = this->_list_cnl.begin(); it != this->_list_cnl.end(); it++)
-// 	{
-		
-// 		(*it)->RmUser(this->_nickname);
-// 		this->_list_cnl.erase(it);
-// 	}
-// }
 
 bool	User::is_set()
 {
