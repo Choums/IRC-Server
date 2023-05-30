@@ -76,7 +76,7 @@ void	Server::cmd_JoinChannel(std::string const& rest, User& user)
 					send(user.getFd(), str.c_str(), str.size(), MSG_NOSIGNAL);
 					return ;
 				}
-
+				
 				std::cout << "<" << channel->getPass() << "> | " << it->second << std::endl;
 				if ((channel->Is_Private() && channel->getPass() == it->second) || !channel->Is_Private())
 				{

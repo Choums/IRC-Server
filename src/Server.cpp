@@ -6,7 +6,7 @@
 /*   By: chaidel <chaidel@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/14 17:37:42 by aptive            #+#    #+#             */
-/*   Updated: 2023/05/25 15:00:04 by chaidel          ###   ########.fr       */
+/*   Updated: 2023/05/30 15:15:54 by chaidel          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -253,7 +253,6 @@ void Server::gestion_activite_client(fd_set * _read_sockets, fd_set * temp)
 	int valread;
 	char buffer[1025];
 	(void)_read_sockets;
-
 	for (size_t i = 0; i < _client_socket_v.size(); i++)
 	{
 		int client_socket_fd = _client_socket_v[i]->getFd();
@@ -264,13 +263,14 @@ void Server::gestion_activite_client(fd_set * _read_sockets, fd_set * temp)
 
 			if (valread == 0)
 			{
-				
-				std::cout << RED << "[SERVER] : Delete " << _client_socket_v[i]->getNickname() << END << std::endl;
-				this->setRmUser(*this->_client_socket_v[i]);
+				if (this->_client_socket_v[i])
+				{
+					std::cout << RED << "[SERVER] : Delete " << _client_socket_v[i]->getNickname() << END << std::endl;
+					this->setRmUser(*this->_client_socket_v[i]);
 
-				delete this->_client_socket_v[i];
-				// Client disconnected, remove from active socket set
-
+					delete this->_client_socket_v[i];
+					// Client disconnected, remove from active socket set
+				}
 			}
 			else
 			{
@@ -617,12 +617,10 @@ void	Server::setRmUser(User &user)
 	}
 	int fd = this->_client_socket_v[i]->getFd();
 
-	std::cout << RED << "[SERVER] : Delete " << _client_socket_v[i]->getNickname() << END << std::endl;
 	// Client disconnected, remove from active socket set
 	close(fd);
 	FD_CLR(fd, &_read_sockets);
-	_client_socket_v.erase(_client_socket_v.begin()+i);
-	
+	this->_client_socket_v.erase(this->_client_socket_v.begin()+i);
 }
 
 void	Server::setNewChannel(Channel* cnl)

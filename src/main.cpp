@@ -6,7 +6,7 @@
 /*   By: chaidel <chaidel@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/07 18:15:00 by aptive            #+#    #+#             */
-/*   Updated: 2023/05/25 15:02:06 by chaidel          ###   ########.fr       */
+/*   Updated: 2023/05/30 15:28:36 by chaidel          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,8 +23,8 @@
 // RPL_MYINFO (004) : Ce code fournit au client des informations sur le serveur IRC, y compris son nom, sa version, les modes pris en charge et les extensions disponibles.
 // 004 "<servername> <version> <available user modes> <available channel modes>"
 void	welcome(User& user)
-	{
-if (user.getAuth_password() == true)
+{
+	if (user.getAuth_password() == true)
 	{
 		std::string    str = RPL_WELCOME(user) + RPL_YOURHOST(user) + RPL_CREATED(user) + RPL_MYINFO(user);
 		send(user.getFd(), str.c_str(), str.size(), MSG_NOSIGNAL);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Nick.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tdelauna <tdelauna@student.42.fr>          +#+  +:+       +#+        */
+/*   By: chaidel <chaidel@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/23 12:43:38 by root              #+#    #+#             */
-/*   Updated: 2023/05/23 18:04:03 by tdelauna         ###   ########.fr       */
+/*   Updated: 2023/05/30 15:32:57 by chaidel          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,8 +64,8 @@ void Server::cmd_Nick(User& user, std::string const& nickname)
 	{
 		std::cout << GREEN << "Nickname has been changed to: [" << user.getNickname() << "]" << END << std::endl;
 		str = NICK(user, nick);
-		std::cout << str << std::endl;
 		send(user.getFd(), str.c_str(), str.size(), MSG_NOSIGNAL);
+		std::cout << str << std::endl;
 		user.setNickname(nick);
 		// std::cout << "||| " << str << " |||" << std::endl;
 

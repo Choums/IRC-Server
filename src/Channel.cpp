@@ -6,7 +6,7 @@
 /*   By: chaidel <chaidel@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/19 08:47:29 by root              #+#    #+#             */
-/*   Updated: 2023/05/24 16:52:42 by chaidel          ###   ########.fr       */
+/*   Updated: 2023/05/30 15:43:02 by chaidel          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -132,12 +132,8 @@ void	Channel::Broadcast_topic()
 
 	while (it != ite)
 	{
-		User user = *(it->second);
-		// if (topic.empty())
-		// 	topic = RPL_NOTOPIC(user, this->_name);
-		// else
-		topic = RPL_TOPIC(user, this->_name, topic);
-		send(user.getFd(), topic.c_str(), topic.size(), MSG_NOSIGNAL);
+		topic = RPL_TOPIC(&(it->second), this->_name, topic);
+		send(it->first, topic.c_str(), topic.size(), MSG_NOSIGNAL);
 		it++;
 	}
 }
