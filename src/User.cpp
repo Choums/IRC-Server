@@ -6,7 +6,7 @@
 /*   By: chaidel <chaidel@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/12 18:50:55 by aptive            #+#    #+#             */
-/*   Updated: 2023/05/25 15:35:14 by chaidel          ###   ########.fr       */
+/*   Updated: 2023/05/30 18:10:46 by chaidel          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,6 @@ User::User(int fd) : _set(false), _fd(fd), _username("X"), _nickname("X"), _host
 
 User::~User()
 {
-	// this->_list_cnl.clear();
 	close(this->_fd);
 }
 
@@ -225,6 +224,8 @@ std::vector<Channel *>	User::getListCnl()
 	return (this->_list_cnl);
 }
 
+bool	User::Is_PassSet()
+{	return (this->_auth_password); }
 /*
 ** --------------------------------- SETTER ---------------------------------
 */

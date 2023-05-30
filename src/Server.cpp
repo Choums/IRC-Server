@@ -6,7 +6,7 @@
 /*   By: chaidel <chaidel@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/14 17:37:42 by aptive            #+#    #+#             */
-/*   Updated: 2023/05/30 15:15:54 by chaidel          ###   ########.fr       */
+/*   Updated: 2023/05/30 18:37:53 by chaidel          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,7 +81,8 @@ Server::~Server()
 
 	while (itu != iteu)
 	{
-		delete *itu;
+		if (*itu)
+			delete *itu;
 		itu++;
 	}
 	close(this->_server_fd);
@@ -269,6 +270,7 @@ void Server::gestion_activite_client(fd_set * _read_sockets, fd_set * temp)
 					this->setRmUser(*this->_client_socket_v[i]);
 
 					delete this->_client_socket_v[i];
+					this->_client_socket_v.erase(this->_client_socket_v.begin()+i);
 					// Client disconnected, remove from active socket set
 				}
 			}
@@ -293,19 +295,19 @@ void Server::gestion_activite_client(fd_set * _read_sockets, fd_set * temp)
 
 std::pair<std::string, std::string>  first_word(std::string line)
 {
-	std::istringstream iss(line);
-	std::string word;
-	std::string	rest;
+    std::istringstream iss(line);
+    std::string word;
+    std::string    rest;
 
-	while (std::getline(iss, word, '\n'))
-	{
-		std::istringstream iss_word(word);
-		iss_word >> word;
-		if (!std::getline(iss_word, rest) || word.size() == 1 || word.empty())
-			return (std::make_pair(word, ""));
-		rest = iss.str().substr(word.size() + 1);
-	}
-	return (std::make_pair(word, rest));
+    while (std::getline(iss, word, '\n'))
+    {
+        std::istringstream iss_word(word);
+        iss_word >> word;
+        if (!std::getline(iss_word, rest) || word.size() == 1 || word.empty())
+            return (std::make_pair(word, ""));
+        rest = iss.str().substr(word.size() + 1, line.size() - (word.size() + 1 + 1));
+    }
+    return (std::make_pair(word, rest));
 }
 
 // void Server::parsing_cmd( User * user )
@@ -397,6 +399,18 @@ static Command option(const std::string& cmd)
 
 void	Server::handleCommandServer(std::string const& cmd, std::string const& rest, User& user)
 {
+	if (!user.Is_PassSet() && option(cmd) != Pass)
+	{
+		std::string	str = "[SERVER]: You need the PASSWORD to connect !\n";
+		send(user.getFd(), str.c_str(), str.size(), MSG_NOSIGNAL);
+		return ;
+	}
+	
+	if (!user.Is_PassSet() && option(cmd) == Pass)
+		if (!this->verif_password(user, rest))
+			return ;
+	
+
 	switch (option(cmd))
 	{
 		case Unknown:
@@ -405,7 +419,6 @@ void	Server::handleCommandServer(std::string const& cmd, std::string const& rest
 		case Cap:
 			break;
 		case Pass:
-			this->verif_password(user, rest);
 			break;
 		case Nick:
 			this->cmd_Nick(user, rest);
@@ -620,7 +633,7 @@ void	Server::setRmUser(User &user)
 	// Client disconnected, remove from active socket set
 	close(fd);
 	FD_CLR(fd, &_read_sockets);
-	this->_client_socket_v.erase(this->_client_socket_v.begin()+i);
+	
 }
 
 void	Server::setNewChannel(Channel* cnl)

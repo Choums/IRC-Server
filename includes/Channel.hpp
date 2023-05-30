@@ -6,7 +6,7 @@
 /*   By: chaidel <chaidel@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/19 08:28:18 by root              #+#    #+#             */
-/*   Updated: 2023/05/24 16:41:19 by chaidel          ###   ########.fr       */
+/*   Updated: 2023/05/30 17:35:15 by chaidel          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,7 @@ class	Channel {
 		void				setName(std::string name);
 		void				setChanModes(User& user, std::string const& mode, std::string const& arg);
 		void				setUserModes(User& user, User& target, std::string const& mode);
-		void				setTopic(std::string topic);
+		void				setTopic(std::string const& topic);
 		void				setTopicClear();
 		void				setUserPrivilege(int user_fd, bool priv);
 		void				setChanLimit(int capacity);

@@ -6,7 +6,7 @@
 /*   By: chaidel <chaidel@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/19 08:47:29 by root              #+#    #+#             */
-/*   Updated: 2023/05/30 15:43:02 by chaidel          ###   ########.fr       */
+/*   Updated: 2023/05/30 17:58:18 by chaidel          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -129,11 +129,18 @@ void	Channel::Broadcast_topic()
 	std::map<int, User*>::iterator	ite = this->_users.end();
 
 	std::string	topic = this->getTopic();
+	std::string	str;
 
 	while (it != ite)
 	{
-		topic = RPL_TOPIC(&(it->second), this->_name, topic);
-		send(it->first, topic.c_str(), topic.size(), MSG_NOSIGNAL);
+		User *user = it->second;
+		std::cout << RED<< "<" << this->_name << ">: BROADCAST TO " << it->first << ", " << it->second->getNickname() << " TOPIC" << END << std::endl;
+		if (topic.empty())
+			str = RPL_NOTOPIC((*user), this->_name);
+		else
+			str = RPL_TOPIC((*user), this->_name, topic);
+		std::cout << GREEN << topic << END << std::endl;
+		send(it->first, str.c_str(), str.size(), MSG_NOSIGNAL);
 		it++;
 	}
 }
@@ -603,7 +610,7 @@ void	Channel::setUserModes(User& user, User& target, std::string const& mode)
 	}
 }
 
-void	Channel::setTopic(std::string topic)
+void	Channel::setTopic(std::string const& topic)
 {
 	std::cout << YELLOW << "-Set New Topic-" << END << std::endl;
 	this->_topic = topic;

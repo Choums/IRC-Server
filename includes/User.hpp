@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   User.hpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tdelauna <tdelauna@student.42.fr>          +#+  +:+       +#+        */
+/*   By: chaidel <chaidel@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/12 18:44:15 by aptive            #+#    #+#             */
-/*   Updated: 2023/05/23 17:59:41 by tdelauna         ###   ########.fr       */
+/*   Updated: 2023/05/30 18:10:10 by chaidel          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ class User
 		bool					getInv() const;
 		bool					getAuth_password(void) const;
 		std::vector<Channel*>	getListCnl();
-
+		bool					Is_PassSet();
 		// ** --------------------------------- SETTER ---------------------------------
 
 		void	setSetUser();
