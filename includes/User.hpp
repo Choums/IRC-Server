@@ -6,7 +6,7 @@
 /*   By: chaidel <chaidel@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/12 18:44:15 by aptive            #+#    #+#             */
-/*   Updated: 2023/05/31 13:56:21 by chaidel          ###   ########.fr       */
+/*   Updated: 2023/05/31 17:05:00 by chaidel          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,8 @@
 # include "ft_irc.hpp"
 
 class Channel;
+
+typedef  std::vector<Channel*>::iterator	Chan_iter;
 
 class User
 {
@@ -45,7 +47,8 @@ class User
 		bool					getOper(void) const;
 		bool					getInv() const;
 		bool					getAuth_password(void) const;
-		std::vector<Channel*>& getListCnl();
+		Chan_iter				getVecBeg();
+		Chan_iter				getVecEnd();
 		bool					Is_PassSet();
 		// ** --------------------------------- SETTER ---------------------------------
 

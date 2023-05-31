@@ -6,7 +6,7 @@
 /*   By: chaidel <chaidel@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/19 08:47:29 by root              #+#    #+#             */
-/*   Updated: 2023/05/31 13:24:26 by chaidel          ###   ########.fr       */
+/*   Updated: 2023/05/31 18:01:16 by chaidel          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,6 +81,7 @@ Channel::~Channel() // Kick les users toujours present avant de fermer le serveu
 		{
 			User*	user = it->second;
 			this->PartUser(*user, reason);
+			user->setRmCnlMembership(this);
 			it = this->_users.begin();
 		}
 	}
@@ -215,7 +216,7 @@ void	Channel::PartUser(User& user, std::string const& reason)
 	this->_privilege.erase(user.getFd()); // Supp de la list des priv
 
 	std::cout << YELLOW << "PART " << user.getUsername() << " has been deleted from " << this->_name << END << std::endl;
-	this->getUsers();
+	
 	std::string	cast = ":" + user.getNames() + " PART " + this->_name + " :" + reason + "\r\n";
 	this->Broadcast(cast); // Display a tout les users que l'user est parti
 

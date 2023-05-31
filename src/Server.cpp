@@ -6,7 +6,7 @@
 /*   By: chaidel <chaidel@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/14 17:37:42 by aptive            #+#    #+#             */
-/*   Updated: 2023/05/31 16:09:13 by chaidel          ###   ########.fr       */
+/*   Updated: 2023/05/31 18:16:42 by chaidel          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -178,7 +178,12 @@ void	Server::boucle_server( void )
 		// Wait for any of the sockets to become readable
 		fd_set temp = _read_sockets;
 		if (select(_max_socket_fd + 1, &temp, NULL, NULL, NULL) < 0)
+		{
+			// for (size_t i = 0; i < _client_socket_v.size(); i++)
+			// 	this->setRmUser(this->_client_socket_v[i]);
+			// std::cout << "clientsocker size : "<< _client_socket_v.size() << std::endl;
 			throw std::string("Error : waiting for sockets to become readable !\n");
+		}
 
 		// traitement de l'activité sur les sockets
 		this->gestion_new_connexion(&temp, &_read_sockets, addr);
@@ -189,6 +194,9 @@ void	Server::boucle_server( void )
 			this->gestion_activite_client( &_read_sockets, &temp );
 
 	}
+
+		
+
 }
 
 bool    Server::verif_password(User& user, std::string const& mdp)
@@ -264,21 +272,6 @@ void Server::gestion_activite_client(fd_set * _read_sockets, fd_set * temp)
 			
 			std::cout << "VALREAD : " << valread <<std::endl;
 			if (valread == 0)
-			{
-				// if (this->_client_socket_v[i])
-				// {
-				// 	std::cout << RED << "[SERVER] : Delete " << _client_socket_v[i]->getNickname() << END << std::endl;
-					
-				// 	this->LeaveCnls(*this->_client_socket_v[i]);
-
-				// 	this->setRmUser(this->_client_socket_v[i]);
-
-				// 	delete this->_client_socket_v[i];
-				// 	this->_client_socket_v.erase(this->_client_socket_v.begin()+i);
-				// 	// Client disconnected, remove from active socket set
-				// }
-			}
-			else if (valread == 15 && !std::strcmp(buffer, "QUIT\n:leaving\r\n"))
 			{
 				if (this->_client_socket_v[i])
 				{
@@ -378,7 +371,10 @@ void Server::parsing_cmd( User * user )
 		std::cout << "-------------------------------------->\n";
 
 		if (option(cmd) == Quit)
+		{
 			this->cmd_Quit(user);
+			return ;
+		}
 		else
 			this->handleCommandServer(cmd, rest, *user);
 
@@ -420,10 +416,9 @@ Command option(const std::string& cmd)
 
 void	Server::cmd_Quit(User* user)
 {
-	std::cout << "HEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEERE\n";
 	if (user)
 	{
-		std::cout << RED << "[SERVER] : Delete " << user->getNickname() << END << std::endl;
+		std::cout << RED << "[SERVER] : Delete Quit" << user->getNickname() << END << std::endl;
 
 		this->LeaveCnls(*user);
 
@@ -431,29 +426,10 @@ void	Server::cmd_Quit(User* user)
 
 		std::vector<User*>::iterator it = std::find(this->_client_socket_v.begin(), this->_client_socket_v.end(), user);
 
-		// delete *std::find(this->_client_socket_v.begin(), this->_client_socket_v.end(), user);
-
+		delete *it;
 
 		this->_client_socket_v.erase(it);
-		
-		
-		
 	}
-	// Client disconnected, remove from active socket set
-
-
-
-
-					// if (this->_client_socket_v[i])
-				// {
-				// 	std::cout << RED << "[SERVER] : Delete " << _client_socket_v[i]->getNickname() << END << std::endl;
-					
-				// 	this->LeaveCnls(*this->_client_socket_v[i]);
-
-				// 	this->setRmUser(this->_client_socket_v[i]);
-
-				// 	delete this->_client_socket_v[i];
-				// 	this->_client_socket_v.erase(this->_client_socket_v.begin()+i);
 }
 
 void	Server::handleCommandServer(std::string const& cmd, std::string const& rest, User& user)
@@ -663,21 +639,18 @@ void	Server::setPassword(const std::string & password)
 
 void	Server::setRmChannel(Channel* cnl)
 {
-	Chan_iter	it = this->_channel.begin();
+	Chan_iter	it = this->get_Channel(cnl->getName());
 
 	std::cout << RED << "-Fermeture channel " << cnl->getName() << "-" << END << std::endl;
 
-	while (it != this->_channel.end())
+	if (*it)
 	{
-		if (*it == cnl)
-		{
-			this->_channel.erase(it);
-			delete cnl;
-			std::cout << GREEN << "-Fermeture successful-" << END << std::endl;
-			return ;
-		}
-		it++;
+		this->_channel.erase(it);
+		delete cnl;
+		std::cout << GREEN << "-Fermeture successful-" << END << std::endl;
+		return ;
 	}
+	(void)cnl;
 }
 
 void	Server::setRmUser(User* user)
@@ -709,8 +682,9 @@ void	Server::setNewChannel(Channel* cnl)
 void	Server::LeaveCnls(User& user)
 {
 	std::cout << "list part of cnl " << std::endl;
-	std::vector<Channel*>::iterator itbegin =   user.getListCnl().begin();
-	for (std::vector<Channel*>::iterator it = itbegin; it != user.getListCnl().end(); it++)
+	// std::vector<Channel*>::iterator itbegin =   user.getListCnl().begin();
+	
+	for (Chan_iter	it = user.getVecBeg(); it != user.getVecEnd(); it++)
 	{
 		std::string	reason = "Disconnect";
 		(*it)->PartUser(user, reason);

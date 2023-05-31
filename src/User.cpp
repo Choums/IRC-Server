@@ -6,7 +6,7 @@
 /*   By: chaidel <chaidel@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/12 18:50:55 by aptive            #+#    #+#             */
-/*   Updated: 2023/05/31 13:56:25 by chaidel          ###   ########.fr       */
+/*   Updated: 2023/05/31 18:15:40 by chaidel          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,39 +85,6 @@ std::ostream &			operator<<( std::ostream & o, User const & i )
 ** --------------------------------- METHODS ----------------------------------
 */
 
-
-
-// void	User::handleCommand(const std::string& cmd, const std::string& rest)
-// {
-// 	// std::string levels[] = {
-// 	// 							"/NICK",
-// 	// 							"/JOIN",
-// 	// 							"/NAMES" };
-
-// 	void (User::*f[])(const std::string&) = {
-// 		&User::setNickname,
-// 		&User::cmd_JoinChannel
-// 	};
-
-// 	// for (int i = 0; i < 2; i++) {
-// 	// 	if (levels[i] == cmd) {
-// 	// 		(this->*f[i])(rest);
-// 	// 	}
-// 	// }
-
-// 	switch (option(cmd))
-// 	{
-// 		case Unknown:
-// 			throw std::string("Unknown Command !");
-// 			break;
-// 		case Nick:
-// 			(this->*f[Nick - 1])(rest);
-// 			break;
-// 		case Join:
-// 			(this->*f[Join - 1])(rest);
-// 			break;
-// 	}
-// }
 
 void	User::sendMessage(const std::string& message) const
 {
@@ -218,16 +185,14 @@ bool		User::getAuth_password(void) const
 	return this->_auth_password;
 }
 
-// Renvoie tout les channels dont est present l'user
-std::vector<Channel*>& User::getListCnl() 
-{
-	return (this->_list_cnl);
-}
-
 bool	User::Is_PassSet()
 {	return (this->_auth_password); }
 
+Chan_iter	User::getVecBeg()
+{	return (this->_list_cnl.begin()); }
 
+Chan_iter	User::getVecEnd()
+{	return (this->_list_cnl.end()); }
 
 
 /*
@@ -333,11 +298,11 @@ void	User::setRmCnlMembership(Channel* cnl)
 	// throw std::string("Channel not found");
 }
 
-void	User::setRmChannel(Channel* cnl)
-{
-	for (std::vector<Channel*>::iterator it = this->_list_cnl.begin(); it != this->_list_cnl.end(); it++)
-		if (*it == cnl)
-			this->_list_cnl.erase(it);
-}
+// void	User::setRmChannel(Channel* cnl)
+// {
+// 	for (std::vector<Channel*>::iterator it = this->_list_cnl.begin(); it != this->_list_cnl.end(); it++)
+// 		if (*it == cnl)
+// 			this->_list_cnl.erase(it);
+// }
 
 /* ************************************************************************** */
