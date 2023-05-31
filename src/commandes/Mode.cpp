@@ -63,9 +63,8 @@ void	Server::cmd_Mode(User& user, std::string const& rest)
 	std::string	str;
 
 	std::cout << YELLOW << "-Mode Modification-" << END << std::endl;
-	std::cout << RED << "<" << target << ">\n<" << mode << ">" << END << std::endl;
+	std::cout << RED << "<" << target << ">\n<" << mode << ">: " << mode.size() << END << std::endl;
 	
-	// std::cout << RED << mode.size() << END << std::endl;
 	if (target.size() == 1)
 	{
 		str = ERR_NEEDMOREPARAMS(user, "MODE");
@@ -73,7 +72,7 @@ void	Server::cmd_Mode(User& user, std::string const& rest)
 		return ;
 	}
 
-	if (mode.size() == 1 && target[0] != '#') // Display User modes
+	if (mode.size() == 0 && target[0] != '#') // Display User modes
 	{
 		Display_Modes(user);
 		return ;
@@ -91,9 +90,9 @@ void	Server::cmd_Mode(User& user, std::string const& rest)
 				std::string	nick; // Si l'user n'est pas donné, display channel modes
 				ss >> nick;
 				
-				std::cout << RED << "<" << nick << ">" << END << std::endl;
-				if (mode.size() == 1) {// Display Channel modes, /mode <channel>
-						Display_Chan_Modes(user, *tmp); return ;}
+				std::cout << GREEN << "|<" << mode << ">| , " << mode.size() << END << std::endl;
+				if (mode.size() == 0) {// Display Channel modes, /mode <channel>
+						Display_Chan_Modes(user, *tmp); return ; }
 				
 				if (tmp->Is_Ope(user)) // Chan oper ou Serv oper, Update Channel modes ou Channel User modes
 				{

@@ -42,7 +42,7 @@ void	Server::cmd_Privmsg(User& user, std::string const& rest)
 	std::cout << RED << "<" << msgtarget << ">\n<" << msg << ">" << END << std::endl;
 
 
-	if (msgtarget.size() == 1)
+	if (msgtarget.size() == 0)
 	{
 		str = ERR_NORECIPIENT(user, "PRIVMSG");
 		send(user.getFd(), str.c_str(), str.size(), MSG_NOSIGNAL);
@@ -60,7 +60,7 @@ void	Server::cmd_Privmsg(User& user, std::string const& rest)
 			{
 				if (channel->Is_Present(user.getNickname()))
 				{
-					if (msg.size() == 1) // Pas de msg a envoyé
+					if (msg.size() == 0) // Pas de msg a envoyé
 					{
 						std::cout << RED << "NO TEXT TO SEND" << END << std::endl;
 						str = ERR_NOTEXTTOSEND(user);
@@ -100,7 +100,8 @@ void	Server::cmd_Privmsg(User& user, std::string const& rest)
 		{
 			std::cout << GREEN << "USER FOUND" << END << std::endl;
 			User *target = (*itu);
-			if (msg.size() == 1)
+			std::cout << GREEN << msg.size() << END << std::endl;
+			if (msg.size() == 0)
 			{
 				std::cout << RED << "NO TEXT TO SEND" << END << std::endl;
 				str = ERR_NOTEXTTOSEND(user);

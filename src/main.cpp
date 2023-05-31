@@ -6,7 +6,7 @@
 /*   By: chaidel <chaidel@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/07 18:15:00 by aptive            #+#    #+#             */
-/*   Updated: 2023/05/30 15:28:36 by chaidel          ###   ########.fr       */
+/*   Updated: 2023/05/31 15:34:02 by chaidel          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ void	welcome(User& user)
 	}
 	else
 	{
-		Server::running_serv->setRmUser(user);
+		Server::running_serv->setRmUser(&user);
 	}
 }
 

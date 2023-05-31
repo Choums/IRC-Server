@@ -6,7 +6,7 @@
 /*   By: chaidel <chaidel@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/19 08:47:29 by root              #+#    #+#             */
-/*   Updated: 2023/05/30 17:58:18 by chaidel          ###   ########.fr       */
+/*   Updated: 2023/05/31 13:24:26 by chaidel          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ Channel::Channel(User& user, std::string const& name, std::string const& pass)
 
 	std::cout << pass.size() << " | " << pass << std::endl;
 
-	if (pass.size() == 1 || pass == "x")
+	if (pass.size() == 0 || pass == "x")
 	{
 		std::cout << "key false\n";
 		this->_key = false;
@@ -210,9 +210,9 @@ void	Channel::RmOpe(User& user)
 // :John!~user@host PART #channel :Je reviendrai plus tard
 void	Channel::PartUser(User& user, std::string const& reason)
 {
-	this->_users.erase(this->_users.find(user.getFd())); // Supp de la list des users
+	this->_users.erase(user.getFd()); // Supp de la list des users
 
-	this->_privilege.erase(this->_privilege.find(user.getFd())); // Supp de la list des priv
+	this->_privilege.erase(user.getFd()); // Supp de la list des priv
 
 	std::cout << YELLOW << "PART " << user.getUsername() << " has been deleted from " << this->_name << END << std::endl;
 	this->getUsers();
@@ -484,12 +484,13 @@ void	Channel::setChanModes(User& user, std::string const& mode, std::string cons
 		}
 		else if (mode[i] == 'l' && sign)
 		{
+			
 			int					size;
 			std::stringstream	ss(arg);
 			ss >> size;
 			std::cout << "arg: " << arg.size() << "|" << arg.empty() << std::endl;
-			// if (arg.empty())
-			// 	size = 50;
+			if (arg.empty())
+				size = 50;
 			std::cout << "size: " << size << " | numUsers: " << this->getNumUsers() << std::endl;
 			if (size > 0 && this->getNumUsers() < size && size <= 50)
 			{
@@ -529,20 +530,23 @@ void	Channel::setChanModes(User& user, std::string const& mode, std::string cons
 			std::string			key;
 			ss >> key;
 			std::cout << "mdp: " << key << std::endl;
-			if (this->Is_PassOnly())
+			if (!arg.empty())
 			{
-				cast = ERR_KEYSET(user, this->_name);
-				send(user.getFd(), cast.c_str(), cast.size(), MSG_NOSIGNAL);
-			}
-			else
-			{
-				if (this->Is_PassValid(key))
+				if (this->Is_PassOnly())
 				{
-					this->_key = true;
-					this->setChanPass(key);
-					this->getModes();
-					cast = CHANMODE(this->_name, std::string("+k ") + arg);
-					this->Broadcast(cast);
+					cast = ERR_KEYSET(user, this->_name);
+					send(user.getFd(), cast.c_str(), cast.size(), MSG_NOSIGNAL);
+				}
+				else
+				{
+					if (this->Is_PassValid(key))
+					{
+						this->_key = true;
+						this->setChanPass(key);
+						this->getModes();
+						cast = CHANMODE(this->_name, std::string("+k ") + arg);
+						this->Broadcast(cast);
+					}
 				}
 			}
 		}

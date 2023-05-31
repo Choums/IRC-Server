@@ -6,7 +6,7 @@
 /*   By: chaidel <chaidel@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/14 17:32:55 by aptive            #+#    #+#             */
-/*   Updated: 2023/05/24 16:43:28 by chaidel          ###   ########.fr       */
+/*   Updated: 2023/05/31 15:34:36 by chaidel          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ class Server
 		void	handleCommandServer(std::string const& cmd, std::string const& rest, User& user);
 
 		bool	is_Ope(User& user);
-
+		void	LeaveCnls(User& user);
 		// ** --------------------------------- COMMANDE ---------------------------------
 		void	cmd_Privmsg(User& user, std::string const& rest);
 		void	cmd_Who(User& user, std::string const& rest);
@@ -69,6 +69,8 @@ class Server
 		void	cmd_Kick(User& user, std::string const& rest);
 		void	cmd_Topic(User& user, std::string const& rest);
 		void	cmd_Notice(User& user, std::string const& rest);
+		void	cmd_Quit(User* user);
+		
 		// ** --------------------------------- ACCESSOR ---------------------------------
 
 		std::string			getHostname() const;
@@ -87,7 +89,7 @@ class Server
 		// void				setClient_socket_v(User user);
 		void				setNewChannel(Channel* cnl);
 		void				setRmChannel(Channel* cnl);
-		void				setRmUser(User &user);
+		void				setRmUser(User* user);
 
 		static	Server* running_serv;
 	private:

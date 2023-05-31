@@ -6,7 +6,7 @@
 /*   By: chaidel <chaidel@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/12 18:50:55 by aptive            #+#    #+#             */
-/*   Updated: 2023/05/30 18:10:46 by chaidel          ###   ########.fr       */
+/*   Updated: 2023/05/31 13:56:25 by chaidel          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -219,13 +219,17 @@ bool		User::getAuth_password(void) const
 }
 
 // Renvoie tout les channels dont est present l'user
-std::vector<Channel *>	User::getListCnl()
+std::vector<Channel*>& User::getListCnl() 
 {
 	return (this->_list_cnl);
 }
 
 bool	User::Is_PassSet()
 {	return (this->_auth_password); }
+
+
+
+
 /*
 ** --------------------------------- SETTER ---------------------------------
 */
@@ -329,11 +333,11 @@ void	User::setRmCnlMembership(Channel* cnl)
 	// throw std::string("Channel not found");
 }
 
-// // Retire le channel de la liste des channels dont l'user fait partie
-// // L'user est par la meme occassion retirer au sein du channel
-// void	User::setRmCnlMembership(Channel& cnl)
-// {
-// 	cnl.RmUser(this->getFd());
-// }
+void	User::setRmChannel(Channel* cnl)
+{
+	for (std::vector<Channel*>::iterator it = this->_list_cnl.begin(); it != this->_list_cnl.end(); it++)
+		if (*it == cnl)
+			this->_list_cnl.erase(it);
+}
 
 /* ************************************************************************** */

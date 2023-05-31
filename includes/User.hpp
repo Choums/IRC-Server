@@ -6,7 +6,7 @@
 /*   By: chaidel <chaidel@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/12 18:44:15 by aptive            #+#    #+#             */
-/*   Updated: 2023/05/30 18:10:10 by chaidel          ###   ########.fr       */
+/*   Updated: 2023/05/31 13:56:21 by chaidel          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ class User
 		void	sendMessage(const std::string& message) const;
 		void	clearBuf( void );
 		bool	is_set();
-
+		
 		// ** --------------------------------- ACCESSOR ---------------------------------
 		std::string				getNames() const;
 		bool					getSet() const;
@@ -45,7 +45,7 @@ class User
 		bool					getOper(void) const;
 		bool					getInv() const;
 		bool					getAuth_password(void) const;
-		std::vector<Channel*>	getListCnl();
+		std::vector<Channel*>& getListCnl();
 		bool					Is_PassSet();
 		// ** --------------------------------- SETTER ---------------------------------
 
@@ -59,6 +59,7 @@ class User
 		void	setAuth_passwordOK( void );
 		void	setRmCnlMembership(Channel* cnl);
 		void	setAddListCnlMember(Channel* cnl);
+		void	setRmChannel(Channel* cnl);
 
 	private:
 		bool					_set;

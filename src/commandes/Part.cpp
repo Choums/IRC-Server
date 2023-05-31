@@ -42,7 +42,7 @@ void	Server::cmd_Part(User& user, std::string const& rest)
 		send(user.getFd(), str.c_str(), str.size(), MSG_NOSIGNAL);
 		return ;
 	}
-	if (reason.size() == 1)
+	if (reason.size() == 0)
 	{
 		std::cout << "reason empty, default used\n";
 		reason = "Bye Bye"; // Reason par defaut si l'user n'en fournit pas
