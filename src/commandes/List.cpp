@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   List.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: root <root@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: chaidel <chaidel@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/05/17 18:41:20 by root              #+#    #+#             */
-/*   Updated: 2023/05/17 18:58:44 by root             ###   ########.fr       */
+/*   Updated: 2023/06/01 15:44:16 by chaidel          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,8 +32,8 @@ void	Server::cmd_List(User& user, std::string const& rest)
 	std::cout << YELLOW << "-LIST Command-" << END << std::endl;
 	std::string	str;
 
-	// std::cout << RED << "|" << rest.size() << "|" << END << std::endl;
-	if (rest.size() == 2) // Display tout les Canaux du serveur
+	std::cout << RED << " |" << rest << "|, " << rest.size() << END << std::endl;
+	if (rest.size() == 1) // Display tout les Canaux du serveur
 	{
 		std::cout << GREEN << "[Display All Channels]" << END << std::endl;
 		for (size_t i(0); i < this->_channel.size(); i++)
