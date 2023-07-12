@@ -1,102 +1,51 @@
-# web_serv
+# IRC-Server
+Internet Relay Chat or IRC is a text-based communication protocol on the Internet. It offers real-time messaging that can be either public or private. Users can exchange direct messages and join group channels. IRC clients connect to IRC servers in order to join channels. IRC servers are connected together to form a network.
 
-Créer un socket d'écoute pour accepter les connexions entrantes.
+## Introduction
+This IRC Server is a simple and lightweight IRC server written in C++98. It is designed to be easy to set up and use.
 
-Accepter les connexions entrantes et créer des sockets pour chacune d'entre elles.
+## Usage
+To run the IRC server, use the following command:  </br>
+``` ./ircserv <port> <password> ``` </br>
+**port**: The port number on which the IRC server will listen for incoming connections. </br>
+**password**: The connection password required for clients to connect to the server.</br>
 
-Lire et traiter les commandes entrantes de chaque client.
+## Features
+The IRC server provides the following features:
 
-Gérer les commandes IRC spécifiques, telles que JOIN, PART, PRIVMSG, etc.
+- **Authentication**: Clients need to provide the correct password to connect to the server.
+- **Nicknames**: Clients can set their nickname to identify themselves in the chat.
+- **Usernames**: Clients can set their username, which is displayed along with their nickname.
+- **Channel Joining**: Clients can join channels to participate in group conversations.
+- **Private Messages**: Clients can send private messages to other connected users.
+- **Channel Messages**: Messages sent by one client to a channel are forwarded to all other clients in the channel.
+- **Channel Operators**: Channels have operators who have additional privileges.
+- **Part**: Clients can leave a channel using the ```/part``` command.
+- **Kick**: Channel operators can eject a client from a channel using the ```/kick``` command.
+- **Ban**: Channel operators can ban a user from a channel using the ```/ban``` command.
+- **Unban**: Channel operators can remove a ban on a user using the ```/unban``` command.
+- **Notice**: Clients can send notices to other connected users or channels.
+- **Invite**: Channel operators can invite a client to a channel using the ```/invite``` command.
+- **Topic**: Channel operators can change or view the topic of a channel using the ```/topic``` command.
+- **Channel Modes**: Channel operators can change the mode of a channel using the ```/mode``` command. Supported modes include:
+  + '**__i__**': Set/remove invite-only channel.
+  + '**__t__**': Set/remove restrictions of the TOPIC command to channel operators.
+  + '**__k__**': Set/remove the channel key (password).
+  + '**__o__**': Give/take channel operator privilege.
+  + '**__l__**': Set/remove the user limit to the channel.
+  + '**__b__**': Set/remove ban list from the channel.
 
-Transmettre les messages à tous les clients dans un canal lorsqu'un client envoie un message.
+## Compatibility
+The IRC server is compatible with IRC clients that support standard IRC commands and protocol. It provides a similar experience to using any official IRC server. Also compatible with netcat.
 
-Implémenter des fonctions de gestion des utilisateurs, telles que l'identification, l'authentification, la définition d'un surnom, etc.
+## Examples
+- Join a channel: ```/join mychannel``` in irssi, ```JOIN #mychannel``` in netcat
+- Send a message to a user: ```/msg username Hello, how are you?``` in irssi, ```PRIVMSG username :Hello, how are you?``` in netcat
+- Send a message to a channel: ```/msg #mychannel Hello, everyone!``` in irssi, ```PRIVMSG #mychannel :Hello, how are you?``` in netcat
+- Quit the channel: ```/part mychannel See you next time !``` in irssi, ```PART #mychannel :See you next time !```  in netcat
 
-Implémenter des fonctions de gestion des canaux, telles que la création et la suppression de canaux, l'ajout et la suppression de membres de canal, etc.
+## Limitations
+Please note the following limitations of the IRC server:
 
-Gérer les déconnexions de clients.
-
-Gérer les erreurs et les exceptions.
-
-----------------------------------------------------------------------------------------------------------------------------------------
-## Requête
-
-Créer une socket serveur :
-
-Utilisez la fonction socket() pour créer une socket TCP/IP IPv4 ou IPv6, en fonction de vos besoins.
-Utilisez la fonction setsockopt() pour définir l'option SO_REUSEADDR sur la socket, afin de réutiliser rapidement le port après la fermeture du serveur.
-Utilisez la fonction bind() pour lier la socket à une adresse IP et au port spécifié en argument.
-Utilisez la fonction listen() pour mettre la socket en mode d'écoute des connexions entrantes.
-Accepter les connexions entrantes :
-
-Utilisez la fonction accept() pour accepter une connexion entrante.
-Cette fonction retourne une nouvelle socket qui sera utilisée pour la communication avec le client.
-Lire les données envoyées par le client :
-
-Utilisez la fonction recv() pour lire les données envoyées par le client sur la socket de communication.
-Envoyer des données au client :
-
-Utilisez la fonction send() pour envoyer des données au client sur la socket de communication.
-Gérer la fin de la communication avec le client :
-
-Fermez la socket de communication à l'aide de la fonction close().
-
-
-----------------------------------------------------------------------------------------------------------------------------------------
-## Fonction utile
-
-- **execve()** : exécute un programme avec un ensemble de paramètres et un environnement définis.
-Cette fonction est utile pour exécuter un programme externe à partir d'un programme en cours d'exécution.
-
-- **dup()** et **dup2()** : dupliquent un descripteur de fichier existant.
-dup() crée une copie d'un descripteur de fichier existant, en utilisant le plus petit numéro de descripteur disponible.
-dup2() fait la même chose, mais permet à l'utilisateur de spécifier le numéro de descripteur de fichier à utiliser.
-
-- **pipe()** : crée une paire de descripteurs de fichiers pour une communication unidirectionnelle entre processus.
-Les données écrites dans un descripteur de fichier peuvent être lues depuis l'autre.
-
-- **strerror()** et **gai_strerror()** : renvoient une chaîne de caractères décrivant une erreur système ou réseau.
-strerror() prend en argument un code d'erreur et renvoie une chaîne de caractères décrivant l'erreur correspondante.
-gai_strerror() prend en argument un code d'erreur d'adressage et renvoie une chaîne de caractères décrivant l'erreur correspondante.
-
-- **errno** : variable globale qui contient le dernier code d'erreur de la dernière opération système.
-Cette variable peut être utilisée pour récupérer le code d'erreur renvoyé par une fonction système.
-
-- **fork()** : crée un nouveau processus en dupliquant le processus existant.
-Le nouveau processus est identique au processus parent, à l'exception de son identifiant de processus (PID) et de son identifiant de groupe de processus (PGID).
-Le processus parent et le nouveau processus continuent l'exécution à partir du point d'appel de la fonction fork().
-
-- **htonl()**, **htons()**, **ntohl()** et **ntohs()** : convertissent des entiers entre l'ordre des octets d'hôte et l'ordre des octets du réseau.
-Ces fonctions sont nécessaires pour convertir les entiers lors de la communication via le réseau.
-
-- **select()**, **poll()** et **epoll()** : sont des mécanismes de gestion d'événements pour les sockets.
-Ces fonctions sont utilisées pour surveiller plusieurs sockets en même temps, en attendant qu'un ou plusieurs événements se produisent.
-
-- **socket()** : crée un nouveau socket.
-Les sockets sont des canaux de communication bidirectionnels utilisés pour la communication entre processus sur un réseau.
-
-- **accept()** : accepte une nouvelle connexion sur un socket.
-Lorsqu'un client se connecte à un serveur, le serveur appelle la fonction accept() pour accepter la connexion.
-
-- **listen()** : met un socket en mode écoute des connexions entrantes.
-Cette fonction est appelée sur un socket côté serveur pour spécifier le nombre maximal de connexions en attente de traitement.
-
-- **send()** et **recv()** : envoient et reçoivent des données sur un socket.
-Ces fonctions sont utilisées pour envoyer et recevoir des données sur un socket.
-
-- **bind()** : attache un socket à une adresse IP et à un port.
-Cette fonction est utilisée pour spécifier l'adresse IP et le port sur lequel le socket doit écouter les conn
-
-----------------------------------------------------------------------------------------------------------------------------------------
-## Cree un socket
-
-
-
-## Lien utile
-
-
-
-----------------------------------------------------------------------------------------------------------------------------------------
-
-## NORME RFC
-
+- The server does not support server-to-server communication.
+- Only a subset of IRC commands is implemented.
